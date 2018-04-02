@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/query_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:text="Search query term" />
+
+    <LinearLayout
+        android:id="@+id/textview_dates"
+        android:layout_marginHorizontal="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/text_begin_date"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Begin Date"/>
+
+
+        <TextView
+            android:id="@+id/text_end_date"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="End Date"/>
+
+    </LinearLayout>
+
+    <!--      AREA FOR SELECTING DATES        -->
+    <LinearLayout
+        android:id="@+id/listview_dates"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <android.support.v7.view.menu.ListMenuItemView
+            android:id="@+id/list_begin_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        </android.support.v7.view.menu.ListMenuItemView>
+
+
+
+        <android.support.v7.view.menu.ListMenuItemView
+            android:id="@+id/list_end_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        </android.support.v7.view.menu.ListMenuItemView>
+
+    </LinearLayout>
+
+    <!--  GRIDVIEW FOR CHECKBOX (arts, travel, sports,...)  -->
+
+        <GridView
+            android:id="@+id/gridview_check_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:numColumns="2"
+            android:verticalSpacing="5dp"
+            android:horizontalSpacing="10dp">
+        </GridView>
+
+    <!--  LINE SEPARATOR  -->
+    <View
+        android:id="@+id/line_separator"
+        android:layout_width="wrap_content"
+        android:layout_height="2dp"
+        android:layout_margin="10dp"
+        android:background="#c0c0c0"/>
+
+    <!--  SWITCH BUTTON FOR ENABLING NOTIFICATIONS  -->
+    <Switch
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Enable notifications (once per day)"/>
+
+    <!--  BUTTON SEARCH  -->
+    <Button
+        android:id="@+id/button_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@color/colorPrimary"
+        android:textColor="#FFFFFF"
+        android:text="SEARCH"/>
+
+
+</LinearLayout>
