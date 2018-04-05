@@ -23,4 +23,12 @@ public class ExampleInstrumentedTest {
 
         assertEquals("com.g.laurent.mynews", appContext.getPackageName());
     }
+
+    // by clicking on the article, a webview is opened
+
+
+    //
+
+
+
 }

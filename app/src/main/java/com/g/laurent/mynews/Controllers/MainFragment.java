@@ -24,6 +24,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,7 +48,7 @@ public class MainFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_recycler, container, false);
         ButterKnife.bind(this, view);
-        this.executeHttpRequestWithRetrofit();
+        //this.executeHttpRequestWithRetrofit();
         return view;
     }
 
@@ -109,7 +112,7 @@ public class MainFragment extends Fragment {
     private void executeHttpRequestWithRetrofit(){
 
         // 1.2 - Execute the stream subscribing to Observable defined inside GithubStream
-        this.disposable = NewsStreams.streamFetchNYTarticles("225a8498a05b4b7bb4d085d0c32e4ce8","newest",1).subscribeWith(new DisposableObserver<ListArticles>() {
+        this.disposable = NewsStreams.streamFetchNYTarticles("225a8498a05b4b7bb4d085d0c32e4ce8", "newest", 1).subscribeWith(new DisposableObserver<ListArticles>() {
 
             @Override
             public void onNext(ListArticles listArticles) {
@@ -141,3 +144,6 @@ public class MainFragment extends Fragment {
     }
 
 }
+
+
+

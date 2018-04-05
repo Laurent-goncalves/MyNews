@@ -1,11 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/activity_main_frame_layout"
-    tools:context="com.g.laurent.mynews.Controllers.MainActivity">
+    tools:context="com.g.laurent.mynews.Controllers.MainActivity"
+    android:orientation="vertical">
+
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/activity_main_toolbar"
+        android:minHeight="?attr/actionBarSize"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/toolbar_menu_button"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_menu_white_24dp"
+                android:layout_alignParentStart="true"/>
+
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="@string/MyNews"
+                android:textColor="@color/colorWhite"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_toEndOf="@+id/toolbar_menu_button"/>
+
+
+            <ImageButton
+                android:id="@+id/toolbar_menu_list"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_search_white_24dp"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_toStartOf ="@id/toolbar_menu_search"/>
+
+            <ImageButton
+                android:id="@+id/toolbar_menu_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_more_vert_white_24dp"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_alignParentEnd="true"/>
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.Toolbar>
 
 
     <android.support.design.widget.TabLayout
@@ -17,4 +71,4 @@
         app:tabTextColor="#D4E0F8"
         app:tabSelectedTextColor="#fff"/>
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

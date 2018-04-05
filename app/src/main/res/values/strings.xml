@@ -1,6 +1,15 @@
 <resources>
     <string name="app_name">MyNews</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="list_tab">
+
+        <item>"TOP STORIES"</item>
+        <item>"MOST POPULAR"</item>
+        <item>"TRAVEL"</item>
+
+    </string-array>
+
+    <string name="MyNews">MyNews</string>
+
 </resources>
