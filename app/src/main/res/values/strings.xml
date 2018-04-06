@@ -12,4 +12,8 @@
 
     <string name="MyNews">MyNews</string>
 
+    <string name="Notifications">Notifications</string>
+    <string name="About">About</string>
+    <string name="Help">Help</string>
+
 </resources>
