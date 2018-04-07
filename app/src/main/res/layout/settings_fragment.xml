@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
-        android:text="Search query term" />
+        android:text="@string/Search_query_term" />
 
     <LinearLayout
         android:id="@+id/textview_dates"
@@ -24,7 +24,7 @@
             android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Begin Date"/>
+            android:text="@string/Begin_Date"/>
 
 
         <TextView
@@ -32,7 +32,7 @@
             android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="End Date"/>
+            android:text="@string/End_Date"/>
 
     </LinearLayout>
 
@@ -49,8 +49,6 @@
             android:layout_height="wrap_content">
 
         </android.support.v7.view.menu.ListMenuItemView>
-
-
 
         <android.support.v7.view.menu.ListMenuItemView
             android:id="@+id/list_end_date"
@@ -82,10 +80,11 @@
 
     <!--  SWITCH BUTTON FOR ENABLING NOTIFICATIONS  -->
     <Switch
+        android:id="@+id/toggle_enabling_notif"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:text="Enable notifications (once per day)"/>
+        android:text="@string/Enable_notifications"/>
 
     <!--  BUTTON SEARCH  -->
     <Button
@@ -95,7 +94,7 @@
         android:layout_margin="10dp"
         android:background="@color/colorPrimary"
         android:textColor="#FFFFFF"
-        android:text="SEARCH"/>
+        android:text="@string/SEARCH"/>
 
 
 </LinearLayout>

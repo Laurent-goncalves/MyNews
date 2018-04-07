@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">MyNews</string>
 
-
+    <!-- sheets for tablayout -->
     <string-array name="list_tab">
 
         <item>"TOP STORIES"</item>
@@ -10,10 +10,26 @@
 
     </string-array>
 
+    <!-- Menu for toolbar -->
     <string name="MyNews">MyNews</string>
 
     <string name="Notifications">Notifications</string>
     <string name="About">About</string>
     <string name="Help">Help</string>
+    <string name="Search_query_term">Search query term</string>
+    <string name="Begin_Date">Begin Date</string>
+    <string name="End_Date">End Date</string>
+    <string name="Enable_notifications">Enable notifications (once per day)</string>
+    <string name="SEARCH">SEARCH</string>
+
+    <!-- list of checkboxes for settings -->
+    <string-array name="list_checkbox">
+        <item>"Arts"</item>
+        <item>"Business"</item>
+        <item>"Entrepreneurs"</item>
+        <item>"Politics"</item>
+        <item>"Sports"</item>
+        <item>"Travel"</item>
+    </string-array>
 
 </resources>
