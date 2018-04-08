@@ -1,44 +1,32 @@
 package com.g.laurent.mynews.Controllers;
 
-
-import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v7.view.menu.ListMenuItemView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CalendarView;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
-
+import com.g.laurent.mynews.Models.Callback_list_subjects;
 import com.g.laurent.mynews.R;
 import com.g.laurent.mynews.Views.GridViewAdapter;
-
-import java.sql.Date;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class SettingFragment extends Fragment {
+
+public class SettingFragment extends Fragment implements Callback_list_subjects {
 
     @BindView(R.id.query_area) EditText query_area;
     @BindView(R.id.gridview_check_box) GridView grid_checkbox;
@@ -52,9 +40,12 @@ public class SettingFragment extends Fragment {
     public static final String EXTRA_SETTING_TYPE = "setting_type";
     private TextView begin_date_text;
     private TextView end_date_text;
+    private String setting_type;
+
+    private ArrayList<String> ListSubjects;
+    private String query;
     private Calendar date_begin;
     private Calendar date_end;
-    private String setting_type;
 
     public SettingFragment() {
         // Required empty public constructor
@@ -72,9 +63,14 @@ public class SettingFragment extends Fragment {
         else
             setting_type = "search";
 
+        ListSubjects=new ArrayList<>();
+        query=null;
+
         configure_date_selectors(getResources().getString(R.string.begindate),begin_date);
         configure_date_selectors(getResources().getString(R.string.enddate),end_date);
         configure_settings_areas();
+        configure_search_button();
+        configure_edit_text();
         configure_checkboxes();
         return view;
     }
@@ -82,12 +78,12 @@ public class SettingFragment extends Fragment {
     private void configure_settings_areas(){
 
         mCalendarView.setVisibility(View.GONE);
-
         switch(setting_type){
 
             case "search":
                 mLinearLayout.removeView(toggle_notif);
                 mLinearLayout.removeView(line_separator);
+                search_button.setEnabled(false);
                 break;
 
             case "notif":
@@ -100,6 +96,23 @@ public class SettingFragment extends Fragment {
 
     private void configure_checkboxes(){
         grid_checkbox.setAdapter(new GridViewAdapter(getContext(),getResources().getStringArray(R.array.list_checkbox)));
+    }
+
+    private void configure_edit_text(){
+
+        query_area.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                query = s.toString();
+                enable_or_not_search_button();
+            }
+        });
     }
 
     private void configure_date_selectors(final String type_date, View date_view){
@@ -177,6 +190,18 @@ public class SettingFragment extends Fragment {
                 }
             }
         }));
+    }
+
+    private void configure_search_button(){
+
+        enable_search_button(false);
+
+        search_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("eeee SEARCH OKKKKKKK");
+            }
+        });
     }
 
     private void update_calendar(String type_date, int year, int month, int dayOfMonth){
@@ -301,5 +326,46 @@ public class SettingFragment extends Fragment {
             return false;
 
     }
+
+    private void enable_or_not_search_button(){
+        // if the query is not null, the list of subjects selected has at least one item and the button search is visible, the button button is enabled
+        if(query!=null && ListSubjects!=null && search_button!=null) {
+
+            if (!query.equals("") && ListSubjects.size() > 0 && search_button.getVisibility() == View.VISIBLE)
+                enable_search_button(true);
+            else
+                enable_search_button(false);
+        }
+    }
+
+    @Override
+    public void update_list_subjects_in_fragment(String type_modif, String subject) {
+
+        if(subject!=null){
+            switch(type_modif){
+                case "add":
+                    ListSubjects.add(subject);
+                    break;
+                case "remove":
+                    ListSubjects.remove(subject);
+                    break;
+            }
+        }
+        enable_or_not_search_button();
+    }
+
+    private void enable_search_button(boolean enable){
+
+        if(enable){
+            search_button.setEnabled(true);
+            search_button.setAlpha(1f);
+            search_button.setClickable(true);
+        } else {
+            search_button.setEnabled(false);
+            search_button.setAlpha(0.3f);
+            search_button.setClickable(false);
+        }
+    }
+
 }
 
