@@ -1,5 +1,6 @@
 package com.g.laurent.mynews.Controllers;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -199,9 +200,23 @@ public class SettingFragment extends Fragment implements Callback_list_subjects 
         search_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("eeee SEARCH OKKKKKKK");
+                Intent intent = new Intent(getActivity(), WebActivity.class);
+                startActivity(intent);
             }
         });
+    }
+
+    private void enable_search_button(boolean enable){
+
+        if(enable){
+            search_button.setEnabled(true);
+            search_button.setAlpha(1f);
+            search_button.setClickable(true);
+        } else {
+            search_button.setEnabled(false);
+            search_button.setAlpha(0.3f);
+            search_button.setClickable(false);
+        }
     }
 
     private void update_calendar(String type_date, int year, int month, int dayOfMonth){
@@ -352,19 +367,6 @@ public class SettingFragment extends Fragment implements Callback_list_subjects 
             }
         }
         enable_or_not_search_button();
-    }
-
-    private void enable_search_button(boolean enable){
-
-        if(enable){
-            search_button.setEnabled(true);
-            search_button.setAlpha(1f);
-            search_button.setClickable(true);
-        } else {
-            search_button.setEnabled(false);
-            search_button.setAlpha(0.3f);
-            search_button.setClickable(false);
-        }
     }
 
 }
