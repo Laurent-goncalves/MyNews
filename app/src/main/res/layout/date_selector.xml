@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/textview_dates"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:id="@+id/text_date"
+        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="10dp">
+
+        <TextView
+            android:id="@+id/date_selected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/colorBlack"
+            android:layout_alignParentStart="true"/>
+
+        <ImageView
+            android:id="@+id/icon_expand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_arrow_drop_down_black_24dp"
+            android:layout_alignParentEnd="true"/>
+
+    </RelativeLayout>
+
+    <!--  LINE SEPARATOR  -->
+    <View
+        android:id="@+id/date_line_separator"
+        android:layout_width="wrap_content"
+        android:layout_height="2dp"
+        android:background="#dfdfdf"/>
+
+</LinearLayout>

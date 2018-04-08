@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.toolbar_menu_button) ImageButton icon_menu;
     @BindView(R.id.toolbar_menu_search) ImageButton icon_search;
     private MainFragment mainFragment;
+    public static final String EXTRA_SETTING_TYPE = "setting_type";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
         switch (item.getItemId()){
             case R.id.notifications:
-                toast = Toast.makeText(this,"Item notification selected",Toast.LENGTH_LONG);
-                toast.show();
+                startSettingActivity_notif();
                 return true;
             case R.id.help:
                 toast = Toast.makeText(this,"Item help selected",Toast.LENGTH_LONG);
@@ -110,13 +110,20 @@ public class MainActivity extends AppCompatActivity {
 
         icon_search.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-                startSettingActivity();
+                startSettingActivity_search();
             }
         });
     }
 
-    private void startSettingActivity(){
+    private void startSettingActivity_search(){
         Intent intent = new Intent(this,SettingActivity.class);
+        intent.putExtra(EXTRA_SETTING_TYPE,"search");
+        startActivity(intent);
+    }
+
+    private void startSettingActivity_notif(){
+        Intent intent = new Intent(this,SettingActivity.class);
+        intent.putExtra(EXTRA_SETTING_TYPE,"notif");
         startActivity(intent);
     }
 

@@ -3,11 +3,9 @@
 
     <!-- sheets for tablayout -->
     <string-array name="list_tab">
-
         <item>"TOP STORIES"</item>
         <item>"MOST POPULAR"</item>
         <item>"TRAVEL"</item>
-
     </string-array>
 
     <!-- Menu for toolbar -->
@@ -31,5 +29,9 @@
         <item>"Sports"</item>
         <item>"Travel"</item>
     </string-array>
+
+    <!-- items for date selection -->
+    <string name="begindate">Begin date</string>
+    <string name="enddate">End date</string>
 
 </resources>

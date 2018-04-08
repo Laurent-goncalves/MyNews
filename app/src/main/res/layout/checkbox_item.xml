@@ -10,12 +10,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:buttonTint="@color/colorPrimary" />
 
-    <CheckBox
+    <TextView
         android:id="@+id/text_CheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:textColor="@color/colorBlack"
+        android:textSize="16sp"
         android:layout_toEndOf="@+id/CheckBox" />
 
 </RelativeLayout>

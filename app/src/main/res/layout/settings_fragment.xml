@@ -3,38 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:id="@+id/setting_fragment_layout">
 
     <EditText
         android:id="@+id/query_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:text="@string/Search_query_term" />
-
-    <LinearLayout
-        android:id="@+id/textview_dates"
-        android:layout_marginHorizontal="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/text_begin_date"
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/Begin_Date"/>
-
-
-        <TextView
-            android:id="@+id/text_end_date"
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/End_Date"/>
-
-    </LinearLayout>
+        android:backgroundTint="@color/colorPrimary"
+        android:layout_margin="15dp"
+        android:hint="@string/Search_query_term" />
 
     <!--      AREA FOR SELECTING DATES        -->
     <LinearLayout
@@ -43,39 +21,53 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <android.support.v7.view.menu.ListMenuItemView
-            android:id="@+id/list_begin_date"
+        <include
+            android:id="@+id/begin_date_selector"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:layout_weight="1"
+            layout="@layout/date_selector"/>
 
-        </android.support.v7.view.menu.ListMenuItemView>
-
-        <android.support.v7.view.menu.ListMenuItemView
-            android:id="@+id/list_end_date"
+        <include
+            android:id="@+id/end_date_selector"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-        </android.support.v7.view.menu.ListMenuItemView>
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:layout_weight="1"
+            layout="@layout/date_selector"/>
 
     </LinearLayout>
 
+
+    <CalendarView
+        android:id="@+id/calendar"
+        android:textColorPrimary="@color/colorPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true">
+    </CalendarView>
+
+
     <!--  GRIDVIEW FOR CHECKBOX (arts, travel, sports,...)  -->
 
-        <GridView
-            android:id="@+id/gridview_check_box"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:numColumns="2"
-            android:verticalSpacing="5dp"
-            android:horizontalSpacing="10dp">
-        </GridView>
+    <GridView
+        android:id="@+id/gridview_check_box"
+        android:layout_margin="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:numColumns="2"
+        android:verticalSpacing="5dp"
+        android:horizontalSpacing="10dp">
+    </GridView>
 
     <!--  LINE SEPARATOR  -->
     <View
         android:id="@+id/line_separator"
         android:layout_width="wrap_content"
         android:layout_height="2dp"
-        android:layout_margin="10dp"
+        android:layout_margin="15dp"
         android:background="#c0c0c0"/>
 
     <!--  SWITCH BUTTON FOR ENABLING NOTIFICATIONS  -->
@@ -83,7 +75,9 @@
         android:id="@+id/toggle_enabling_notif"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_margin="15dp"
+        android:thumbTint="@color/colorPrimary"
+        android:trackTint="#7cdae6"
         android:text="@string/Enable_notifications"/>
 
     <!--  BUTTON SEARCH  -->
@@ -91,7 +85,7 @@
         android:id="@+id/button_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_margin="15dp"
         android:background="@color/colorPrimary"
         android:textColor="#FFFFFF"
         android:text="@string/SEARCH"/>
