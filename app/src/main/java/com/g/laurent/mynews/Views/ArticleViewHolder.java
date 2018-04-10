@@ -7,6 +7,7 @@ import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -40,15 +41,16 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
 
         Glide.with(article_view)
                 .load(article.getImageUrl())
-                .apply(RequestOptions.circleCropTransform())
                 .into(image_view);
 
+        article_view.setClickable(true);
+        //article_view.setMovementMethod(LinkMovementMethod.getInstance())
 
-        title_view.setClickable(true);
-        title_view.setMovementMethod(LinkMovementMethod.getInstance());
+
+        /*title_view.setMovementMethod(LinkMovementMethod.getInstance());
         String text = "<a href='"+ article.getWebUrl() + "'> " + article.getTitle() + " </a>";
         title_view.setText(Html.fromHtml(text));
-        title_view.setLinkTextColor(Color.BLACK);
+        title_view.setLinkTextColor(Color.BLACK);*/
     }
 
 }

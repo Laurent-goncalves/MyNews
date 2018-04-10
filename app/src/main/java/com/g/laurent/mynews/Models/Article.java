@@ -89,4 +89,9 @@ public class Article {
             return null;
 
     }
+
+    public void ArticleToString(){
+
+        System.out.println("eeee  title =" + title + "    pubDate=" + pubDate  + "    section=" + section);
+    }
 }

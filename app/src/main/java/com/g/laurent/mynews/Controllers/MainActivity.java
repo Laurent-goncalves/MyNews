@@ -24,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.toolbar_menu_search) ImageButton icon_search;
     private MainFragment mainFragment;
     public static final String EXTRA_SETTING_TYPE = "setting_type";
+    public static final String EXTRA_TAB_NAME = "tab_name";
+    private String tab_name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +33,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setIconOnClickListener();
-        this.configureAndShowMainFragment();
+        tab_name=null;
         this.configureToolBar();
         this.configureTabLayout();
+
+        String[] list_tabs = recover_list_tabs();
+
+        if(tab_name==null){
+            tab_name=list_tabs[0];
+        }
+
+        System.out.println("eeeee   tab_name=" + tab_name);
+
+        this.configureAndShowMainFragment();
     }
 
     @Override
@@ -49,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
         switch (item.getItemId()){
             case R.id.notifications:
-                startSettingActivity_notif();
+                startSettingActivity("notif");
                 return true;
             case R.id.help:
                 toast = Toast.makeText(this,"Item help selected",Toast.LENGTH_LONG);
@@ -68,12 +80,18 @@ public class MainActivity extends AppCompatActivity {
     private void configureAndShowMainFragment(){
 
         mainFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.activity_main_frame_layout);
+
+        Bundle bundle = new Bundle();
+        bundle.putString(EXTRA_TAB_NAME,tab_name);
+
         if (mainFragment == null) {
             mainFragment = new MainFragment();
+            mainFragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.activity_main_frame_layout, mainFragment)
                     .commit();
-        }
+        } else
+            mainFragment.setArguments(bundle);
     }
 
     private void configureToolBar(){
@@ -95,36 +113,47 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tablayout= (TabLayout) findViewById(R.id.activity_main_tabs);
 
         if(list_tabs!=null) {
-            for (String tab : list_tabs)
+            for (String tab : list_tabs) {
                 tablayout.addTab(tablayout.newTab().setText(tab));
+                tablayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                    @Override
+                    public void onTabSelected(TabLayout.Tab tab) {
+                        tab_name=tab.getText().toString();
+                    }
+
+                    @Override
+                    public void onTabUnselected(TabLayout.Tab tab) {
+
+                    }
+
+                    @Override
+                    public void onTabReselected(TabLayout.Tab tab) {
+
+                    }
+                });
+            }
         }
     }
+
+
 
     private void setIconOnClickListener(){
 
         icon_menu.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-
             }
         });
 
         icon_search.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-                startSettingActivity_search();
+                startSettingActivity("search");
             }
         });
     }
 
-    private void startSettingActivity_search(){
+    private void startSettingActivity(String type){
         Intent intent = new Intent(this,SettingActivity.class);
-        intent.putExtra(EXTRA_SETTING_TYPE,"search");
+        intent.putExtra(EXTRA_SETTING_TYPE,type);
         startActivity(intent);
     }
-
-    private void startSettingActivity_notif(){
-        Intent intent = new Intent(this,SettingActivity.class);
-        intent.putExtra(EXTRA_SETTING_TYPE,"notif");
-        startActivity(intent);
-    }
-
 }

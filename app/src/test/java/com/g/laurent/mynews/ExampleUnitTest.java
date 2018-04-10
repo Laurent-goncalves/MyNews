@@ -72,26 +72,6 @@ public class ExampleUnitTest {
 
             }};
 
-        disposable = NewsStreams.streamFetchNYTarticles("225a8498a05b4b7bb4d085d0c32e4ce8","newest",1).subscribeWith(new DisposableObserver<ListArticles>() {
-
-                        @Override
-                        public void onNext(ListArticles listArticles) {
-
-
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            Log.e("TAG","On Error"+Log.getStackTraceString(e));
-                        }
-
-                        @Override
-                        public void onComplete() {
-                            Log.e("TAG","On Complete !!");
-                        }
-                    });
-
-
 
 
 
@@ -120,8 +100,6 @@ public class ExampleUnitTest {
 
          */
     }
-
-
 
     public boolean is_the_date_ok(String type_date, int year, int month, int day){
 
@@ -203,6 +181,27 @@ public class ExampleUnitTest {
         } else
             return false;
 
+    }
+
+
+    @Test
+    public void test_subjects(){
+
+        assertEquals(true, is_tab_name_among_subjects("travel"));
+        assertEquals(false, is_tab_name_among_subjects(null));
+        assertEquals(false, is_tab_name_among_subjects("politic"));
+
+    }
+
+    private boolean is_tab_name_among_subjects(String tab_name) {
+        boolean answer = false;
+        /*String[] list_subjects = getResources().getStringArray(R.array.list_checkbox);
+
+        for(String subject : list_subjects){
+            if(subject.toLowerCase().equals(tab_name))
+                answer = true;
+        }*/
+        return answer;
     }
 
 }

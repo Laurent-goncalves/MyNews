@@ -16,10 +16,11 @@ import com.g.laurent.mynews.R;
 
 public class SettingActivity extends AppCompatActivity {
 
-    private static final String EXTRA_SETTING_TYPE = "setting_type";
-    private String setting_type;
     private SettingFragment settingFragment;
-    public Bundle bundle;
+    private NotifFragment notifFragment;
+   // private static final String EXTRA_SETTING_TYPE = "setting_type";
+    private String setting_type;
+    //public Bundle bundle;
     public Callback_list_subjects callback_list_subjects;
 
     @Override
@@ -28,15 +29,32 @@ public class SettingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_setting);
         Intent intent = getIntent();
 
-
         setting_type = intent.getStringExtra(MainActivity.EXTRA_SETTING_TYPE);
-        bundle = new Bundle();
-        bundle.putString(EXTRA_SETTING_TYPE,setting_type);
-        configureAndShowSettingFragment();
-        callback_list_subjects= (Callback_list_subjects) settingFragment;
+        /*bundle = new Bundle();
+        bundle.putString(EXTRA_SETTING_TYPE,setting_type);*/
+        if(setting_type.equals("search")) {
+            configureAndShowSettingFragment();
+            callback_list_subjects= (Callback_list_subjects) settingFragment;
+        }
+        else if(setting_type.equals("notif")){
+            configureAndShowNotifFragment();
+            callback_list_subjects= (Callback_list_subjects) notifFragment;
+        }
+
         configureToolbar(setting_type);
     }
 
+    private void configureAndShowNotifFragment() {
+
+        notifFragment = (NotifFragment) getSupportFragmentManager().findFragmentById(R.id.setting_activity_layout);
+
+        if (notifFragment == null) {
+            notifFragment = new NotifFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.setting_activity_layout, notifFragment)
+                    .commit();
+        }
+    }
 
     private void configureAndShowSettingFragment(){
 
@@ -44,14 +62,10 @@ public class SettingActivity extends AppCompatActivity {
 
         if (settingFragment == null) {
             settingFragment = new SettingFragment();
-            settingFragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.setting_activity_layout, settingFragment)
                     .commit();
         }
-        else
-            settingFragment.setArguments(bundle);
-
     }
 
     private void configureToolbar(String setting_type){
@@ -74,12 +88,6 @@ public class SettingActivity extends AppCompatActivity {
             // Enable the Up button
             //toolbar.setDisplayHomeAsUpEnabled(true);
         }
-    }
-
-
-    public void defineDate(View view) {
-
-
     }
 
     public void update_list_subjects(View view) {
@@ -105,6 +113,5 @@ public class SettingActivity extends AppCompatActivity {
         else
             callback_list_subjects.update_list_subjects_in_fragment("remove",subject);
     }
-
 
 }

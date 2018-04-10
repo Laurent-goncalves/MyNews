@@ -19,7 +19,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".Controllers.SettingActivity" />
-        <activity android:name=".Controllers.WebActivity"></activity>
+        <activity android:name=".Controllers.WebActivity" />
     </application>
 
 </manifest>

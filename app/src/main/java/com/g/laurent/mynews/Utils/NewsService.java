@@ -8,31 +8,37 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import io.reactivex.Observable;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 
 public interface NewsService {
 
-    @GET("articlesearch.json")
-                     // "articlesearch.json?q=query&page={pagenum}&sort=newest&api-key=")
-    Observable<ListArticles> getListArticles(@Query("api-key") String api_key,
-                                            @Query("sort") String sort,
-                                            @Query("page") int page);
+    // SEARCH REQUEST
+    @GET("search/v2/articlesearch.json")  // "articlesearch.json?q=query&page={pagenum}&sort=newest&api-key=")
+    Observable<ListArticles> getSearchListArticles( @Query("api-key") String api_key,
+                                                    @Query("q") String query,
+                                                    @Query("sort") String sort,
+                                                    @Query("begin_date") String begin_date,
+                                                    @Query("end_date") String end_date);
+    // MOST POPULAR ARTICLES REQUEST    // https://api.nytimes.com/svc/mostpopular/v2/mostviewed/Food/1.json?api-key=225a8498a05b4b7bb4d085d0c32e4ce8
+    @GET("mostviewed/{section}/{time-period}.json")
+    Observable<MostPopular> getMostPopularArticles(@Path("section") String subject, @Query("api-key") String api_key);
+
+                                        //http://api.nytimes.com/svc/search/v2/food.json?api-key=225a8498a05b4b7bb4d085d0c32e4ce8
+
+    // TOP STORIES ARTICLES REQUEST     //https://api.nytimes.com/svc/topstories/v2/home.json?api-key=225a8498a05b4b7bb4d085d0c32e4ce8
+    @GET("topstories/v2/{section}.json")
+    Observable<TopStories> getTopStoriesArticles(@Path("section") String subject, @Query("api-key") String api_key);
 
     HttpLoggingInterceptor logging = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
 
     OkHttpClient.Builder httpClient = new OkHttpClient.Builder().addInterceptor(logging);
 
-
     public static final Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("http://api.nytimes.com/svc/search/v2/")
+            .baseUrl("http://api.nytimes.com/svc/")
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .client(httpClient.build())
             .build();
-
-
-    // TOP STORIES
-    // https://api.nytimes.com/svc/topstories/v2/home.json?api-key=225a8498a05b4b7bb4d085d0c32e4ce8
-
 }
