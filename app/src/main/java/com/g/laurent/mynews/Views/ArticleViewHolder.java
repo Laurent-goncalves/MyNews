@@ -1,16 +1,11 @@
 package com.g.laurent.mynews.Views;
 
 
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.g.laurent.mynews.Models.Article;
 import com.g.laurent.mynews.R;
 import butterknife.BindView;
@@ -44,6 +39,12 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
                 .into(image_view);
 
         article_view.setClickable(true);
+        article_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         //article_view.setMovementMethod(LinkMovementMethod.getInstance())
 
 

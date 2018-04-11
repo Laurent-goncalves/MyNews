@@ -1,20 +1,14 @@
 package com.g.laurent.mynews;
 
-import android.util.Log;
-
 import com.g.laurent.mynews.Models.Article;
-import com.g.laurent.mynews.Utils.ListArticles;
-import com.g.laurent.mynews.Utils.NewsStreams;
 
 import org.junit.Test;
 
 import java.util.Calendar;
 
 import io.reactivex.disposables.Disposable;
-import io.reactivex.observers.DisposableObserver;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Response;
 
 import static org.junit.Assert.*;
 

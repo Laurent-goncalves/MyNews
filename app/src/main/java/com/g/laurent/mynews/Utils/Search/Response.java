@@ -1,6 +1,8 @@
 
-package com.g.laurent.mynews.Utils;
+package com.g.laurent.mynews.Utils.Search;
 
+import com.g.laurent.mynews.Utils.Search.Doc;
+import com.g.laurent.mynews.Utils.Search.Meta;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

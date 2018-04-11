@@ -1,10 +1,11 @@
 
-package com.g.laurent.mynews.Utils;
+package com.g.laurent.mynews.Utils.MostPopular;
 
+import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class ListArticles {
+public class MostPopular {
 
     @SerializedName("status")
     @Expose
@@ -12,9 +13,12 @@ public class ListArticles {
     @SerializedName("copyright")
     @Expose
     private String copyright;
-    @SerializedName("response")
+    @SerializedName("num_results")
     @Expose
-    private Response response;
+    private Integer numResults;
+    @SerializedName("results")
+    @Expose
+    private List<Result> results = null;
 
     public String getStatus() {
         return status;
@@ -32,12 +36,20 @@ public class ListArticles {
         this.copyright = copyright;
     }
 
-    public Response getResponse() {
-        return response;
+    public Integer getNumResults() {
+        return numResults;
     }
 
-    public void setResponse(Response response) {
-        this.response = response;
+    public void setNumResults(Integer numResults) {
+        this.numResults = numResults;
+    }
+
+    public List<Result> getResults() {
+        return results;
+    }
+
+    public void setResults(List<Result> results) {
+        this.results = results;
     }
 
 }

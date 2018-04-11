@@ -1,11 +1,11 @@
 
-package com.g.laurent.mynews.Utils;
+package com.g.laurent.mynews.Utils.TopStories;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Result {
+public class ResultTopS {
 
     @SerializedName("section")
     @Expose
@@ -54,10 +54,10 @@ public class Result {
     private List<String> perFacet = null;
     @SerializedName("geo_facet")
     @Expose
-    private List<Object> geoFacet = null;
+    private List<String> geoFacet = null;
     @SerializedName("multimedia")
     @Expose
-    private List<Multimedium> multimedia = null;
+    private List<MultimediumTopS> multimedia = null;
     @SerializedName("short_url")
     @Expose
     private String shortUrl;
@@ -182,19 +182,19 @@ public class Result {
         this.perFacet = perFacet;
     }
 
-    public List<Object> getGeoFacet() {
+    public List<String> getGeoFacet() {
         return geoFacet;
     }
 
-    public void setGeoFacet(List<Object> geoFacet) {
+    public void setGeoFacet(List<String> geoFacet) {
         this.geoFacet = geoFacet;
     }
 
-    public List<Multimedium> getMultimedia() {
+    public List<MultimediumTopS> getMultimedia() {
         return multimedia;
     }
 
-    public void setMultimedia(List<Multimedium> multimedia) {
+    public void setMultimedia(List<MultimediumTopS> multimedia) {
         this.multimedia = multimedia;
     }
 

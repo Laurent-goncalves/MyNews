@@ -1,5 +1,5 @@
 
-package com.g.laurent.mynews.Utils;
+package com.g.laurent.mynews.Utils.MostPopular;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

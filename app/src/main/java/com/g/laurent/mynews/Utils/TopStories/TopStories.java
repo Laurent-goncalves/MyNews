@@ -1,5 +1,5 @@
 
-package com.g.laurent.mynews.Utils;
+package com.g.laurent.mynews.Utils.TopStories;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;
@@ -24,7 +24,7 @@ public class TopStories {
     private Integer numResults;
     @SerializedName("results")
     @Expose
-    private List<Result> results = null;
+    private List<ResultTopS> mResultTopS = null;
 
     public String getStatus() {
         return status;
@@ -66,12 +66,12 @@ public class TopStories {
         this.numResults = numResults;
     }
 
-    public List<Result> getResults() {
-        return results;
+    public List<ResultTopS> getResultTopS() {
+        return mResultTopS;
     }
 
-    public void setResults(List<Result> results) {
-        this.results = results;
+    public void setResultTopS(List<ResultTopS> resultTopS) {
+        this.mResultTopS = resultTopS;
     }
 
 }

@@ -1,5 +1,5 @@
 
-package com.g.laurent.mynews.Utils;
+package com.g.laurent.mynews.Utils.MostPopular;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;
