@@ -1,4 +1,4 @@
-package com.g.laurent.mynews.Controllers;
+package com.g.laurent.mynews.Controllers.Fragments;
 
 
 import android.os.Bundle;
@@ -16,7 +16,8 @@ import butterknife.ButterKnife;
 
 public class WebFragment extends Fragment {
 
-
+    private String link;
+    private static String EXTRA_LINK = "linkaddress";
     @BindView(R.id.webview) WebView mWebView;
 
     public WebFragment() {
@@ -29,8 +30,8 @@ public class WebFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_web, container, false);
         ButterKnife.bind(this, view);
-
-        mWebView.loadUrl("https://www.google.fr/");
+        link = getArguments().getString(EXTRA_LINK);
+        mWebView.loadUrl(link);
         return view;
     }
 

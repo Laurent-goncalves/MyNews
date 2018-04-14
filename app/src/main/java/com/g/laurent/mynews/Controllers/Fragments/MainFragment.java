@@ -1,7 +1,8 @@
-package com.g.laurent.mynews.Controllers;
+package com.g.laurent.mynews.Controllers.Fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -10,8 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.g.laurent.mynews.Models.Article;
 import com.g.laurent.mynews.R;
-import com.g.laurent.mynews.Utils.MostPopular.MediaMetadatum;
-import com.g.laurent.mynews.Utils.MostPopular.Medium;
 import com.g.laurent.mynews.Utils.MostPopular.MostPopular;
 import com.g.laurent.mynews.Utils.MostPopular.Result;
 import com.g.laurent.mynews.Utils.Search.Doc;
@@ -22,8 +21,10 @@ import com.g.laurent.mynews.Utils.TopStories.MultimediumTopS;
 import com.g.laurent.mynews.Utils.TopStories.ResultTopS;
 import com.g.laurent.mynews.Utils.TopStories.TopStories;
 import com.g.laurent.mynews.Views.ArticleAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.disposables.Disposable;
@@ -32,20 +33,23 @@ import io.reactivex.observers.DisposableObserver;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment{
 
-    @BindView(R.id.fragment_recycler_view) RecyclerView recyclerView;
+    @BindView(R.id.fragment_recycler_view)
+    RecyclerView recyclerView;
+    private ArticleAdapter adapter;
     private List<Doc> mDoc;
     private List<Result> mResultMostPopular;
     private List<ResultTopS> mResultTopStories;
     private Disposable disposable;
-    private ArticleAdapter adapter;
+    ArrayList<Article> listArticles = new ArrayList<>();
+
     public static final String EXTRA_TAB_NAME = "tab_name";
     public static final String EXTRA_QUERY = "query";
     public static final String EXTRA_SUBJECT = "subject";
     public static final String EXTRA_BEGIN = "begin_date";
     public static final String EXTRA_END = "end_date";
-    ArrayList<Article> listArticles = new ArrayList<>();
+
     private String tab_name;
     private String query;
     private String subject;
@@ -76,7 +80,6 @@ public class MainFragment extends Fragment {
 
         return view;
     }
-
 
     private void configure_subject_articles(String tab_name) {
 
@@ -153,7 +156,7 @@ public class MainFragment extends Fragment {
         }
     }
 
-    private void configureRecyclerView(){
+    protected void configureRecyclerView(){
 
         if(this.adapter == null) {
             // Create adapter passing in the sample user data
@@ -165,15 +168,6 @@ public class MainFragment extends Fragment {
         } else {
             adapter.notifyDataSetChanged();
         }
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        if(adapter!=null)
-            adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -210,7 +204,8 @@ public class MainFragment extends Fragment {
     }
 
     private String getImageUrlMostPopular(Result result){
-        System.out.println("eeee   start");
+
+        /*System.out.println("eeee   start");
         if (result.getMedia() !=null){
             System.out.println("eeee   getMedia");
             List<Medium> list_medium = result.getMedia();
@@ -229,7 +224,7 @@ public class MainFragment extends Fragment {
                 }
             }
         }
-
+*/
         return null;
     }
 

@@ -1,10 +1,13 @@
-package com.g.laurent.mynews.Controllers;
+package com.g.laurent.mynews.Controllers.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,23 +15,38 @@ import android.widget.CalendarView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import com.g.laurent.mynews.R;
-import com.g.laurent.mynews.Views.GridViewAdapter;
 
+import com.g.laurent.mynews.Controllers.Activities.WebActivity;
+import com.g.laurent.mynews.Models.Article;
+import com.g.laurent.mynews.R;
+import com.g.laurent.mynews.Utils.NewsStreams;
+import com.g.laurent.mynews.Utils.Search.Doc;
+import com.g.laurent.mynews.Utils.Search.ListArticles;
+import com.g.laurent.mynews.Utils.Search.Multimedium;
+import com.g.laurent.mynews.Views.ArticleAdapter;
+import com.g.laurent.mynews.Views.GridViewAdapter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableObserver;
 
 
-public class SettingFragment extends BaseSettingFragment  {
+public class SearchFragment extends BaseFragment {
+
 
     private TextView begin_date_text;
     private TextView end_date_text;
+    public static final String EXTRA_LINK = "linkaddress";
+    ArrayList<Article> listArticles = new ArrayList<>();
+    private String link_search;
+    private Disposable disposable;
+    private ArticleAdapter adapter;
 
-
-    public SettingFragment() {
+    public SearchFragment() {
         // Required empty public constructor
     }
 
@@ -41,28 +59,30 @@ public class SettingFragment extends BaseSettingFragment  {
         query=null;
         configure_date_selectors(getResources().getString(R.string.begindate),begin_date);
         configure_date_selectors(getResources().getString(R.string.enddate),end_date);
-        configure_settings_areas();
-        configure_search_button();
+        configure_search_areas();
         configure_checkboxes();
-        configure_edit_text();
         return view;
-    }
-
-    protected void configure_checkboxes(){
-        grid_checkbox.setAdapter(new GridViewAdapter(getContext(),getResources().getStringArray(R.array.list_checkbox)));
     }
 
     // -------------- SETTINGS AREAS ------------------------------
 
-    private void configure_settings_areas(){
+    protected void configure_checkboxes(){
+        grid_checkbox.setAdapter(new GridViewAdapter(getContext(),getResources().getStringArray(R.array.list_checkbox),null));
+    }
+
+    private void configure_search_areas(){
+
         mCalendarView.setVisibility(View.GONE);
         mLinearLayout.removeView(toggle_notif);
         mLinearLayout.removeView(line_separator);
         search_button.setEnabled(false);
+
+        configure_search_button();
+        //configure_checkboxes();
+        configure_edit_text();
     }
 
     private void configure_edit_text(){
-
         query_area.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -99,35 +119,35 @@ public class SettingFragment extends BaseSettingFragment  {
         search_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), WebActivity.class);
-                startActivity(intent);
+
+                String date_begin = create_date_format_yyyymmdd(begin_date.toString());
+                String date_end = create_date_format_yyyymmdd(end_date.toString());
+
+                disposable = NewsStreams.streamFetchgetListArticles(query, date_begin,date_end).subscribeWith(new DisposableObserver<ListArticles>() {
+
+                    @Override
+                    public void onNext(ListArticles listArticles) {
+
+                        // CALLBACK TO MAINACTIVITY
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("TAG","On Error"+Log.getStackTraceString(e));
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.e("TAG","On Complete !!");
+                    }
+                });
+
             }
         });
     }
 
-    private void enable_or_not_search_button(){
-        // if the query is not null, the list of subjects selected has at least one item and the button search is visible, the button button is enabled
-        if(query!=null && ListSubjects!=null && search_button!=null) {
 
-            if (!query.equals("") && ListSubjects.size() > 0 && search_button.getVisibility() == View.VISIBLE)
-                enable_search_button(true);
-            else
-                enable_search_button(false);
-        }
-    }
-
-    private void enable_search_button(boolean enable){
-
-        if(enable){
-            search_button.setEnabled(true);
-            search_button.setAlpha(1f);
-            search_button.setClickable(true);
-        } else {
-            search_button.setEnabled(false);
-            search_button.setAlpha(0.3f);
-            search_button.setClickable(false);
-        }
-    }
 
     // -----------------------------------------------------------------------------
     // ------------ CONFIGURATION CALENDAR / DATES (begin & end) -------------------

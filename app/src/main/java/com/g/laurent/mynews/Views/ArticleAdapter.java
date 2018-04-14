@@ -15,8 +15,8 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleViewHolder>{
 
     private ArrayList<Article> listArticles;
 
-    public ArticleAdapter(ArrayList<Article> ListNYTarticles) {
-        this.listArticles=ListNYTarticles;
+    public ArticleAdapter(ArrayList<Article> ListArticles) {
+        this.listArticles=ListArticles;
     }
 
     @Override

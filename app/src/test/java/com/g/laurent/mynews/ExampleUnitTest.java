@@ -4,6 +4,7 @@ import com.g.laurent.mynews.Models.Article;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import io.reactivex.disposables.Disposable;
@@ -177,6 +178,19 @@ public class ExampleUnitTest {
 
     }
 
+    @Test
+    public void test_date_format(){
+        assertEquals("20180615", create_date_format_yyyymmdd("2018-06-15 GMT "));
+    }
+
+    protected String create_date_format_yyyymmdd(String date){
+
+        String year = date.substring(0,4);
+        String month = date.substring(5,7);
+        String day = date.substring(8,10);
+
+        return year.toUpperCase() + month.toUpperCase() + day.toUpperCase();
+    }
 
     @Test
     public void test_subjects(){
@@ -186,6 +200,51 @@ public class ExampleUnitTest {
         assertEquals(false, is_tab_name_among_subjects("politic"));
 
     }
+
+    @Test
+    public void test_list_subjects(){
+
+        assertEquals("arts,sport,travel,business", create_string_list());
+    }
+
+    @Test
+    public void separate_subjects(){
+
+        assertEquals("arts", getListCheckBoxOK("arts,sport,travel,business")[0]);
+        assertEquals("sport", getListCheckBoxOK("arts,sport,travel,business")[1]);
+        assertEquals("travel", getListCheckBoxOK("arts,sport,travel,business")[2]);
+        assertEquals("business", getListCheckBoxOK("arts,sport,travel,business")[3]);
+
+    }
+
+    private String[] getListCheckBoxOK(String liste){
+
+        return liste.split(",");
+
+    }
+
+    private String create_string_list(){
+
+        ArrayList<String> ListSubjects = new ArrayList<String>();
+
+        ListSubjects.add("arts");
+        ListSubjects.add("sport");
+        ListSubjects.add("travel");
+        ListSubjects.add("business");
+
+        StringBuilder list_subjects = new StringBuilder();
+
+        for(String subject:ListSubjects) {
+            list_subjects.append(subject);
+            list_subjects.append(",");
+        }
+
+        if(list_subjects.length()>1 && list_subjects.substring(list_subjects.length()-1,list_subjects.length()).equals(","))
+            list_subjects.deleteCharAt(list_subjects.length()-1);
+
+        return list_subjects.toString();
+    }
+
 
     private boolean is_tab_name_among_subjects(String tab_name) {
         boolean answer = false;

@@ -15,10 +15,14 @@ public class GridViewAdapter extends BaseAdapter {
 
     private Context mContext;
     private String[] list_tabs;
+    private String[] list_checkbox_OK;
+    public TextView title;
+    private CheckBox checkBox;
 
-    public GridViewAdapter(Context c,String[] list_tabs){
+    public GridViewAdapter(Context c,String[] list_tabs, String[] list_checkbox_OK){
         mContext = c;
         this.list_tabs = list_tabs;
+        this.list_checkbox_OK=list_checkbox_OK;
     }
 
     @Override
@@ -42,11 +46,34 @@ public class GridViewAdapter extends BaseAdapter {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         grid = inflater.inflate(R.layout.checkbox_item, null);
 
-        TextView title = (TextView) grid.findViewById(R.id.text_CheckBox);
-        CheckBox checkBox = (CheckBox) grid.findViewById(R.id.CheckBox);
+        title = (TextView) grid.findViewById(R.id.text_CheckBox);
+        checkBox = (CheckBox) grid.findViewById(R.id.CheckBox);
 
         title.setText(list_tabs[position]);
 
+        if(include_in_list_checkboxOK(list_checkbox_OK,list_tabs[position]))
+            checkBox.setChecked(true);
+
         return grid;
+    }
+
+    private boolean include_in_list_checkboxOK(String[] list_checkbox_ok, String title) {
+
+        if(list_checkbox_ok!=null && title != null){
+            for(String subject : list_checkbox_ok){
+
+                if(subject.equals(title))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    public Boolean getCheckBoxStatus(int position){
+        return checkBox.isChecked();
+    }
+
+    public String getCheckBoxTitle(int position){
+        return list_tabs[position];
     }
 }
