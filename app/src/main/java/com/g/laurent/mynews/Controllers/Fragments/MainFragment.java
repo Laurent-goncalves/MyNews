@@ -1,5 +1,7 @@
 package com.g.laurent.mynews.Controllers.Fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.g.laurent.mynews.Models.Article;
 import com.g.laurent.mynews.R;
+import com.g.laurent.mynews.Utils.MostPopular.MediaMetadatum;
+import com.g.laurent.mynews.Utils.MostPopular.Medium;
 import com.g.laurent.mynews.Utils.MostPopular.MostPopular;
 import com.g.laurent.mynews.Utils.MostPopular.Result;
 import com.g.laurent.mynews.Utils.Search.Doc;
@@ -43,6 +47,7 @@ public class MainFragment extends Fragment{
     private List<ResultTopS> mResultTopStories;
     private Disposable disposable;
     ArrayList<Article> listArticles = new ArrayList<>();
+    private SharedPreferences sharedPreferences_Search;
 
     public static final String EXTRA_TAB_NAME = "tab_name";
     public static final String EXTRA_QUERY = "query";
@@ -52,6 +57,7 @@ public class MainFragment extends Fragment{
 
     private String tab_name;
     private String query;
+    private String filter_q;
     private String subject;
     private String begin_date;
     private String end_date;
@@ -65,16 +71,38 @@ public class MainFragment extends Fragment{
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_recycler, container, false);
         ButterKnife.bind(this, view);
+        sharedPreferences_Search = getContext().getSharedPreferences("SEARCH_settings", Context.MODE_PRIVATE);
 
         tab_name = getArguments().getString(EXTRA_TAB_NAME);
-        query = getArguments().getString(EXTRA_QUERY);
-        subject = define_subject(getArguments().getString(EXTRA_SUBJECT));
 
-        if(subject==null)
-            subject = "food";
+        if(tab_name.equals("search request")){
 
-        begin_date = getArguments().getString(EXTRA_BEGIN);
-        end_date = getArguments().getString(EXTRA_END);
+            System.out.println("eeeee  begin_date=" + sharedPreferences_Search.getString("begin_date",null)
+                    +"     end_date="+sharedPreferences_Search.getString("end_date",null)
+                    +"     fq="  + sharedPreferences_Search.getString("list_subjects",null) +
+                    "     q="  + sharedPreferences_Search.getString("query",null));
+
+
+
+            query = sharedPreferences_Search.getString("query",null);
+            subject = sharedPreferences_Search.getString("list_subjects",null);
+            begin_date = sharedPreferences_Search.getString("begin_date",null);
+            end_date = sharedPreferences_Search.getString("end_date",null);
+
+
+        } else {
+
+            query = getArguments().getString(EXTRA_QUERY);
+            subject = define_subject(getArguments().getString(EXTRA_SUBJECT));
+
+            if(subject==null)
+                subject = "food";
+
+            begin_date = getArguments().getString(EXTRA_BEGIN);
+            end_date = getArguments().getString(EXTRA_END);
+
+        }
+
 
         configure_subject_articles(tab_name);
 
@@ -87,9 +115,33 @@ public class MainFragment extends Fragment{
 
         switch(type_request){
 
+            case "search request":
+
+                //System.out.println("eeeee  begin_date=" + begin_date +"     end_date="+end_date +"     fq="  + filter_q);
+
+                this.disposable = NewsStreams.streamFetchgetListArticles(query,subject, begin_date,end_date).subscribeWith(new DisposableObserver<ListArticles>() {
+
+                    @Override
+                    public void onNext(ListArticles listArticles) {
+                        Build_data_SearchArticles(listArticles);
+                        configureRecyclerView();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("TAG","On Error"+Log.getStackTraceString(e));
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.e("TAG","On Complete !!");
+                    }
+                });
+                break;
+
             case "search":
 
-                this.disposable = NewsStreams.streamFetchgetListArticles(query, begin_date,end_date).subscribeWith(new DisposableObserver<ListArticles>() {
+                this.disposable = NewsStreams.streamFetchgetListArticles(query, null, begin_date,end_date).subscribeWith(new DisposableObserver<ListArticles>() {
 
                     @Override
                     public void onNext(ListArticles listArticles) {
@@ -156,11 +208,11 @@ public class MainFragment extends Fragment{
         }
     }
 
-    protected void configureRecyclerView(){
+    private void configureRecyclerView(){
 
         if(this.adapter == null) {
             // Create adapter passing in the sample user data
-            this.adapter = new ArticleAdapter(this.listArticles);
+            this.adapter = new ArticleAdapter(this.listArticles, getContext());
             // Attach the adapter to the recyclerview to populate items
             this.recyclerView.setAdapter(this.adapter);
             // Set layout manager to position the items
@@ -168,6 +220,20 @@ public class MainFragment extends Fragment{
         } else {
             adapter.notifyDataSetChanged();
         }
+    }
+
+    private String[] getListCheckBoxOK(String liste){
+        if(liste!=null)
+            return liste.split(",");
+        else
+            return null;
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        configure_subject_articles(tab_name);
     }
 
     @Override
@@ -193,9 +259,11 @@ public class MainFragment extends Fragment{
 
                     for(Result resultMostPopular : mResultMostPopular) {
 
+                        System.out.println("eeee555   " + getImageUrlMostPopular(resultMostPopular));
+
                         this.listArticles.add(new Article(getImageUrlMostPopular(resultMostPopular),
                                 resultMostPopular.getPublishedDate(), resultMostPopular.getTitle(),
-                                resultMostPopular.getSection(), null, resultMostPopular.getUrl()));
+                                resultMostPopular.getSection(), null, resultMostPopular.getUrl(), resultMostPopular.getId()));
 
                     }
                 }
@@ -205,26 +273,86 @@ public class MainFragment extends Fragment{
 
     private String getImageUrlMostPopular(Result result){
 
-        /*System.out.println("eeee   start");
-        if (result.getMedia() !=null){
-            System.out.println("eeee   getMedia");
-            List<Medium> list_medium = result.getMedia();
+        /*System.out.println("eeee  DEBUT");
 
+        if(result.getMedia()!=null){
 
+            for (Medium med : result.getMedia()) {
 
-            for(Medium medium : list_medium){
-                System.out.println("eeee   list_medium");
-                if(medium.getMediaMetadata()!=null){
-                    System.out.println("eeee   getMediaMetadata");
-                    List<MediaMetadatum> mediaMetadata = medium.getMediaMetadata();
-                    for(MediaMetadatum metamedia : mediaMetadata){
-                        if(metamedia.getUrl()!=null)
-                            return metamedia.getUrl(); // return image link
+                if (med != null) {
+                    if (med.getMediaMetadata() != null) {
+                        List<MediaMetadatum> mediaMetadata = med.getMediaMetadata();
+
+                        for (MediaMetadatum metamedia : mediaMetadata) {
+                            if (metamedia.getUrl() != null)
+                                return metamedia.getUrl(); // return image link
+                        }
                     }
                 }
             }
+
         }
-*/
+
+
+
+
+        Medium medium=null;
+        List<Medium> mMediumList=null;
+
+        if (result.getMedia() !=null) {
+
+            Object media = result.getMedia();
+
+            if (media != null) {
+                if (media.toString().equals("")) {
+                    return null;
+                } else {
+
+                    try {
+                        medium = (Medium) media;
+
+                        if (medium != null) {
+
+                            if (medium.getMediaMetadata() != null) {
+                                List<MediaMetadatum> mediaMetadata = medium.getMediaMetadata();
+                                for (MediaMetadatum metamedia : mediaMetadata) {
+                                    if (metamedia.getUrl() != null)
+                                        return metamedia.getUrl(); // return image link
+                                }
+                            }
+                        }
+
+                    } catch (Throwable e1) {
+
+                        try {
+                            mMediumList = (List<Medium>) media;
+
+                            for (Medium med : mMediumList) {
+
+                                System.out.println("eeee2");
+                                if (med != null) {
+                                    System.out.println("eeee3");
+                                    if (med.getMediaMetadata() != null) {
+                                        System.out.println("eeee4");
+                                        List<MediaMetadatum> mediaMetadata = med.getMediaMetadata();
+
+                                        for (MediaMetadatum metamedia : mediaMetadata) {
+                                            if (metamedia.getUrl() != null)
+                                                return metamedia.getUrl(); // return image link
+                                        }
+                                    }
+                                }
+                            }
+
+                        } catch (Throwable e2) {
+                            media = null;
+                            System.out.println("eee putain!!!");
+                        }
+                    }
+                }
+            }
+        }*/
+
         return null;
     }
 
@@ -243,7 +371,7 @@ public class MainFragment extends Fragment{
                     for(ResultTopS result : mResultTopStories) {
                         Article article = new Article(getImageUrlTopStories(result),
                                 result.getPublishedDate(),result.getTitle(),
-                                result.getSection(),result.getSubsection(),result.getUrl());
+                                result.getSection(),result.getSubsection(),result.getUrl(),result.getUrl());
 
                         this.listArticles.add(article);
 
@@ -283,7 +411,7 @@ public class MainFragment extends Fragment{
                             this.listArticles.add(new Article(getImageUrlSearch(doc),
                                     doc.getPubDate(),
                                     doc.getHeadline().getMain(),
-                                    doc.getSectionName(),null,doc.getWebUrl()));
+                                    doc.getSectionName(),null,doc.getWebUrl(),doc.getId()));
 
                         }
                     }
@@ -300,7 +428,7 @@ public class MainFragment extends Fragment{
 
                 for(Multimedium multimedium : multimediumList){
                     if(multimedium.getUrl()!=null && !multimedium.getUrl().equals("")) {
-                        return "https://static01.nyt.com/" + multimedium.getUrl();
+                        return multimedium.getUrl();
                     }
                 }
             }
@@ -327,6 +455,8 @@ public class MainFragment extends Fragment{
                 return "most popular";
             case "TOP STORIES":
                 return "top stories";
+            case "search request":
+                return "search request";
             default:
                 return "search";
         }

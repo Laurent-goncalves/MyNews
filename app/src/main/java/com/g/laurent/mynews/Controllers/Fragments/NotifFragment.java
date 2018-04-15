@@ -1,8 +1,6 @@
 package com.g.laurent.mynews.Controllers.Fragments;
 
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -10,14 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import com.g.laurent.mynews.Models.Callback_notif_acti;
+import com.g.laurent.mynews.Models.Callback_settings;
 import com.g.laurent.mynews.R;
 import com.g.laurent.mynews.Views.GridViewAdapter;
 
 import java.util.ArrayList;
 import butterknife.ButterKnife;
 
-public class NotifFragment extends BaseFragment implements Callback_notif_acti {
+public class NotifFragment extends BaseFragment implements Callback_settings {
 
     public NotifFragment() {
         // Required empty public constructor
@@ -49,8 +47,8 @@ public class NotifFragment extends BaseFragment implements Callback_notif_acti {
 
         String[] list_checkbox_OK;
 
-        if(type.equals("notif") && mSharedPreferences!=null)
-            list_checkbox_OK = getListCheckBoxOK(mSharedPreferences.getString("list_subjects", null));
+        if(type.equals("notif") && sharedPreferences_Notif!=null)
+            list_checkbox_OK = getListCheckBoxOK(sharedPreferences_Notif.getString("list_subjects", null));
         else
             list_checkbox_OK=null;
 
@@ -61,7 +59,7 @@ public class NotifFragment extends BaseFragment implements Callback_notif_acti {
     private void configure_edit_text(String type){
 
         if(type.equals("notif"))
-            query_area.setText(mSharedPreferences.getString("query", null));
+            query_area.setText(sharedPreferences_Notif.getString("query", null));
 
         query_area.addTextChangedListener(new TextWatcher() {
             @Override
@@ -79,7 +77,7 @@ public class NotifFragment extends BaseFragment implements Callback_notif_acti {
 
     private void configure_switch_button(String type){
         if(type.equals("notif"))
-            toggle_notif.setChecked(mSharedPreferences.getBoolean("enable_notifications",false));
+            toggle_notif.setChecked(sharedPreferences_Notif.getBoolean("enable_notifications",false));
 
         enable_notif = toggle_notif.isChecked();
 
@@ -91,30 +89,26 @@ public class NotifFragment extends BaseFragment implements Callback_notif_acti {
         });
     }
 
-    private void save_settings_notification() {
 
-        StringBuilder list_subjects = new StringBuilder();
-
-        // Build the list_subjects in a single String (each subject is separated by a ",")
-        for(String subject:ListSubjects) {
-            list_subjects.append(subject);
-            list_subjects.append(",");
-        }
-
-        // Remove the last ","
-        if(list_subjects.length()>1){
-            if(list_subjects.substring(list_subjects.length()-1,list_subjects.length()).equals(",")){
-                list_subjects.deleteCharAt(list_subjects.length()-1);
-            }
-        }
-        mSharedPreferences.edit().putString("query",query).apply();
-        mSharedPreferences.edit().putString("list_subjects",list_subjects.toString()).apply();
-        mSharedPreferences.edit().putBoolean("enable_notifications",enable_notif).apply();
-    }
 
     @Override
-    public void update_data_notification() {
-        save_settings_notification();
+    public void save_data() {
+        // Save the settings of notification in sharedpreferrences
+        save_settings("notif");
+        // create or update the notification builder
+
+        /*NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle("New article corresponding to your criteria of interest!")
+                .setContentText("article title")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);*/
+
+        // Launch request with criteria and save the list of id of articles
+
+        // Set an alarm. When the alarm rings, a new request is sent.
+
+        // The list of id of the new request is compared to the old one. if there is new id, a notification is sent.
+
+
     }
 
     @Override

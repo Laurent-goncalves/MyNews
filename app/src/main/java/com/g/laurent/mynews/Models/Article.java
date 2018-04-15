@@ -8,8 +8,9 @@ public class Article {
     private String section;
     private String subsection;
     private String webUrl;
+    private String id;
 
-    public Article(String imageUrl, String pubDate, String title, String section, String subsection, String webUrl) {
+    public Article(String imageUrl, String pubDate, String title, String section, String subsection, String webUrl, String id) {
 
         this.imageUrl = imageUrl;
         this.pubDate = pubDate;
@@ -17,6 +18,15 @@ public class Article {
         this.section=section;
         this.subsection=subsection;
         this.webUrl = webUrl;
+        this.id=id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getImageUrl() {

@@ -36,11 +36,14 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
     @BindView(R.id.setting_fragment_layout) LinearLayout mLinearLayout;
     protected Calendar date_begin;
     protected Calendar date_end;
+    protected String date_begin_str;
+    protected String date_end_str;
     protected ArrayList<String> ListSubjects;
     protected String query;
     protected Boolean enable_notif;
     protected String type;
-    protected SharedPreferences mSharedPreferences;
+    protected SharedPreferences sharedPreferences_Search;
+    protected SharedPreferences sharedPreferences_Notif;
 
     public BaseFragment() {
         // Required empty public constructor
@@ -51,17 +54,31 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.settings_fragment, container, false);
-        mSharedPreferences=getContext().getSharedPreferences("NOTIFICATION_settings", Context.MODE_PRIVATE);
+        sharedPreferences_Notif = getContext().getSharedPreferences("NOTIFICATION_settings", Context.MODE_PRIVATE);
+        sharedPreferences_Search = getContext().getSharedPreferences("SEARCH_settings", Context.MODE_PRIVATE);
+
         return view;
     }
 
     protected String create_date_format_yyyymmdd(String date){
 
-        String year = date.substring(0,4);
-        String month = date.substring(5,7);
-        String day = date.substring(8,10);
+        if(date.substring(4,5).equals("-")){
+            String year = date.substring(0,4);
+            String month = date.substring(5,7);
+            String day = date.substring(8,10);
 
-        return year.toUpperCase() + month.toUpperCase() + day.toUpperCase();
+            return year.toUpperCase() + month.toUpperCase() + day.toUpperCase();
+
+        } else if (date.substring(2,3).equals("/")){ // 01/02/2018
+
+            String year = date.substring(6,10);
+            String month = date.substring(3,5);
+            String day = date.substring(0,2);
+
+            return year.toUpperCase() + month.toUpperCase() + day.toUpperCase();
+
+        } else
+            return "";
     }
 
     protected String create_string_date(int year, int month, int dayOfMonth){
@@ -188,6 +205,58 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
             search_button.setEnabled(false);
             search_button.setAlpha(0.3f);
             search_button.setClickable(false);
+        }
+    }
+
+    protected void save_settings(String type) {
+
+        StringBuilder list_subjects = new StringBuilder();
+
+        switch(type){
+
+            case "search":
+
+                // Build the list_subjects in a single String (each subject is separated by a ",")
+                for(String subject:ListSubjects) {
+                    list_subjects.append(subject);
+                    list_subjects.append(",");
+                }
+
+                // Remove the last ","
+                if(list_subjects.length()>1){
+                    if(list_subjects.substring(list_subjects.length()-1,list_subjects.length()).equals(",")){
+                        list_subjects.deleteCharAt(list_subjects.length()-1);
+                    }
+                }
+                sharedPreferences_Search.edit().putString("query",query).apply();
+                sharedPreferences_Search.edit().putString("list_subjects",list_subjects.toString()).apply();
+                sharedPreferences_Search.edit().putString("begin_date",date_begin_str).apply();
+                sharedPreferences_Search.edit().putString("end_date",date_end_str).apply();
+
+                System.out.println("eeee   begin_date = " + date_begin_str
+                                        + "      end_date = " + date_end_str);
+
+                break;
+
+            case "notif":
+
+                // Build the list_subjects in a single String (each subject is separated by a ",")
+                for(String subject:ListSubjects) {
+                    list_subjects.append(subject);
+                    list_subjects.append(",");
+                }
+
+                // Remove the last ","
+                if(list_subjects.length()>1){
+                    if(list_subjects.substring(list_subjects.length()-1,list_subjects.length()).equals(",")){
+                        list_subjects.deleteCharAt(list_subjects.length()-1);
+                    }
+                }
+                sharedPreferences_Notif.edit().putString("query",query).apply();
+                sharedPreferences_Notif.edit().putString("list_subjects",list_subjects.toString()).apply();
+                sharedPreferences_Notif.edit().putBoolean("enable_notifications",enable_notif).apply();
+
+                break;
         }
     }
 

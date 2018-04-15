@@ -12,10 +12,10 @@ import io.reactivex.schedulers.Schedulers;
 public class NewsStreams {
 
 
-    public static Observable<ListArticles> streamFetchgetListArticles(String query, String begin_date, String end_date){
+    public static Observable<ListArticles> streamFetchgetListArticles(String query, String filter_q, String begin_date, String end_date){
         NewsService MyNewsService = NewsService.retrofit.create(NewsService.class);
 
-        return MyNewsService.getSearchListArticles("225a8498a05b4b7bb4d085d0c32e4ce8", query,"newest", begin_date, end_date)
+        return MyNewsService.getSearchListArticles("225a8498a05b4b7bb4d085d0c32e4ce8", query,filter_q,"newest", begin_date, end_date)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .timeout(25, TimeUnit.SECONDS);

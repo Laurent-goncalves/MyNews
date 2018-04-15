@@ -3,6 +3,7 @@ package com.g.laurent.mynews.Utils.MostPopular;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -61,7 +62,20 @@ public class Result {
     private transient  ArrayList<String> geoFacet = null;
     @SerializedName("media")
     @Expose
-    private Object media;
+    private String media;
+
+   /* public List<Medium> getMedialist() {
+        return medialist;
+    }
+
+    public void setMedialist(List<Medium> medialist) {
+        this.medialist = medialist;
+    }
+
+    @SerializedName("media")
+    @Expose
+    private List<Medium> medialist;*/
+
 
     public String getUrl() {
         return url;
@@ -199,11 +213,11 @@ public class Result {
         this.geoFacet = geoFacet;
     }
 
-    public Object getMedia() {
+    public String getMedia() {
         return media;
     }
 
-    public void setMedia(Object media) {
+    public void setMedia(String media) {
         this.media = media;
     }
 

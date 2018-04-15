@@ -2,7 +2,6 @@ package com.g.laurent.mynews.Controllers.Activities;
 
 import android.support.design.widget.TabLayout;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.PopupMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,13 +16,14 @@ import com.g.laurent.mynews.Controllers.Fragments.MainFragment;
 import com.g.laurent.mynews.Controllers.Fragments.NotifFragment;
 import com.g.laurent.mynews.Controllers.Fragments.SearchFragment;
 import com.g.laurent.mynews.Models.Callback_list_subjects;
-import com.g.laurent.mynews.Models.Callback_notif_acti;
+import com.g.laurent.mynews.Models.Callback_search;
+import com.g.laurent.mynews.Models.Callback_settings;
 import com.g.laurent.mynews.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements Callback_search {
 
     @BindView(R.id.toolbar_menu_button) ImageButton icon_menu;
     @BindView(R.id.toolbar_menu_search) ImageButton icon_search;
@@ -54,6 +54,13 @@ public class MainActivity extends BaseActivity {
         this.configureAndShowMainFragment();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        System.out.println("eeee OnResume MainActivity");
+        this.configureAndShowMainFragment();
+    }
+
     // -------------- CONFIGURATION --------------------
 
     private void configureAndShowMainFragment(){
@@ -78,10 +85,29 @@ public class MainActivity extends BaseActivity {
         fragment_displayed="mainfragment";
     }
 
+    @Override
+    public void configureAndShowMainFragmentSearchRequest(){
+
+        Bundle bundle = new Bundle();
+        bundle.putString(EXTRA_TAB_NAME,"search request");
+
+        mainFragment = new MainFragment();
+        mainFragment.setArguments(bundle);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.activity_main_frame_layout, mainFragment)
+                .commit();
+
+        tablayout.setVisibility(View.GONE);
+
+        this.configureToolbar("Search Articles");
+        fragment_displayed="mainfragment";
+
+    }
+
     private void configureAndShowNotifFragment(){
 
         notifFragment = new NotifFragment();
-        callback_notif_act = (Callback_notif_acti) notifFragment;
+        callback_save_settings = (Callback_settings) notifFragment;
         callback_list_subjects = (Callback_list_subjects) notifFragment;
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.activity_main_frame_layout, notifFragment)
@@ -229,7 +255,7 @@ public class MainActivity extends BaseActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 if(fragment_displayed.equals("notiffragment"))
-                    callback_notif_act.update_data_notification();
+                    callback_save_settings.save_data();
                 configureAndShowMainFragment();
 
                 return true;

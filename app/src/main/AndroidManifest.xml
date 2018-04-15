@@ -18,7 +18,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Controllers.Activities.WebActivity" />
+        <activity
+            android:name=".Controllers.Activities.WebActivity"
+            android:parentActivityName=".Controllers.Activities.MainActivity"/>
         <activity android:name=".Controllers.Activities.BaseActivity"></activity>
     </application>
 

@@ -14,9 +14,11 @@ import java.util.ArrayList;
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleViewHolder>{
 
     private ArrayList<Article> listArticles;
+    private Context context;
 
-    public ArticleAdapter(ArrayList<Article> ListArticles) {
+    public ArticleAdapter(ArrayList<Article> ListArticles, Context context) {
         this.listArticles=ListArticles;
+        this.context=context;
     }
 
     @Override
@@ -29,7 +31,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleViewHolder>{
 
     @Override
     public void onBindViewHolder(ArticleViewHolder holder, int position) {
-        holder.updateViews(this.listArticles.get(position));
+        holder.updateViews(this.listArticles.get(position),context);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.g.laurent.mynews.Controllers.Fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import com.g.laurent.mynews.Controllers.Activities.WebActivity;
 import com.g.laurent.mynews.Models.Article;
+import com.g.laurent.mynews.Models.Callback_search;
 import com.g.laurent.mynews.R;
 import com.g.laurent.mynews.Utils.NewsStreams;
 import com.g.laurent.mynews.Utils.Search.Doc;
@@ -45,6 +47,7 @@ public class SearchFragment extends BaseFragment {
     private String link_search;
     private Disposable disposable;
     private ArticleAdapter adapter;
+    private Callback_search mCallback_search;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -53,10 +56,12 @@ public class SearchFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        super.onCreateView(inflater,container,savedInstanceState);
         View view = inflater.inflate(R.layout.settings_fragment, container, false);
         ButterKnife.bind(this, view);
         ListSubjects=new ArrayList<>();
         query=null;
+        //mCallback_search=new Callback_search();
         configure_date_selectors(getResources().getString(R.string.begindate),begin_date);
         configure_date_selectors(getResources().getString(R.string.enddate),end_date);
         configure_search_areas();
@@ -119,34 +124,21 @@ public class SearchFragment extends BaseFragment {
         search_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                String date_begin = create_date_format_yyyymmdd(begin_date.toString());
-                String date_end = create_date_format_yyyymmdd(end_date.toString());
-
-                disposable = NewsStreams.streamFetchgetListArticles(query, date_begin,date_end).subscribeWith(new DisposableObserver<ListArticles>() {
-
-                    @Override
-                    public void onNext(ListArticles listArticles) {
-
-                        // CALLBACK TO MAINACTIVITY
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e("TAG","On Error"+Log.getStackTraceString(e));
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.e("TAG","On Complete !!");
-                    }
-                });
-
+                save_settings("search");
+                mCallback_search.configureAndShowMainFragmentSearchRequest();
             }
         });
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mCallback_search = (Callback_search) getActivity();
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement OnArticleSelectedListener");
+        }
+    }
 
 
     // -----------------------------------------------------------------------------
@@ -225,6 +217,8 @@ public class SearchFragment extends BaseFragment {
                         update_calendar(type_date, year, month, dayOfMonth);
 
                     mCalendarView.setVisibility(View.GONE);
+                    grid_checkbox.setVisibility(View.VISIBLE);
+                    search_button.setVisibility(View.VISIBLE);
                 }
             }
         }));
@@ -241,6 +235,7 @@ public class SearchFragment extends BaseFragment {
                 date_begin.set(Calendar.YEAR, year);
                 date_begin.set(Calendar.MONTH, month);
                 date_begin.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                date_begin_str=create_date_format_yyyymmdd(create_string_date(year, month, dayOfMonth));
                 break;
             case "End date":
                 if(date_end==null)
@@ -249,13 +244,10 @@ public class SearchFragment extends BaseFragment {
                 date_end.set(Calendar.YEAR, year);
                 date_end.set(Calendar.MONTH, month);
                 date_end.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                date_end_str=create_date_format_yyyymmdd(create_string_date(year, month, dayOfMonth));
                 break;
 
         }
-
-
-
     }
-
 }
 

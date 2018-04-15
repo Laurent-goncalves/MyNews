@@ -1,6 +1,5 @@
 package com.g.laurent.mynews.Controllers.Activities;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -10,7 +9,7 @@ import android.widget.CheckBox;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.g.laurent.mynews.Models.Callback_list_subjects;
-import com.g.laurent.mynews.Models.Callback_notif_acti;
+import com.g.laurent.mynews.Models.Callback_settings;
 import com.g.laurent.mynews.R;
 
 
@@ -22,7 +21,7 @@ public class BaseActivity extends AppCompatActivity {
      *       - the SearchFragment with the different criteria of search                       **/
 
     protected Callback_list_subjects callback_list_subjects;
-    protected Callback_notif_acti callback_notif_act;
+    protected Callback_settings callback_save_settings;
     public static final String EXTRA_SETTING_TYPE = "setting_type";
     protected String tab_name;
     protected Toolbar toolbar;

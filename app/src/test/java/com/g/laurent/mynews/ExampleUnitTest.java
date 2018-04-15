@@ -22,14 +22,14 @@ public class ExampleUnitTest {
     @Test
     public void extract_date_correct() throws Exception {
 
-        Article article = new Article("","2018-04-02","","","","");
+        Article article = new Article("","2018-04-02","","","","","");
         assertEquals("02/04/2018", article.extract_date());
     }
 
     @Test
     public void extract_category() throws Exception {
 
-        Article article = new Article("","2018-04-02","","U.S.","Politics","");
+        Article article = new Article("","2018-04-02","","","U.S.","Politics","");
         assertEquals("U.S. > Politics", article.extract_category());
 
         article.setSection("U.S.");
@@ -180,16 +180,28 @@ public class ExampleUnitTest {
 
     @Test
     public void test_date_format(){
-        assertEquals("20180615", create_date_format_yyyymmdd("2018-06-15 GMT "));
+        assertEquals("20180201", create_date_format_yyyymmdd("01/02/2018"));
     }
 
     protected String create_date_format_yyyymmdd(String date){
 
-        String year = date.substring(0,4);
-        String month = date.substring(5,7);
-        String day = date.substring(8,10);
+        if(date.substring(4,5).equals("-")){
+            String year = date.substring(0,4);
+            String month = date.substring(5,7);
+            String day = date.substring(8,10);
 
-        return year.toUpperCase() + month.toUpperCase() + day.toUpperCase();
+            return year.toUpperCase() + month.toUpperCase() + day.toUpperCase();
+
+        } else if (date.substring(2,3).equals("/")){ // 01/02/2018
+
+            String year = date.substring(6,10);
+            String month = date.substring(3,5);
+            String day = date.substring(0,2);
+
+            return year.toUpperCase() + month.toUpperCase() + day.toUpperCase();
+
+        } else
+            return null;
     }
 
     @Test

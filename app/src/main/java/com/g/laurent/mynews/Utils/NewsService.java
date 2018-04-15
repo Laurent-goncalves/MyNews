@@ -18,9 +18,10 @@ import retrofit2.http.Query;
 public interface NewsService {
 
     // SEARCH REQUEST
-    @GET("search/v2/articlesearch.json")  // "articlesearch.json?q=query&page={pagenum}&sort=newest&api-key=")
+    @GET("search/v2/articlesearch.json")  // "https://api.nytimes.com/svc/articlesearch.json?q=query&page={pagenum}&sort=newest&api-key=225a8498a05b4b7bb4d085d0c32e4ce8")
     Observable<ListArticles> getSearchListArticles(@Query("api-key") String api_key,
                                                    @Query("q") String query,
+                                                   @Query("fq") String filter_q,
                                                    @Query("sort") String sort,
                                                    @Query("begin_date") String begin_date,
                                                    @Query("end_date") String end_date);
@@ -39,7 +40,7 @@ public interface NewsService {
     OkHttpClient.Builder httpClient = new OkHttpClient.Builder().addInterceptor(logging);
 
     public static final Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("http://api.nytimes.com/svc/")
+            .baseUrl("https://api.nytimes.com/svc/")
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .client(httpClient.build())
