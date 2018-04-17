@@ -2,6 +2,7 @@ package com.g.laurent.mynews.Views;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,10 +16,13 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleViewHolder>{
 
     private ArrayList<Article> listArticles;
     private Context context;
+    private SharedPreferences mSharedPreferences;
 
     public ArticleAdapter(ArrayList<Article> ListArticles, Context context) {
         this.listArticles=ListArticles;
         this.context=context;
+        if(context!=null)
+        mSharedPreferences=context.getSharedPreferences("LIST_ARTICLES_READ",Context.MODE_PRIVATE);
     }
 
     @Override
@@ -26,7 +30,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleViewHolder>{
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.fragment_item_recycler, parent, false);
-        return new ArticleViewHolder(view);
+        return new ArticleViewHolder(view,context,mSharedPreferences);
     }
 
     @Override

@@ -269,4 +269,64 @@ public class ExampleUnitTest {
         return answer;
     }
 
+
+    @Test
+    public void test_articles_read(){
+
+        String[] table = new String[5];
+
+        table[0]="1";
+
+
+        assertEquals("0,1," + null + "," + null + "," + null, add_id_articles_in_list_articles_read(table,"0"));
+    }
+
+
+    private String add_id_articles_in_list_articles_read(String[] list_id_articles_read, String id_article) {
+
+        StringBuilder new_table = new StringBuilder();
+
+        if(list_id_articles_read!=null){
+
+            int size_table = list_id_articles_read.length;
+
+            if(size_table < 5){
+
+                for(int i = 0;i<size_table;i++){
+                    if(list_id_articles_read[i]==null){
+                        list_id_articles_read[i]=id_article;
+                        break;
+                    }
+                }
+
+            } else {
+                // Shifting all id's from "index" to "index+1" in the table
+                if(size_table>=2){
+
+                    for(int i = size_table-2;i>=0;i--)
+                        list_id_articles_read[i+1] = list_id_articles_read[i];
+                    } else
+                        list_id_articles_read[1] = list_id_articles_read[0];
+
+                // Put the new id at the first place of the table
+                list_id_articles_read[0]=id_article;
+            }
+
+
+            for (int i = 0; i < list_id_articles_read.length; i++) {
+                if(i==list_id_articles_read.length-1)
+                    new_table.append(list_id_articles_read[i]);
+                else
+                    new_table.append(list_id_articles_read[i]).append(",");
+            }
+
+        } else
+            new_table.append(id_article);
+
+
+        return new_table.toString();
+        //mSharedPreferences.edit().putString("ID_ARTICLES_READ", new_table.toString()).apply();
+
+    }
+
 }

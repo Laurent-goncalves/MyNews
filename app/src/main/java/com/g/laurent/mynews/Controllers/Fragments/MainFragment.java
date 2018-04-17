@@ -2,15 +2,25 @@ package com.g.laurent.mynews.Controllers.Fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
 import com.g.laurent.mynews.Models.Article;
 import com.g.laurent.mynews.R;
 import com.g.laurent.mynews.Utils.MostPopular.MediaMetadatum;
@@ -25,7 +35,15 @@ import com.g.laurent.mynews.Utils.TopStories.MultimediumTopS;
 import com.g.laurent.mynews.Utils.TopStories.ResultTopS;
 import com.g.laurent.mynews.Utils.TopStories.TopStories;
 import com.g.laurent.mynews.Views.ArticleAdapter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,21 +95,12 @@ public class MainFragment extends Fragment{
 
         if(tab_name.equals("search request")){
 
-            System.out.println("eeeee  begin_date=" + sharedPreferences_Search.getString("begin_date",null)
-                    +"     end_date="+sharedPreferences_Search.getString("end_date",null)
-                    +"     fq="  + sharedPreferences_Search.getString("list_subjects",null) +
-                    "     q="  + sharedPreferences_Search.getString("query",null));
-
-
-
             query = sharedPreferences_Search.getString("query",null);
             subject = sharedPreferences_Search.getString("list_subjects",null);
             begin_date = sharedPreferences_Search.getString("begin_date",null);
             end_date = sharedPreferences_Search.getString("end_date",null);
 
-
         } else {
-
             query = getArguments().getString(EXTRA_QUERY);
             subject = define_subject(getArguments().getString(EXTRA_SUBJECT));
 
@@ -100,9 +109,7 @@ public class MainFragment extends Fragment{
 
             begin_date = getArguments().getString(EXTRA_BEGIN);
             end_date = getArguments().getString(EXTRA_END);
-
         }
-
 
         configure_subject_articles(tab_name);
 
@@ -116,8 +123,6 @@ public class MainFragment extends Fragment{
         switch(type_request){
 
             case "search request":
-
-                //System.out.println("eeeee  begin_date=" + begin_date +"     end_date="+end_date +"     fq="  + filter_q);
 
                 this.disposable = NewsStreams.streamFetchgetListArticles(query,subject, begin_date,end_date).subscribeWith(new DisposableObserver<ListArticles>() {
 
@@ -273,7 +278,7 @@ public class MainFragment extends Fragment{
 
     private String getImageUrlMostPopular(Result result){
 
-        /*System.out.println("eeee  DEBUT");
+      /*  System.out.println("eeee  DEBUT");
 
         if(result.getMedia()!=null){
 
@@ -462,6 +467,3 @@ public class MainFragment extends Fragment{
         }
     }
 }
-
-
-
