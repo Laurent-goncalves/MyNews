@@ -15,6 +15,7 @@ import com.g.laurent.mynews.Models.CallbackMainActivity;
 import com.g.laurent.mynews.Models.ListArticlesMostPopular;
 import com.g.laurent.mynews.Models.ListArticlesSearch;
 import com.g.laurent.mynews.Models.ListArticlesTopStories;
+import com.g.laurent.mynews.Models.Search_request;
 import com.g.laurent.mynews.R;
 import com.g.laurent.mynews.Views.ArticleAdapter;
 
@@ -98,10 +99,8 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
                 listArticlesMostPopular = new ListArticlesMostPopular(subject,mCallbackMainActivity);
                 break;
             case "search":
-                listArticlesSearch = new ListArticlesSearch(query,null,begin_date,end_date,mCallbackMainActivity);
-                break;
-            case "notif_search":
-                listArticlesNotif = new ListArticlesSearch(query,subject,null,null,mCallbackMainActivity);
+                Search_request search_request = new Search_request("search",query,null,begin_date,end_date);
+                listArticlesSearch = new ListArticlesSearch(getContext(),search_request,null,mCallbackMainActivity);
                 break;
         }
     }

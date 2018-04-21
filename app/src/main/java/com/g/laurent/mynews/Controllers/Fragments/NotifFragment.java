@@ -1,29 +1,18 @@
 package com.g.laurent.mynews.Controllers.Fragments;
 
-import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-
-import com.g.laurent.mynews.Models.AlarmReceiver;
-import com.g.laurent.mynews.Models.Article;
 import com.g.laurent.mynews.Models.Callback_settings;
+import com.g.laurent.mynews.Models.ListArticlesSearch;
+import com.g.laurent.mynews.Models.Search_request;
 import com.g.laurent.mynews.R;
 import com.g.laurent.mynews.Views.GridViewAdapter;
 import java.util.ArrayList;
-import java.util.Calendar;
-
 import butterknife.ButterKnife;
 
 public class NotifFragment extends BaseFragment implements Callback_settings {
@@ -42,7 +31,7 @@ public class NotifFragment extends BaseFragment implements Callback_settings {
         query=null;
         type = "notif";
         configure_edit_text(type);
-        configure_checkboxes(type);
+        configure_checkboxes();
         configure_switch_button(type);
         configure_settings_areas();
 
@@ -55,16 +44,10 @@ public class NotifFragment extends BaseFragment implements Callback_settings {
         mLinearLayout.removeView(date_areas);
     }
 
-    private void configure_checkboxes(String type){
+    private void configure_checkboxes(){
 
-        String[] list_checkbox_OK;
-
-        if(type.equals("notif") && sharedPreferences_Notif!=null)
-            list_checkbox_OK = getListCheckBoxOK(sharedPreferences_Notif.getString("list_subjects", null));
-        else
-            list_checkbox_OK=null;
-
-        grid_checkbox.setAdapter(new GridViewAdapter(getContext(),getResources().getStringArray(R.array.list_checkbox),list_checkbox_OK));
+        grid_checkbox.setAdapter(new GridViewAdapter(getContext(),getResources().getStringArray(R.array.list_checkbox),
+                ListSubjects.toArray(new String[ListSubjects.size()])));
     }
 
     private void configure_edit_text(String type){
@@ -100,46 +83,45 @@ public class NotifFragment extends BaseFragment implements Callback_settings {
         });
     }
 
-    // ------------------------------------ SET NOTIFICATIONS ----------------------------------
+    // ------------------------------------ DATA ----------------------------------
 
     @Override
     public void save_data() {
 
         // Save the settings of notification in sharedpreferrences
         save_settings("notif");
-        // create or update the notification builder
-
-        StringBuilder list_subjects = new StringBuilder();
-
-        for(String subject:ListSubjects) {
-            list_subjects.append(subject);
-            list_subjects.append(",");
-        }
+        // Recover data saved
+        recover_data();
 
         if(enable_notif){
 
+            Search_request search_request = new Search_request("notif",query,list_transform_to_String(ListSubjects),null,null);
             // Launch request with criteria and save the list of id of articles
-            launch_search_request(query,list_subjects.toString(),null,null);
-
-            // save the list of ID for each article
-            save_list_ID_articles_notif();
+            ListArticlesSearch listArticlesSearch = new ListArticlesSearch(getContext(),search_request,sharedPreferences_Notif,null);
         }
     }
 
+    public void recover_data() {
 
-
-
-
-    // ------------------------------------ CREATE NOTIFICATIONS ----------------------------------
-
-
+        if(sharedPreferences_Notif!=null) {
+            ListSubjects = string_transform_to_list(sharedPreferences_Notif.getString("list_subjects", null));
+            query = sharedPreferences_Notif.getString("query", null);
+            enable_notif = sharedPreferences_Notif.getBoolean("enable_notifications",false);
+        } else {
+            ListSubjects=null;
+            query=null;
+            enable_notif=false;
+        }
+    }
 
     @Override
     public void onResume() {
         super.onResume();
 
+        recover_data();
         configure_edit_text(type);
-        configure_checkboxes(type);
+        configure_checkboxes();
         configure_switch_button(type);
     }
+
 }

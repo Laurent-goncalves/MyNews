@@ -2,6 +2,7 @@ package com.g.laurent.mynews.Models;
 
 import android.util.Log;
 
+import com.g.laurent.mynews.Utils.MostPopular.MediaMetadatum;
 import com.g.laurent.mynews.Utils.MostPopular.Medium;
 import com.g.laurent.mynews.Utils.MostPopular.MostPopular;
 import com.g.laurent.mynews.Utils.MostPopular.Result;
@@ -40,11 +41,8 @@ public class ListArticlesMostPopular {
 
             @Override
             public void onNext(MostPopular mostPopular) {
-                System.out.println("eeee COUCOU");
                 Build_data_mostPopular(mostPopular);
-                System.out.println("eeee BEAUUUAAA");
                 mCallbackMainActivity.launch_configure_recycler_view();
-                System.out.println("eeee FENETRE");
                 disposable.dispose();
             }
 
@@ -89,7 +87,7 @@ public class ListArticlesMostPopular {
 
     private String getImageUrlMostPopular(Result result){
 
-
+/*
 
         ArrayList<Medium> list = new ArrayList<>();
         JSONArray jsonArray = result.getMedia();
@@ -105,7 +103,7 @@ public class ListArticlesMostPopular {
         }
         System.out.println("eeee  list.size()="+list.size());
 
-      /*  System.out.println("eeee  DEBUT");
+        System.out.println("eeee  DEBUT");
 
         if(result.getMedia()!=null){
 

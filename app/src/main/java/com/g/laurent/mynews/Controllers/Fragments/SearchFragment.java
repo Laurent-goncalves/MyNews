@@ -117,6 +117,30 @@ public class SearchFragment extends BaseFragment {
     // ------------ CONFIGURATION SEARCH BUTTON -------------------
     // ------------------------------------------------------------
 
+    private void enable_or_not_search_button(){
+        // if the query is not null, the list of subjects selected has at least one item and the button search is visible, the button button is enabled
+        if(query!=null && ListSubjects!=null && search_button!=null) {
+
+            if (!query.equals("") && ListSubjects.size() > 0 && search_button.getVisibility() == View.VISIBLE)
+                enable_search_button(true);
+            else
+                enable_search_button(false);
+        }
+    }
+
+    private void enable_search_button(boolean enable){
+
+        if(enable){
+            search_button.setEnabled(true);
+            search_button.setAlpha(1f);
+            search_button.setClickable(true);
+        } else {
+            search_button.setEnabled(false);
+            search_button.setAlpha(0.3f);
+            search_button.setClickable(false);
+        }
+    }
+
     private void configure_search_button(){
 
         enable_search_button(false);

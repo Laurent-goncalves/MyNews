@@ -60,6 +60,8 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
     protected ArrayList<Article> mlistArticles;
     protected Disposable disposable;
 
+
+
     public BaseFragment() {
         // Required empty public constructor
     }
@@ -75,7 +77,7 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
         return view;
     }
 
-    protected String create_date_format_yyyymmdd(String date){
+    public String create_date_format_yyyymmdd(String date){
 
         if(date.substring(4,5).equals("-")){
             String year = date.substring(0,4);
@@ -115,7 +117,7 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
         return Day + "/" + new_month + "/" + year;
     }
 
-    protected boolean is_the_date_ok(String type_date, int year, int month, int day){
+    public boolean is_the_date_ok(String type_date, int year, int month, int day){
 
         boolean answer = true;
 
@@ -192,37 +194,6 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
 
     }
 
-    protected String[] getListCheckBoxOK(String liste){
-        if(liste!=null)
-            return liste.split(",");
-        else
-            return null;
-    }
-
-    protected void enable_or_not_search_button(){
-        // if the query is not null, the list of subjects selected has at least one item and the button search is visible, the button button is enabled
-        if(query!=null && ListSubjects!=null && search_button!=null) {
-
-            if (!query.equals("") && ListSubjects.size() > 0 && search_button.getVisibility() == View.VISIBLE)
-                enable_search_button(true);
-            else
-                enable_search_button(false);
-        }
-    }
-
-    protected void enable_search_button(boolean enable){
-
-        if(enable){
-            search_button.setEnabled(true);
-            search_button.setAlpha(1f);
-            search_button.setClickable(true);
-        } else {
-            search_button.setEnabled(false);
-            search_button.setAlpha(0.3f);
-            search_button.setClickable(false);
-        }
-    }
-
     protected void save_settings(String type) {
 
         switch(type){
@@ -261,80 +232,6 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
     @Override
     public void onResume() {
         super.onResume();
-    }
-
-    protected void launch_search_request(String query,String subject, String begin_date,String end_date){
-
-        this.disposable = NewsStreams.streamFetchgetListArticles(query,subject, begin_date,end_date).subscribeWith(new DisposableObserver<ListArticles>() {
-
-            @Override
-            public void onNext(ListArticles listArticles) {
-
-                Build_data_SearchArticles(listArticles);
-                save_list_ID_articles_notif();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Log.e("TAG","On Error"+Log.getStackTraceString(e));
-            }
-
-            @Override
-            public void onComplete() {
-                Log.e("TAG","On Complete !!");
-            }
-        });
-    }
-
-    protected void save_list_ID_articles_notif() {
-
-        ArrayList<String> List_ID = new ArrayList<>();
-
-        if(mlistArticles!=null) {
-            for (Article article : mlistArticles)
-                List_ID.add(article.getId());
-        }
-
-        sharedPreferences_Notif.edit().putString("list_subjects_notif",list_transform_to_String(List_ID)).apply();
-    }
-
-    protected void Build_data_SearchArticles(ListArticles listArticles) {
-
-        mlistArticles = new ArrayList<>();
-
-        if(listArticles!=null){
-            if(listArticles.getResponse()!=null) {
-                if(listArticles.getResponse().getDocs() != null){
-
-                    List<Doc> mDoc = listArticles.getResponse().getDocs();
-
-                    if (mDoc != null) {
-                        for(Doc doc : mDoc) {
-                            mlistArticles.add(new Article(getImageUrlSearch(doc),
-                                    doc.getPubDate(),
-                                    doc.getHeadline().getMain(),
-                                    doc.getSectionName(),null,doc.getWebUrl(),doc.getId()));
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    protected String getImageUrlSearch(Doc doc){
-
-        if(doc!=null){
-            if (doc.getMultimedia() !=null){
-                List<Multimedium> multimediumList = doc.getMultimedia();
-
-                for(Multimedium multimedium : multimediumList){
-                    if(multimedium.getUrl()!=null && !multimedium.getUrl().equals("")) {
-                        return multimedium.getUrl();
-                    }
-                }
-            }
-        }
-        return null;
     }
 
     protected String list_transform_to_String(ArrayList<String> list){
@@ -376,5 +273,39 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
         return new_list_subjects;
     }
 
+    public void setDate_begin(Calendar date_begin) {
+        this.date_begin = date_begin;
+    }
 
+    public void setDate_end(Calendar date_end) {
+        this.date_end = date_end;
+    }
+
+    public ArrayList<String> getListSubjects() {
+        return ListSubjects;
+    }
+
+    public void setListSubjects(ArrayList<String> listSubjects) {
+        ListSubjects = listSubjects;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
+
+    public Boolean getEnable_notif() {
+        return enable_notif;
+    }
+
+    public void setEnable_notif(Boolean enable_notif) {
+        this.enable_notif = enable_notif;
+    }
+
+    public void setSharedPreferences_Notif(SharedPreferences sharedPreferences_Notif) {
+        this.sharedPreferences_Notif = sharedPreferences_Notif;
+    }
 }
