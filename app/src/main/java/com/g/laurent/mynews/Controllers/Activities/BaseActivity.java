@@ -67,4 +67,5 @@ public class BaseActivity extends AppCompatActivity {
         else
             callback_list_subjects.update_list_subjects_in_fragment("remove",subject);
     }
+
 }

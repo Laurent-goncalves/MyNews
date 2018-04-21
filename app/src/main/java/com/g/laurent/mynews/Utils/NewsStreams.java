@@ -15,9 +15,10 @@ public class NewsStreams {
     public static Observable<ListArticles> streamFetchgetListArticles(String query, String filter_q, String begin_date, String end_date){
         NewsService MyNewsService = NewsService.retrofit.create(NewsService.class);
 
-        return MyNewsService.getSearchListArticles("225a8498a05b4b7bb4d085d0c32e4ce8", query,filter_q,"newest", begin_date, end_date)
+        return MyNewsService.getSearchListArticles("225a8498a05b4b7bb4d085d0c32e4ce8",query,filter_q,"newest", begin_date, end_date)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                //.observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.newThread())
                 .timeout(25, TimeUnit.SECONDS);
 
     }
@@ -27,7 +28,8 @@ public class NewsStreams {
 
             return MyNewsService.getMostPopularArticles(subject,"225a8498a05b4b7bb4d085d0c32e4ce8")
                     .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
+                    //.observeOn(AndroidSchedulers.mainThread())
+                    .observeOn(Schedulers.newThread())
                     .timeout(25, TimeUnit.SECONDS);
 
     }
@@ -37,7 +39,8 @@ public class NewsStreams {
 
         return MyNewsService.getTopStoriesArticles(subject,"225a8498a05b4b7bb4d085d0c32e4ce8")
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                //.observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.newThread())
                 .timeout(25, TimeUnit.SECONDS);
 
     }

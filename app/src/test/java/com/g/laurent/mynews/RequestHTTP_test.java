@@ -1,16 +1,9 @@
 package com.g.laurent.mynews;
 
-import com.g.laurent.mynews.Models.Article;
-
+import com.g.laurent.mynews.Models.ListArticlesMostPopular;
+import com.g.laurent.mynews.Models.ListArticlesSearch;
+import com.g.laurent.mynews.Models.ListArticlesTopStories;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-
-import io.reactivex.disposables.Disposable;
-import retrofit2.Call;
-import retrofit2.Callback;
-
 import static org.junit.Assert.*;
 
 /**
@@ -18,7 +11,44 @@ import static org.junit.Assert.*;
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
-public class ExampleUnitTest {
+public class RequestHTTP_test {
+
+    @Test
+    public void Test_Search_Request() throws Exception {
+
+        final ListArticlesSearch listArticlesSearch = new ListArticlesSearch("trump",null,null,null, null);
+
+        Thread.sleep(3000);
+
+        assertTrue(listArticlesSearch.getListArticles().size()>0);
+    }
+
+    /*@Test
+    public void Test_Most_Popular_Request() throws Exception {
+
+        final ListArticlesMostPopular listArticlesMostPopular = new ListArticlesMostPopular("travel",null);
+
+        Thread.sleep(3000);
+
+        assertTrue(listArticlesMostPopular.getListArticles().size()>0);
+    }*/
+
+    @Test
+    public void Test_TopStories_Request() throws Exception {
+
+        final ListArticlesTopStories listArticlesTopStories = new ListArticlesTopStories("travel",null);
+
+        Thread.sleep(3000);
+
+        assertTrue(listArticlesTopStories.getListArticles().size()>0);
+    }
+
+
+
+
+/*
+
+
     @Test
     public void extract_date_correct() throws Exception {
 
@@ -45,32 +75,12 @@ public class ExampleUnitTest {
         assertEquals(null, article.extract_category());
     }
 
-
-
-    @Test
-    public void executeHttpRequestWithRetrofit(){
-
-        final Disposable disposable;
-
-        // Execute the stream subscribing to Observable defined inside GithubStream
-        //disposable = NewsStreams.streamFetchNYTarticles("225a8498a05b4b7bb4d085d0c32e4ce8","newest",1)
-
-
-        Callback<Integer> callback = new Callback<Integer>(){
-            @Override
-            public void onResponse(Call<Integer> call, retrofit2.Response<Integer> response) {
-                System.out.println("eeeee " + response.code());
-            }
-
-            @Override
-            public void onFailure(Call<Integer> call, Throwable t) {
-
-            }};
+@Test
+public void recover_list(){
 
 
 
-
-    }
+}
 
 
 
@@ -93,7 +103,7 @@ public class ExampleUnitTest {
           01/04/2018     01/04/2018
           01/04/2018     21/04/2018
 
-         */
+
     }
 
     public boolean is_the_date_ok(String type_date, int year, int month, int day){
@@ -108,7 +118,7 @@ public class ExampleUnitTest {
         Calendar date_to_compare=null; // = Calendar.getInstance();
         /*date_to_compare.set(Calendar.YEAR, 2018);
         date_to_compare.set(Calendar.MONTH, 3);
-        date_to_compare.set(Calendar.DAY_OF_MONTH, 1);*/
+        date_to_compare.set(Calendar.DAY_OF_MONTH, 1);
 
         switch(type_date){
 
@@ -265,7 +275,7 @@ public class ExampleUnitTest {
         for(String subject : list_subjects){
             if(subject.toLowerCase().equals(tab_name))
                 answer = true;
-        }*/
+        }
         return answer;
     }
 
@@ -328,5 +338,12 @@ public class ExampleUnitTest {
         //mSharedPreferences.edit().putString("ID_ARTICLES_READ", new_table.toString()).apply();
 
     }
+
+
+    @Test
+    public void test_request(){
+
+        assertEquals(1,1);
+    }*/
 
 }

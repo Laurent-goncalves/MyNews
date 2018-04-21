@@ -1,18 +1,29 @@
 package com.g.laurent.mynews.Controllers.Fragments;
 
-
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+
+import com.g.laurent.mynews.Models.AlarmReceiver;
+import com.g.laurent.mynews.Models.Article;
 import com.g.laurent.mynews.Models.Callback_settings;
 import com.g.laurent.mynews.R;
 import com.g.laurent.mynews.Views.GridViewAdapter;
-
 import java.util.ArrayList;
+import java.util.Calendar;
+
 import butterknife.ButterKnife;
 
 public class NotifFragment extends BaseFragment implements Callback_settings {
@@ -34,6 +45,7 @@ public class NotifFragment extends BaseFragment implements Callback_settings {
         configure_checkboxes(type);
         configure_switch_button(type);
         configure_settings_areas();
+
         return view;
     }
 
@@ -43,7 +55,7 @@ public class NotifFragment extends BaseFragment implements Callback_settings {
         mLinearLayout.removeView(date_areas);
     }
 
-    protected void configure_checkboxes(String type){
+    private void configure_checkboxes(String type){
 
         String[] list_checkbox_OK;
 
@@ -54,7 +66,6 @@ public class NotifFragment extends BaseFragment implements Callback_settings {
 
         grid_checkbox.setAdapter(new GridViewAdapter(getContext(),getResources().getStringArray(R.array.list_checkbox),list_checkbox_OK));
     }
-
 
     private void configure_edit_text(String type){
 
@@ -89,27 +100,39 @@ public class NotifFragment extends BaseFragment implements Callback_settings {
         });
     }
 
-
+    // ------------------------------------ SET NOTIFICATIONS ----------------------------------
 
     @Override
     public void save_data() {
+
         // Save the settings of notification in sharedpreferrences
         save_settings("notif");
         // create or update the notification builder
 
-        /*NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("New article corresponding to your criteria of interest!")
-                .setContentText("article title")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);*/
+        StringBuilder list_subjects = new StringBuilder();
 
-        // Launch request with criteria and save the list of id of articles
+        for(String subject:ListSubjects) {
+            list_subjects.append(subject);
+            list_subjects.append(",");
+        }
 
-        // Set an alarm. When the alarm rings, a new request is sent.
+        if(enable_notif){
 
-        // The list of id of the new request is compared to the old one. if there is new id, a notification is sent.
+            // Launch request with criteria and save the list of id of articles
+            launch_search_request(query,list_subjects.toString(),null,null);
 
-
+            // save the list of ID for each article
+            save_list_ID_articles_notif();
+        }
     }
+
+
+
+
+
+    // ------------------------------------ CREATE NOTIFICATIONS ----------------------------------
+
+
 
     @Override
     public void onResume() {

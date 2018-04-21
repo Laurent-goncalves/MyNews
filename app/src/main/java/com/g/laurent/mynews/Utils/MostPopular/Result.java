@@ -4,8 +4,12 @@ package com.g.laurent.mynews.Utils.MostPopular;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import org.json.JSONArray;
 
 public class Result {
 
@@ -14,10 +18,10 @@ public class Result {
     private String url;
     @SerializedName("adx_keywords")
     @Expose
-    private String adxKeywords;
+    private transient String adxKeywords;
     @SerializedName("column")
     @Expose
-    private Object column;
+    private transient Object column;
     @SerializedName("section")
     @Expose
     private String section;
@@ -62,7 +66,11 @@ public class Result {
     private transient  ArrayList<String> geoFacet = null;
     @SerializedName("media")
     @Expose
-    private String media;
+    private List<Medium> media;
+
+    private String mMedium_string;
+    private Medium mMedium;
+    private List<Medium> mMedialist;
 
    /* public List<Medium> getMedialist() {
         return medialist;
@@ -213,11 +221,11 @@ public class Result {
         this.geoFacet = geoFacet;
     }
 
-    public String getMedia() {
+    public List<Medium> getMedia() {
         return media;
     }
 
-    public void setMedia(String media) {
+    public void setMedia(List<Medium>  media) {
         this.media = media;
     }
 

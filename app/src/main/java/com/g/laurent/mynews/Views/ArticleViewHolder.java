@@ -35,12 +35,14 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
         article_view = itemView;
         list_id_articles_read = new ArrayList<>();
         this.mSharedPreferences=mSharedPreferences;
-this.context = context;
+        this.context = context;
 
         if(mSharedPreferences!=null)
             list_articles_read=mSharedPreferences.getString("ID_ARTICLES_READ",null);
         else
             list_articles_read=null;
+
+        mSharedPreferences.edit().putString("ID_ARTICLES_READ", null).apply();
 
         configure_list_articles_read();
     }
@@ -115,10 +117,8 @@ this.context = context;
     }
 
     private void add_id_articles_in_list_articles_read(String id_article) {
-
         list_id_articles_read=shift_values_from_table(list_id_articles_read,50,id_article);
         save_list_articles_read_in_sharedpref();
-
     }
 
     private List<String> shift_values_from_table(List<String> table, int max, String new_value){

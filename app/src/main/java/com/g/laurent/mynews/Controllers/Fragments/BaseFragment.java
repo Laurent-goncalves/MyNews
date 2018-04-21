@@ -1,9 +1,13 @@
 package com.g.laurent.mynews.Controllers.Fragments;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,14 +17,23 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
+
+import com.g.laurent.mynews.Models.AlarmReceiver;
+import com.g.laurent.mynews.Models.Article;
 import com.g.laurent.mynews.Models.Callback_list_subjects;
 import com.g.laurent.mynews.R;
-import com.g.laurent.mynews.Views.GridViewAdapter;
+import com.g.laurent.mynews.Utils.NewsStreams;
+import com.g.laurent.mynews.Utils.Search.Doc;
+import com.g.laurent.mynews.Utils.Search.ListArticles;
+import com.g.laurent.mynews.Utils.Search.Multimedium;
+
 import java.util.ArrayList;
 import java.util.Calendar;
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import java.util.List;
 
+import butterknife.BindView;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableObserver;
 
 public class BaseFragment extends Fragment implements Callback_list_subjects {
 
@@ -44,6 +57,8 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
     protected String type;
     protected SharedPreferences sharedPreferences_Search;
     protected SharedPreferences sharedPreferences_Notif;
+    protected ArrayList<Article> mlistArticles;
+    protected Disposable disposable;
 
     public BaseFragment() {
         // Required empty public constructor
@@ -210,52 +225,21 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
 
     protected void save_settings(String type) {
 
-        StringBuilder list_subjects = new StringBuilder();
-
         switch(type){
 
             case "search":
 
-                // Build the list_subjects in a single String (each subject is separated by a ",")
-                for(String subject:ListSubjects) {
-                    list_subjects.append(subject);
-                    list_subjects.append(",");
-                }
-
-                // Remove the last ","
-                if(list_subjects.length()>1){
-                    if(list_subjects.substring(list_subjects.length()-1,list_subjects.length()).equals(",")){
-                        list_subjects.deleteCharAt(list_subjects.length()-1);
-                    }
-                }
                 sharedPreferences_Search.edit().putString("query",query).apply();
-                sharedPreferences_Search.edit().putString("list_subjects",list_subjects.toString()).apply();
+                sharedPreferences_Search.edit().putString("list_subjects",list_transform_to_String(ListSubjects)).apply();
                 sharedPreferences_Search.edit().putString("begin_date",date_begin_str).apply();
                 sharedPreferences_Search.edit().putString("end_date",date_end_str).apply();
-
-                System.out.println("eeee   begin_date = " + date_begin_str
-                                        + "      end_date = " + date_end_str);
-
                 break;
 
             case "notif":
 
-                // Build the list_subjects in a single String (each subject is separated by a ",")
-                for(String subject:ListSubjects) {
-                    list_subjects.append(subject);
-                    list_subjects.append(",");
-                }
-
-                // Remove the last ","
-                if(list_subjects.length()>1){
-                    if(list_subjects.substring(list_subjects.length()-1,list_subjects.length()).equals(",")){
-                        list_subjects.deleteCharAt(list_subjects.length()-1);
-                    }
-                }
                 sharedPreferences_Notif.edit().putString("query",query).apply();
-                sharedPreferences_Notif.edit().putString("list_subjects",list_subjects.toString()).apply();
+                sharedPreferences_Notif.edit().putString("list_subjects",list_transform_to_String(ListSubjects)).apply();
                 sharedPreferences_Notif.edit().putBoolean("enable_notifications",enable_notif).apply();
-
                 break;
         }
     }
@@ -278,5 +262,119 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
     public void onResume() {
         super.onResume();
     }
+
+    protected void launch_search_request(String query,String subject, String begin_date,String end_date){
+
+        this.disposable = NewsStreams.streamFetchgetListArticles(query,subject, begin_date,end_date).subscribeWith(new DisposableObserver<ListArticles>() {
+
+            @Override
+            public void onNext(ListArticles listArticles) {
+
+                Build_data_SearchArticles(listArticles);
+                save_list_ID_articles_notif();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.e("TAG","On Error"+Log.getStackTraceString(e));
+            }
+
+            @Override
+            public void onComplete() {
+                Log.e("TAG","On Complete !!");
+            }
+        });
+    }
+
+    protected void save_list_ID_articles_notif() {
+
+        ArrayList<String> List_ID = new ArrayList<>();
+
+        if(mlistArticles!=null) {
+            for (Article article : mlistArticles)
+                List_ID.add(article.getId());
+        }
+
+        sharedPreferences_Notif.edit().putString("list_subjects_notif",list_transform_to_String(List_ID)).apply();
+    }
+
+    protected void Build_data_SearchArticles(ListArticles listArticles) {
+
+        mlistArticles = new ArrayList<>();
+
+        if(listArticles!=null){
+            if(listArticles.getResponse()!=null) {
+                if(listArticles.getResponse().getDocs() != null){
+
+                    List<Doc> mDoc = listArticles.getResponse().getDocs();
+
+                    if (mDoc != null) {
+                        for(Doc doc : mDoc) {
+                            mlistArticles.add(new Article(getImageUrlSearch(doc),
+                                    doc.getPubDate(),
+                                    doc.getHeadline().getMain(),
+                                    doc.getSectionName(),null,doc.getWebUrl(),doc.getId()));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    protected String getImageUrlSearch(Doc doc){
+
+        if(doc!=null){
+            if (doc.getMultimedia() !=null){
+                List<Multimedium> multimediumList = doc.getMultimedia();
+
+                for(Multimedium multimedium : multimediumList){
+                    if(multimedium.getUrl()!=null && !multimedium.getUrl().equals("")) {
+                        return multimedium.getUrl();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    protected String list_transform_to_String(ArrayList<String> list){
+
+        StringBuilder list_subjects = new StringBuilder();
+
+        // Build the list_subjects in a single String (each subject is separated by a ",")
+        for(String subject:list) {
+            list_subjects.append(subject);
+            list_subjects.append(",");
+        }
+
+        // Remove the last ","
+        if(list_subjects.length()>1){
+            if(list_subjects.substring(list_subjects.length()-1,list_subjects.length()).equals(",")){
+                list_subjects.deleteCharAt(list_subjects.length()-1);
+            }
+        }
+
+        return list_subjects.toString();
+
+    }
+
+    protected ArrayList<String> string_transform_to_list(String list_string){
+
+        ArrayList<String> new_list_subjects = new ArrayList<>();
+        String[] mlist_subjects;
+
+        if(list_string!=null){
+            mlist_subjects=list_string.split(",");
+
+            for(int i = 0;i<=mlist_subjects.length-1;i++) {
+                new_list_subjects.add(mlist_subjects[i]);
+            }
+
+        } else {
+            new_list_subjects=null;
+        }
+        return new_list_subjects;
+    }
+
 
 }
