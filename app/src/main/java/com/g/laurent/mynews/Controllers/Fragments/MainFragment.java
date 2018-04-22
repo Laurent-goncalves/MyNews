@@ -53,35 +53,45 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_recycler, container, false);
-        ButterKnife.bind(this, view);
-        sharedPreferences_Search = getContext().getSharedPreferences("SEARCH_settings", Context.MODE_PRIVATE);
-        mCallbackMainActivity=this;
-        tab_name = getArguments().getString(EXTRA_TAB_NAME);
+        View view;
 
-        if(tab_name.equals("search request")){
+        if(inflater!=null) {
+            view = inflater.inflate(R.layout.fragment_recycler, container, false);
+            ButterKnife.bind(this, view);
+            sharedPreferences_Search = getContext().getSharedPreferences("SEARCH_settings", Context.MODE_PRIVATE);
+            mCallbackMainActivity = this;
+        } else
+            view = null;
 
-            query = sharedPreferences_Search.getString("query",null);
-            subject = sharedPreferences_Search.getString("list_subjects",null);
-            begin_date = sharedPreferences_Search.getString("begin_date",null);
-            end_date = sharedPreferences_Search.getString("end_date",null);
+        if(getArguments()!=null)
+            tab_name = getArguments().getString(EXTRA_TAB_NAME);
 
-        } else {
-            query = getArguments().getString(EXTRA_QUERY);
-            subject = define_subject(getArguments().getString(EXTRA_SUBJECT));
+        if(tab_name!=null){
 
-            if(subject==null)
-                subject = "food";
+            if(tab_name.equals("search request")){
 
-            begin_date = getArguments().getString(EXTRA_BEGIN);
-            end_date = getArguments().getString(EXTRA_END);
+                query = sharedPreferences_Search.getString("query_search",null);
+                subject = sharedPreferences_Search.getString("list_subjects_search",null);
+                begin_date = sharedPreferences_Search.getString("begin_date_search",null);
+                end_date = sharedPreferences_Search.getString("end_date_search",null);
+
+            } else if(getArguments()!=null){
+                query = getArguments().getString(EXTRA_QUERY);
+                subject = define_subject(getArguments().getString(EXTRA_SUBJECT));
+
+                if(subject==null)
+                    subject = "food";
+
+                begin_date = getArguments().getString(EXTRA_BEGIN);
+                end_date = getArguments().getString(EXTRA_END);
+            }
         }
 
         configure_subject_articles(tab_name);
         return view;
     }
 
-    private void configure_subject_articles(String tab_name) {
+    public void configure_subject_articles(String tab_name) {
 
         type_request = define_type_request(tab_name);
 
@@ -93,13 +103,17 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
                 listArticlesMostPopular = new ListArticlesMostPopular(subject,mCallbackMainActivity);
                 break;
             case "search":
-                Search_request search_request = new Search_request("search",query,null,begin_date,end_date);
-                listArticlesSearch = new ListArticlesSearch(getContext(),search_request,null,mCallbackMainActivity);
+                Search_request search_request = new Search_request("search", query, null, begin_date, end_date);
+                listArticlesSearch = new ListArticlesSearch(getContext(), search_request,null,mCallbackMainActivity);
+                break;
+            default:
+                search_request = new Search_request("search",null,tab_name,null,null);
+                listArticlesSearch = new ListArticlesSearch(getContext(), search_request,null,mCallbackMainActivity);
                 break;
         }
     }
 
-    private void configureRecyclerView(final ArrayList<Article> listarticles){
+    public void configureRecyclerView(final ArrayList<Article> listarticles){
 
         if(adapter == null) {
             // Create adapter passing in the sample user data
@@ -108,29 +122,9 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
             recyclerView.setAdapter(adapter);
             // Set layout manager to position the items
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            System.out.println("eeeee END222");
         } else {
             adapter.notifyDataSetChanged();
         }
-
-        /*
-        getActivity().runOnUiThread(new Runnable() {
-            public void run() {
-
-                if(adapter == null) {
-                    // Create adapter passing in the sample user data
-                    adapter = new ArticleAdapter(listarticles, getContext());
-                    // Attach the adapter to the recyclerview to populate items
-                    recyclerView.setAdapter(adapter);
-                    // Set layout manager to position the items
-                    recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                    System.out.println("eeeee END222");
-                } else {
-                    adapter.notifyDataSetChanged();
-                }
-            }
-        });*/
-
     }
 
     @Override

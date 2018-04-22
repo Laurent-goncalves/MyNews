@@ -1,6 +1,6 @@
 package com.g.laurent.mynews.Controllers.Activities;
 
-
+import android.os.Bundle;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -8,18 +8,17 @@ import android.test.suitebuilder.annotation.LargeTest;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-
+import com.g.laurent.mynews.Controllers.Fragments.MainFragment;
+import com.g.laurent.mynews.Models.Article;
 import com.g.laurent.mynews.R;
-
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
+import java.util.ArrayList;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.replaceText;
@@ -31,6 +30,9 @@ import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
@@ -38,6 +40,48 @@ public class MainActivityTest {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
+
+    @Test
+    public void Test_consider_article_as_read(){
+
+        // Create MainFragment inside MainActivity
+        MainFragment mainFragment = mock(MainFragment.class);
+
+        doNothing().when(mainFragment).configure_subject_articles("search");
+
+        // Create list of fake articles
+        ArrayList<Article> listarticles = new ArrayList<>();
+
+        listarticles.add(new Article(null,"dd/mm/yyyy","article1",null,null,null,"ID1"));
+        listarticles.add(new Article(null,"dd/mm/yyyy","article2",null,null,null,"ID2"));
+        listarticles.add(new Article(null,"dd/mm/yyyy","article3",null,null,null,"ID3"));
+        listarticles.add(new Article(null,"dd/mm/yyyy","article4",null,null,null,"ID4"));
+
+        // configure recyclerView
+        mainFragment.configureRecyclerView(listarticles);
+
+
+        /*
+        String ListArticles_read= "ID1,ID2,ID3,ID4";
+        final MockContext context = new MockContext();
+        final SharedPreferences sharedPrefs = mock(SharedPreferences.class);
+
+
+        ArticleAdapter articleAdapter = mock(ArticleAdapter.class);
+        ViewGroup parent = mock(ViewGroup.class);
+        Article article = mock(Article.class);
+
+
+
+        Mockito.doNothing().when(parent).getContext();
+
+        articleAdapter.onCreateViewHolder(parent,0);*/
+
+
+    }
+
+
+
 
     @Test
     public void mainActivityTest() {

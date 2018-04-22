@@ -45,7 +45,6 @@ public class SearchFragment extends BaseFragment {
     public static final String EXTRA_LINK = "linkaddress";
     ArrayList<Article> listArticles = new ArrayList<>();
     private String link_search;
-    private Disposable disposable;
     private ArticleAdapter adapter;
     private Callback_search mCallback_search;
 
@@ -83,7 +82,7 @@ public class SearchFragment extends BaseFragment {
         search_button.setEnabled(false);
 
         configure_search_button();
-        //configure_checkboxes();
+        configure_checkboxes();
         configure_edit_text();
     }
 
@@ -125,6 +124,7 @@ public class SearchFragment extends BaseFragment {
                 enable_search_button(true);
             else
                 enable_search_button(false);
+
         }
     }
 

@@ -36,7 +36,7 @@ public class RequestHTTP_test {
         assertTrue(listArticlesSearch.getListArticles().size()>0);
     }
 
-    /*@Test
+    @Test
     public void Test_Most_Popular_Request() throws Exception {
 
         final ListArticlesMostPopular listArticlesMostPopular = new ListArticlesMostPopular("travel",null);
@@ -44,7 +44,7 @@ public class RequestHTTP_test {
         Thread.sleep(3000);
 
         assertTrue(listArticlesMostPopular.getListArticles().size()>0);
-    }*/
+    }
 
     @Test
     public void Test_TopStories_Request() throws Exception {

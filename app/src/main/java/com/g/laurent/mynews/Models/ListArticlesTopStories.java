@@ -34,8 +34,9 @@ public class ListArticlesTopStories {
             @Override
             public void onNext(TopStories topStories) {
                 Build_data_topStories(topStories);
-                mCallbackMainActivity.launch_configure_recycler_view();
-                disposable.dispose();
+
+                if(mCallbackMainActivity!=null)
+                    mCallbackMainActivity.launch_configure_recycler_view();
             }
 
             @Override
@@ -49,7 +50,7 @@ public class ListArticlesTopStories {
                 Log.e("TAG", "On Complete !!");
             }
         });
-
+       // disposable.dispose();
     }
 
     private void Build_data_topStories(TopStories topStories) {

@@ -67,21 +67,16 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
     @Override
     protected void onResume() {
         super.onResume();
-        this.configureAndShowMainFragment();
     }
 
     // -------------- CONFIGURATION Fragment --------------------
+
+
 
     private void configureAndShowMainFragment(){
 
         Bundle bundle = new Bundle();
         bundle.putString(EXTRA_TAB_NAME,tab_name);
-
-        mainFragment = new MainFragment();
-        mainFragment.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.activity_main_frame_layout, mainFragment)
-                .commit();
 
         if(tablayout==null)
             this.configureTabLayout();
@@ -92,6 +87,13 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
         this.configureToolbar("MyNews");
         configure_popupmenu_icon_toolbar();
         fragment_displayed="mainfragment";
+
+        mainFragment = new MainFragment();
+        mainFragment.setArguments(bundle);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.activity_main_frame_layout, mainFragment)
+                .commit();
+
     }
 
     @Override
@@ -153,6 +155,7 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
 
         SearchFragment searchFragment = new SearchFragment();
         callback_list_subjects = (Callback_list_subjects) searchFragment;
+
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.activity_main_frame_layout, searchFragment)
                 .commit();

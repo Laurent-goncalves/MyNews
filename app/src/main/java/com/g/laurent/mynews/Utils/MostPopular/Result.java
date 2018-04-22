@@ -66,13 +66,13 @@ public class Result {
     private transient  ArrayList<String> geoFacet = null;
     @SerializedName("media")
     @Expose
-    private List<Medium> media;
+    private transient List<Medium> media;
 
-    private String mMedium_string;
+  /*  private String mMedium_string;
     private Medium mMedium;
     private List<Medium> mMedialist;
 
-   /* public List<Medium> getMedialist() {
+    public List<Medium> getMedialist() {
         return medialist;
     }
 

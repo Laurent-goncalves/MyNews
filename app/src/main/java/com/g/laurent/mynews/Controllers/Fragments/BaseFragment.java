@@ -1,13 +1,9 @@
 package com.g.laurent.mynews.Controllers.Fragments;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,23 +13,13 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
-
-import com.g.laurent.mynews.Models.AlarmReceiver;
 import com.g.laurent.mynews.Models.Article;
 import com.g.laurent.mynews.Models.Callback_list_subjects;
 import com.g.laurent.mynews.R;
-import com.g.laurent.mynews.Utils.NewsStreams;
-import com.g.laurent.mynews.Utils.Search.Doc;
-import com.g.laurent.mynews.Utils.Search.ListArticles;
-import com.g.laurent.mynews.Utils.Search.Multimedium;
-
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
-
 import butterknife.BindView;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.observers.DisposableObserver;
 
 public class BaseFragment extends Fragment implements Callback_list_subjects {
 
@@ -73,7 +59,7 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
         View view = inflater.inflate(R.layout.settings_fragment, container, false);
         sharedPreferences_Notif = getContext().getSharedPreferences("NOTIFICATION_settings", Context.MODE_PRIVATE);
         sharedPreferences_Search = getContext().getSharedPreferences("SEARCH_settings", Context.MODE_PRIVATE);
-
+        ListSubjects=new ArrayList<>();
         return view;
     }
 
@@ -200,16 +186,16 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
 
             case "search":
 
-                sharedPreferences_Search.edit().putString("query",query).apply();
-                sharedPreferences_Search.edit().putString("list_subjects",list_transform_to_String(ListSubjects)).apply();
-                sharedPreferences_Search.edit().putString("begin_date",date_begin_str).apply();
-                sharedPreferences_Search.edit().putString("end_date",date_end_str).apply();
+                sharedPreferences_Search.edit().putString("query_search",query).apply();
+                sharedPreferences_Search.edit().putString("list_subjects_search",list_transform_to_String(ListSubjects)).apply();
+                sharedPreferences_Search.edit().putString("begin_date_search",date_begin_str).apply();
+                sharedPreferences_Search.edit().putString("end_date_search",date_end_str).apply();
                 break;
 
             case "notif":
 
-                sharedPreferences_Notif.edit().putString("query",query).apply();
-                sharedPreferences_Notif.edit().putString("list_subjects",list_transform_to_String(ListSubjects)).apply();
+                sharedPreferences_Notif.edit().putString("query_notif",query).apply();
+                sharedPreferences_Notif.edit().putString("list_subjects_notif",list_transform_to_String(ListSubjects)).apply();
                 sharedPreferences_Notif.edit().putBoolean("enable_notifications",enable_notif).apply();
                 break;
         }
@@ -217,6 +203,8 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
 
     @Override
     public void update_list_subjects_in_fragment(String type_modif, String subject) {
+
+
         if(subject!=null){
             switch(type_modif){
                 case "add":

@@ -60,7 +60,7 @@ public class ListArticlesSearch {
             @Override
             public void onNext(ListArticles listArticles) {
                 Build_data_SearchArticles(listArticles);
-                disposable.dispose();
+                //disposable.dispose();
 
                 if(mCallbackMainActivity!=null)
                     mCallbackMainActivity.launch_configure_recycler_view();

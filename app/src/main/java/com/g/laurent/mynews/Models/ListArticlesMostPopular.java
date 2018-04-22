@@ -31,8 +31,9 @@ public class ListArticlesMostPopular {
             @Override
             public void onNext(MostPopular mostPopular) {
                 Build_data_mostPopular(mostPopular);
+                if(mCallbackMainActivity!=null)
                 mCallbackMainActivity.launch_configure_recycler_view();
-                disposable.dispose();
+                //disposable.dispose();
             }
 
             @Override
@@ -64,8 +65,6 @@ public class ListArticlesMostPopular {
                         listarticles.add(new Article(getImageUrlMostPopular(resultMostPopular),
                                 resultMostPopular.getPublishedDate(), resultMostPopular.getTitle(),
                                 resultMostPopular.getSection(), null, resultMostPopular.getUrl(), resultMostPopular.getId()));
-
-                        System.out.println("eeee " + listarticles.toString());
 
                         mlist_ID.add(resultMostPopular.getId());
                     }
@@ -113,63 +112,6 @@ public class ListArticlesMostPopular {
         }
 
 
-
-
-        Medium medium=null;
-        List<Medium> mMediumList=null;
-
-        if (result.getMedia() !=null) {
-
-            Object media = result.getMedia();
-
-            if (media != null) {
-                if (media.toString().equals("")) {
-                    return null;
-                } else {
-
-                    try {
-                        medium = (Medium) media;
-
-                        if (medium != null) {
-
-                            if (medium.getMediaMetadata() != null) {
-                                List<MediaMetadatum> mediaMetadata = medium.getMediaMetadata();
-                                for (MediaMetadatum metamedia : mediaMetadata) {
-                                    if (metamedia.getUrl() != null)
-                                        return metamedia.getUrl(); // return image link
-                                }
-                            }
-                        }
-
-                    } catch (Throwable e1) {
-
-                        try {
-                            mMediumList = (List<Medium>) media;
-
-                            for (Medium med : mMediumList) {
-
-                                System.out.println("eeee2");
-                                if (med != null) {
-                                    System.out.println("eeee3");
-                                    if (med.getMediaMetadata() != null) {
-                                        System.out.println("eeee4");
-                                        List<MediaMetadatum> mediaMetadata = med.getMediaMetadata();
-
-                                        for (MediaMetadatum metamedia : mediaMetadata) {
-                                            if (metamedia.getUrl() != null)
-                                                return metamedia.getUrl(); // return image link
-                                        }
-                                    }
-                                }
-                            }
-
-                        } catch (Throwable e2) {
-                            media = null;
-                            System.out.println("eee putain!!!");
-                        }
-                    }
-                }
-            }
         }*/
 
         return null;

@@ -27,9 +27,13 @@ public class NotifFragment extends BaseFragment implements Callback_settings {
         super.onCreateView(inflater,container,savedInstanceState);
         View view = inflater.inflate(R.layout.settings_fragment, container, false);
         ButterKnife.bind(this, view);
-        ListSubjects=new ArrayList<>();
         query=null;
         type = "notif";
+
+
+        if(ListSubjects==null)
+            System.out.println("eeee      ListSubjects est null");
+
         configure_edit_text(type);
         configure_checkboxes();
         configure_switch_button(type);
@@ -46,14 +50,22 @@ public class NotifFragment extends BaseFragment implements Callback_settings {
 
     private void configure_checkboxes(){
 
+        ListSubjects = string_transform_to_list(sharedPreferences_Notif.getString("list_subjects_notif",null));
+
+        if(ListSubjects!=null)
         grid_checkbox.setAdapter(new GridViewAdapter(getContext(),getResources().getStringArray(R.array.list_checkbox),
                 ListSubjects.toArray(new String[ListSubjects.size()])));
+        else {
+            ListSubjects = new ArrayList<>();
+            grid_checkbox.setAdapter(new GridViewAdapter(getContext(),getResources().getStringArray(R.array.list_checkbox),
+                    null));
+        }
     }
 
     private void configure_edit_text(String type){
 
         if(type.equals("notif"))
-            query_area.setText(sharedPreferences_Notif.getString("query", null));
+            query_area.setText(sharedPreferences_Notif.getString("query_notif", null));
 
         query_area.addTextChangedListener(new TextWatcher() {
             @Override
@@ -104,8 +116,8 @@ public class NotifFragment extends BaseFragment implements Callback_settings {
     public void recover_data() {
 
         if(sharedPreferences_Notif!=null) {
-            ListSubjects = string_transform_to_list(sharedPreferences_Notif.getString("list_subjects", null));
-            query = sharedPreferences_Notif.getString("query", null);
+            ListSubjects = string_transform_to_list(sharedPreferences_Notif.getString("list_subjects_notif", null));
+            query = sharedPreferences_Notif.getString("query_notif", null);
             enable_notif = sharedPreferences_Notif.getBoolean("enable_notifications",false);
         } else {
             ListSubjects=null;
