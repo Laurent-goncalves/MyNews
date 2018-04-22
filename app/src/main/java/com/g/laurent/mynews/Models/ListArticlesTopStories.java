@@ -40,6 +40,7 @@ public class ListArticlesTopStories {
 
             @Override
             public void onError(Throwable e) {
+                System.out.println("eeee PROBLEM TOP STORIES");
                 Log.e("TAG", "On Error" + Log.getStackTraceString(e));
             }
 

@@ -92,6 +92,8 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
                 context.startActivity(intent);*/
             }
         });
+
+        System.out.println("eeee end configure_list_articles_read");
     }
 
     @SuppressLint("ResourceAsColor")

@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.g.laurent.mynews.Models.Article;
 import com.g.laurent.mynews.Models.CallbackMainActivity;
 import com.g.laurent.mynews.Models.ListArticlesMostPopular;
@@ -18,15 +17,10 @@ import com.g.laurent.mynews.Models.ListArticlesTopStories;
 import com.g.laurent.mynews.Models.Search_request;
 import com.g.laurent.mynews.R;
 import com.g.laurent.mynews.Views.ArticleAdapter;
-
 import java.util.ArrayList;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class MainFragment extends Fragment implements CallbackMainActivity {
 
     @BindView(R.id.fragment_recycler_view)
@@ -105,24 +99,44 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
         }
     }
 
-    private void configureRecyclerView(ArrayList<Article> listarticles){
+    private void configureRecyclerView(final ArrayList<Article> listarticles){
 
-        if(this.adapter == null) {
+        if(adapter == null) {
             // Create adapter passing in the sample user data
-            this.adapter = new ArticleAdapter(listarticles, getContext());
+            adapter = new ArticleAdapter(listarticles, getContext());
             // Attach the adapter to the recyclerview to populate items
-            this.recyclerView.setAdapter(this.adapter);
+            recyclerView.setAdapter(adapter);
             // Set layout manager to position the items
-            this.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            System.out.println("eeeee END222");
         } else {
             adapter.notifyDataSetChanged();
         }
+
+        /*
+        getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+
+                if(adapter == null) {
+                    // Create adapter passing in the sample user data
+                    adapter = new ArticleAdapter(listarticles, getContext());
+                    // Attach the adapter to the recyclerview to populate items
+                    recyclerView.setAdapter(adapter);
+                    // Set layout manager to position the items
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                    System.out.println("eeeee END222");
+                } else {
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });*/
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        configure_subject_articles(tab_name);
+        //configure_subject_articles(tab_name);
     }
 
     // ---------------------- TOOLS FOR DEFINING VARIABLES --------------------------------

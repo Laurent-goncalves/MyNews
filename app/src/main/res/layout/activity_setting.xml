@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.g.laurent.mynews.Controllers.Activities.NotifActivity"
+    tools:context="com.g.laurent.mynews.Controllers.Activities.MainActivity"
     android:id="@+id/setting_activity_layout"
     android:orientation="vertical">
 

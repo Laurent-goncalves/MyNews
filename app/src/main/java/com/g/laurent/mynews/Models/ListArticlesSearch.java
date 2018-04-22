@@ -20,6 +20,9 @@ import io.reactivex.observers.DisposableObserver;
 public class ListArticlesSearch {
 
     private Disposable disposable;
+    public ArrayList<String> getMlist_ID() {
+        return mlist_ID;
+    }
     private ArrayList<Article> mlistArticles;
     private ArrayList<String> mlist_ID;
     private String query;
@@ -57,19 +60,23 @@ public class ListArticlesSearch {
             @Override
             public void onNext(ListArticles listArticles) {
                 Build_data_SearchArticles(listArticles);
+                disposable.dispose();
 
                 if(mCallbackMainActivity!=null)
                     mCallbackMainActivity.launch_configure_recycler_view();
 
                 // if search for notification, save the list of ID in sharedpreferences
-                if(type_search.equals("notif"))
-                    save_list_ID_articles_notif();
+                if(type_search!=null){
 
-                // if new request for notification, create the new list of articles with the ID saved
-                if(type_search.equals("notif_checking"))
-                    compare_lists_of_id_and_send_notification();
+                    if(type_search.equals("notif"))
+                        save_list_ID_articles_notif();
 
-                disposable.dispose();
+                    // if new request for notification, create the new list of articles with the ID saved
+                    if(type_search.equals("notif_checking"))
+                        compare_lists_of_id_and_send_notification();
+
+                }
+
             }
 
             @Override
@@ -131,9 +138,9 @@ public class ListArticlesSearch {
 
     // ------------------------------- NOTIFICATION AREA -----------------------------------------------------
 
-    private void compare_lists_of_id_and_send_notification(){
+    public void compare_lists_of_id_and_send_notification(){
 
-        ArrayList<String> list_ID_old = string_transform_to_list(filterq);
+        ArrayList<String> list_ID_old = string_transform_to_list(sharedPreferences_Notif.getString("list_old_ID_notif",null));
         int count = 0;
 
         // Save the new list of ID articles
@@ -155,7 +162,15 @@ public class ListArticlesSearch {
 
     }
 
-    private void save_list_ID_articles_notif() {
+    public void setMlistArticles(ArrayList<Article> mlistArticles) {
+        this.mlistArticles = mlistArticles;
+    }
+
+    public void setMlist_ID(ArrayList<String> mlist_ID) {
+        this.mlist_ID = mlist_ID;
+    }
+
+    public void save_list_ID_articles_notif() {
 
         ArrayList<String> List_ID = new ArrayList<>();
 
@@ -164,7 +179,7 @@ public class ListArticlesSearch {
                 List_ID.add(article.getId());
         }
 
-        sharedPreferences_Notif.edit().putString("list_subjects_notif",list_transform_to_String(List_ID)).apply();
+        sharedPreferences_Notif.edit().putString("list_old_ID_notif",list_transform_to_String(List_ID)).apply();
     }
 
     private String list_transform_to_String(ArrayList<String> list){
@@ -206,7 +221,7 @@ public class ListArticlesSearch {
         return new_list_subjects;
     }
 
-    private void send_notification(String title_article){
+    public void send_notification(String title_article){
 
         String title_notif = null;
 

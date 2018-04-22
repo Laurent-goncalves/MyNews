@@ -1,20 +1,11 @@
 package com.g.laurent.mynews.Models;
 
 import android.util.Log;
-
-import com.g.laurent.mynews.Utils.MostPopular.MediaMetadatum;
-import com.g.laurent.mynews.Utils.MostPopular.Medium;
 import com.g.laurent.mynews.Utils.MostPopular.MostPopular;
 import com.g.laurent.mynews.Utils.MostPopular.Result;
 import com.g.laurent.mynews.Utils.NewsStreams;
-import com.google.gson.Gson;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 
@@ -31,9 +22,7 @@ public class ListArticlesMostPopular {
         this.mlist_ID=new ArrayList<>();
         this.subject=subject;
         this.mCallbackMainActivity=mCallbackMainActivity;
-        System.out.println("eeee START");
         launch_request_most_popular();
-        System.out.println("eeee END");
     }
 
     private void launch_request_most_popular(){

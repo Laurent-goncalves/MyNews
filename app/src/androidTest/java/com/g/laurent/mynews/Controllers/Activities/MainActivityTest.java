@@ -79,7 +79,8 @@ public class MainActivityTest {
         //pressBack(); // press back to remove keyboard
 
         // select subject in gridView
-        ViewInteraction appCompatCheckBox = onView(
+
+ /*       ViewInteraction appCompatCheckBox = onView(
                 allOf(withId(R.id.CheckBox),
                         childAtPosition(
                                 allOf(withId(R.id.item_checkbox),
@@ -96,6 +97,16 @@ public class MainActivityTest {
                                 1),
                         isDisplayed()));
         appCompatCheckBox2.perform(click());
+
+    */
+
+
+
+
+
+
+
+
 
         // click on switch button to enable notification
         ViewInteraction switch_ = onView(

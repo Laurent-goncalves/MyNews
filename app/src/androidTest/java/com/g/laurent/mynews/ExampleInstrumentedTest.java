@@ -28,24 +28,8 @@ public class ExampleInstrumentedTest {
     @Test
     public void Test_Search_Request() throws Exception {
 
-        final ListArticlesSearch listArticlesSearch = new ListArticlesSearch("trump",null,null,null, null);
 
-        Handler mHandler = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message message) {
 
-                new CountDownTimer(3000, 1000) {
-
-                    public void onTick(long millisUntilFinished) {}
-
-                    public void onFinish() {
-                        System.out.println("eeee num_results=" + listArticlesSearch.getListArticles().size());
-                        assertTrue(listArticlesSearch.getListArticles().size()>0);
-                    }
-                }.start();
-
-            }
-        };
 
 
 
