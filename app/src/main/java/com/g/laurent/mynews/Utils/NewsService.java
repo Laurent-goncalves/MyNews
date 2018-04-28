@@ -25,7 +25,7 @@ public interface NewsService {
                                                    @Query("begin_date") String begin_date,
                                                    @Query("end_date") String end_date);
     // MOST POPULAR ARTICLES REQUEST    // https://api.nytimes.com/svc/mostpopular/v2/mostviewed/Food/1.json?api-key=225a8498a05b4b7bb4d085d0c32e4ce8
-    @GET("mostpopular/v2/mostviewed/{section}/1.json")
+    @GET("mostpopular/v2/mostemailed/{section}/30.json") //mostviewed
     Observable<MostPopular> getMostPopularArticles(@Path("section") String subject,
                                                    @Query("api-key") String api);
 

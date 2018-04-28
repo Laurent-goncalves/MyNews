@@ -13,7 +13,6 @@ import io.reactivex.observers.DisposableObserver;
 
 public class ListArticlesTopStories {
 
-    private Disposable disposable;
     private ArrayList<Article> listarticles;
     private String subject;
     private ArrayList<String> mlist_ID;
@@ -29,19 +28,18 @@ public class ListArticlesTopStories {
 
     private void launch_request_top_stories(){
 
-         disposable = NewsStreams.streamFetchgetTopStories(subject).subscribeWith(new DisposableObserver<TopStories>() {
+        Disposable disposable = NewsStreams.streamFetchgetTopStories(subject).subscribeWith(new DisposableObserver<TopStories>() {
 
             @Override
             public void onNext(TopStories topStories) {
                 Build_data_topStories(topStories);
 
-                if(mCallbackMainActivity!=null)
+                if (mCallbackMainActivity != null)
                     mCallbackMainActivity.launch_configure_recycler_view();
             }
 
             @Override
             public void onError(Throwable e) {
-                System.out.println("eeee PROBLEM TOP STORIES");
                 Log.e("TAG", "On Error" + Log.getStackTraceString(e));
             }
 
@@ -50,7 +48,7 @@ public class ListArticlesTopStories {
                 Log.e("TAG", "On Complete !!");
             }
         });
-       // disposable.dispose();
+
     }
 
     private void Build_data_topStories(TopStories topStories) {
@@ -64,10 +62,6 @@ public class ListArticlesTopStories {
                 if (resultTopStories != null) {
 
                     for(ResultTopS result : resultTopStories) {
-                        /*Article article = new Article(getImageUrlTopStories(result),
-                                result.getPublishedDate(),result.getTitle(),
-                                result.getSection(),result.getSubsection(),result.getUrl(),result.getUrl());*/
-
                         this.listarticles.add(new Article(getImageUrlTopStories(result),
                                 result.getPublishedDate(),result.getTitle(),
                                 result.getSection(),result.getSubsection(),result.getUrl(),result.getUrl()));

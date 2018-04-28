@@ -11,7 +11,9 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         System.out.println("eeee START ALARM");
-        mcallbackAlarm.notification_request_checking();
+
+        if(mcallbackAlarm!=null)
+            mcallbackAlarm.notification_request_checking();
     }
 
     public interface callbackAlarm {

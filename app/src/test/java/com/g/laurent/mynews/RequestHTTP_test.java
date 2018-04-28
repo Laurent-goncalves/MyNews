@@ -4,6 +4,7 @@ import android.content.Context;
 import android.test.mock.MockContext;
 
 import com.g.laurent.mynews.Controllers.Fragments.BaseFragment;
+import com.g.laurent.mynews.Models.AlarmReceiver;
 import com.g.laurent.mynews.Models.Article;
 import com.g.laurent.mynews.Models.ListArticlesMostPopular;
 import com.g.laurent.mynews.Models.ListArticlesSearch;
@@ -127,6 +128,9 @@ public class RequestHTTP_test {
     public void test_date_format(){
         assertEquals("20180201", new BaseFragment().create_date_format_yyyymmdd("01/02/2018"));
     }
+
+
+
 
     /*
     @Test

@@ -39,15 +39,20 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
     @BindView(R.id.relative_layout_toolbar) RelativeLayout mRelativeLayout;
     @BindView(R.id.activity_main_frame_layout) LinearLayout mLinearLayout;
     private MainFragment mainFragment;
+    private SearchFragment searchFragment;
     public static final String EXTRA_TAB_NAME = "tab_name";
     private TabLayout tablayout;
     private String fragment_displayed;
     private SharedPreferences sharedPreferences_Notif;
+    private Boolean enable_notif;
+
+    public SearchFragment getSearchFragment() {
+        return searchFragment;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
         tab_name=null;
@@ -59,9 +64,10 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
         }
 
         sharedPreferences_Notif = this.getSharedPreferences("NOTIFICATION_settings", Context.MODE_PRIVATE);
+        enable_notif=sharedPreferences_Notif.getBoolean("enable_notifications",false);
 
         this.configureAndShowMainFragment();
-        this.configureAlarmManager();
+        this.configureAlarmManager(enable_notif);
     }
 
     @Override
@@ -70,8 +76,6 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
     }
 
     // -------------- CONFIGURATION Fragment --------------------
-
-
 
     private void configureAndShowMainFragment(){
 
@@ -87,6 +91,7 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
         this.configureToolbar("MyNews");
         configure_popupmenu_icon_toolbar();
         fragment_displayed="mainfragment";
+
 
         mainFragment = new MainFragment();
         mainFragment.setArguments(bundle);
@@ -129,7 +134,7 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
         tablayout.setVisibility(View.GONE);
     }
 
-    private void configureAlarmManager(){
+    private void configureAlarmManager(Boolean enable){
 
         // Configuration of alarm for saving feeling each day
         AlarmReceiver.callbackAlarm mcallbackAlarm=this;
@@ -147,13 +152,17 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
 
         // Create alarm
         AlarmManager manager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        if(manager!=null)
+
+        if(manager!=null && enable) // IF NOTIFICATION ENABLED
             manager.setRepeating(AlarmManager.RTC,calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+
+        if(manager!=null && !enable) // IF NOTIFICATION DISABLED
+            manager.cancel(pendingIntent);
     }
 
-    private void configureAndShowSearchFragment(){
+    public void configureAndShowSearchFragment(){
 
-        SearchFragment searchFragment = new SearchFragment();
+        searchFragment = new SearchFragment();
         callback_list_subjects = (Callback_list_subjects) searchFragment;
 
         getSupportFragmentManager().beginTransaction()
@@ -165,7 +174,7 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
         tablayout.setVisibility(View.GONE);
     }
 
-    // -------------- CONFIGURATION TabLayout --------------------
+    // -------------- CONFIGURATION TabLayout  --------------------
 
     private void configureTabLayout(){
 
@@ -294,6 +303,7 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
             case android.R.id.home:
                 if(fragment_displayed.equals("notiffragment"))
                     callback_save_settings.save_data();
+
                 configureAndShowMainFragment();
 
                 return true;
@@ -321,4 +331,11 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
         }
     }
 
+    public MainFragment getMainFragment() {
+        return mainFragment;
+    }
+
+    public void setMainFragment(MainFragment mainFragment) {
+        this.mainFragment = mainFragment;
+    }
 }

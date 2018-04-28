@@ -30,10 +30,6 @@ public class NotifFragment extends BaseFragment implements Callback_settings {
         query=null;
         type = "notif";
 
-
-        if(ListSubjects==null)
-            System.out.println("eeee      ListSubjects est null");
-
         configure_edit_text(type);
         configure_checkboxes();
         configure_switch_button(type);

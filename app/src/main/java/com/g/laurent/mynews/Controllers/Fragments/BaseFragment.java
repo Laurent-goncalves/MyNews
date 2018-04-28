@@ -261,6 +261,7 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
         return new_list_subjects;
     }
 
+
     public void setDate_begin(Calendar date_begin) {
         this.date_begin = date_begin;
     }

@@ -26,6 +26,9 @@ public class BaseActivity extends AppCompatActivity {
     protected String tab_name;
     protected Toolbar toolbar;
 
+    public void setToolbar(Toolbar toolbar) {
+        this.toolbar = toolbar;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

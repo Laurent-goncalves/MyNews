@@ -8,6 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
 import com.g.laurent.mynews.Controllers.Activities.WebActivity;
 import com.g.laurent.mynews.Models.Article;
@@ -67,6 +69,8 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
 
     public void updateViews(final Article article, final Context context){
 
+        System.out.println("eeee " + article.toString());
+
         // Filling textviews
         title_view.setText(article.getTitle());
         date_view.setText(article.extract_date());
@@ -74,9 +78,6 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
 
         if(has_been_read(article.getId()))
             change_color_for_read_articles();
-
-
-        System.out.println("eeee article.getImageUrl()=" + article.getImageUrl());
 
         // Put image article into imageView
         Glide.with(article_view)
@@ -87,13 +88,14 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
         article_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!has_been_read(article.getId())){
-                    add_id_articles_in_list_articles_read(article.getId());
-                    change_color_for_read_articles();
-                }
+
+            setAsArticleRead(article.getId());
+
+            if(article.getWebUrl()!=null){
                 Intent intent = new Intent(context,WebActivity.class);
                 intent.putExtra(EXTRA_LINK, article.getWebUrl());
                 context.startActivity(intent);
+            }
             }
         });
 
@@ -104,6 +106,13 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
         title_view.setTextColor(context.getResources().getColor(R.color.color_article_read));
         date_view.setTextColor(context.getResources().getColor(R.color.color_article_read));
         category_view.setTextColor(context.getResources().getColor(R.color.color_article_read));
+    }
+
+    public void setAsArticleRead(String id){
+        if(!has_been_read(id)){
+            add_id_articles_in_list_articles_read(id);
+            change_color_for_read_articles();
+        }
     }
 
     private Boolean has_been_read(String article_id){

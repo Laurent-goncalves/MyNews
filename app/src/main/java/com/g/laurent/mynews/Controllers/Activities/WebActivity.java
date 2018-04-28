@@ -2,9 +2,7 @@ package com.g.laurent.mynews.Controllers.Activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.MenuItem;
-
 import com.g.laurent.mynews.Controllers.Fragments.WebFragment;
 import com.g.laurent.mynews.R;
 
@@ -24,7 +22,6 @@ public class WebActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        System.out.println("eeee onBackPressed");
         super.onBackPressed();
     }
 
@@ -33,7 +30,6 @@ public class WebActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if ( id == android.R.id.home ) {
-            System.out.println("eeee onOptionsItemSelected");
             finish();
             return true;
         }

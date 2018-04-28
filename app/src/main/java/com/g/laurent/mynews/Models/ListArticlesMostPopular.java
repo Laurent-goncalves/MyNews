@@ -1,6 +1,9 @@
 package com.g.laurent.mynews.Models;
 
 import android.util.Log;
+
+import com.g.laurent.mynews.Utils.MostPopular.MediaMetadatum;
+import com.g.laurent.mynews.Utils.MostPopular.Medium;
 import com.g.laurent.mynews.Utils.MostPopular.MostPopular;
 import com.g.laurent.mynews.Utils.MostPopular.Result;
 import com.g.laurent.mynews.Utils.NewsStreams;
@@ -31,15 +34,14 @@ public class ListArticlesMostPopular {
             @Override
             public void onNext(MostPopular mostPopular) {
                 Build_data_mostPopular(mostPopular);
+
                 if(mCallbackMainActivity!=null)
-                mCallbackMainActivity.launch_configure_recycler_view();
-                //disposable.dispose();
+                    mCallbackMainActivity.launch_configure_recycler_view();
             }
 
             @Override
             public void onError(Throwable e) {
                 Log.e("TAG","On Error"+Log.getStackTraceString(e));
-                System.out.println("eeee PROBLEM");
             }
 
             @Override
@@ -47,8 +49,6 @@ public class ListArticlesMostPopular {
                 Log.e("TAG","On Complete !!");
             }
         });
-
-
     }
 
     private void Build_data_mostPopular(MostPopular mostPopular) {
@@ -75,24 +75,6 @@ public class ListArticlesMostPopular {
 
     private String getImageUrlMostPopular(Result result){
 
-/*
-
-        ArrayList<Medium> list = new ArrayList<>();
-        JSONArray jsonArray = result.getMedia();
-        if (jsonArray != null) {
-            int len = jsonArray.length();
-            for (int i=0;i<len;i++){
-                try {
-                    list.add((Medium) jsonArray.get(i));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        System.out.println("eeee  list.size()="+list.size());
-
-        System.out.println("eeee  DEBUT");
-
         if(result.getMedia()!=null){
 
             for (Medium med : result.getMedia()) {
@@ -110,9 +92,6 @@ public class ListArticlesMostPopular {
             }
 
         }
-
-
-        }*/
 
         return null;
     }

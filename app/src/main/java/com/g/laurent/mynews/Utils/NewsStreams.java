@@ -19,7 +19,7 @@ public class NewsStreams {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 //.observeOn(Schedulers.newThread())  // TEST
-                .timeout(25, TimeUnit.SECONDS);
+                .timeout(20, TimeUnit.SECONDS);
 
     }
 
@@ -30,7 +30,7 @@ public class NewsStreams {
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     //.observeOn(Schedulers.newThread()) // TEST
-                    .timeout(25, TimeUnit.SECONDS);
+                    .timeout(20, TimeUnit.SECONDS);
 
     }
 
@@ -41,7 +41,7 @@ public class NewsStreams {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 //.observeOn(Schedulers.newThread()) // TEST
-                .timeout(25, TimeUnit.SECONDS);
+                .timeout(20, TimeUnit.SECONDS);
 
     }
 
