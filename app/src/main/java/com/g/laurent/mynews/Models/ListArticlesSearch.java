@@ -30,6 +30,11 @@ public class ListArticlesSearch {
     private CallbackMainActivity mCallbackMainActivity;
     private SharedPreferences sharedPreferences_Notif;
     private Context context;
+    public int count;
+
+    public void setSharedPreferences_Notif(SharedPreferences sharedPreferences_Notif) {
+        this.sharedPreferences_Notif = sharedPreferences_Notif;
+    }
 
     public ListArticlesSearch(Context context, Search_request search_request, SharedPreferences sharedPreferences_Notif, CallbackMainActivity mCallbackMainActivity){
 
@@ -136,11 +141,20 @@ public class ListArticlesSearch {
 
     public void compare_lists_of_id_and_send_notification(){
 
-        ArrayList<String> list_ID_old = string_transform_to_list(sharedPreferences_Notif.getString("list_old_ID_notif",null));
-        int count = 0;
+        ArrayList<String> list_ID_old;
+
+        if(sharedPreferences_Notif!=null)
+            list_ID_old = string_transform_to_list(sharedPreferences_Notif.getString("list_old_ID_notif",null));
+        else
+            list_ID_old=null;
+
+        count = 0;
 
         // Save the new list of ID articles
-        save_list_ID_articles_notif();
+        try{
+            save_list_ID_articles_notif();
+        } catch(Throwable e){};
+
 
         // For each article, check if it's in the list
         if(mlistArticles!=null){

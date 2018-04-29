@@ -1,20 +1,21 @@
 package com.g.laurent.mynews;
 
-import android.content.Context;
 import android.test.mock.MockContext;
-
 import com.g.laurent.mynews.Controllers.Fragments.BaseFragment;
-import com.g.laurent.mynews.Models.AlarmReceiver;
 import com.g.laurent.mynews.Models.Article;
 import com.g.laurent.mynews.Models.ListArticlesMostPopular;
 import com.g.laurent.mynews.Models.ListArticlesSearch;
 import com.g.laurent.mynews.Models.ListArticlesTopStories;
 import com.g.laurent.mynews.Models.Search_request;
-
 import org.junit.Test;
-import java.util.Calendar;
+import org.mockito.Mockito;
 
-import static org.junit.Assert.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -128,8 +129,6 @@ public class RequestHTTP_test {
     public void test_date_format(){
         assertEquals("20180201", new BaseFragment().create_date_format_yyyymmdd("01/02/2018"));
     }
-
-
 
 
     /*

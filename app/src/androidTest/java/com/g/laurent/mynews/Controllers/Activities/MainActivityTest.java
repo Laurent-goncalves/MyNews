@@ -37,14 +37,8 @@ public class MainActivityTest {
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
-    /*@Before
-    public void init(){
-        mActivityTestRule.getActivity()
-                .getSupportFragmentManager().beginTransaction();
-    }*/
-
     @Test
-    public void Test_display_recyclerView() {
+    public void Test_read_articles() {
 
         mainFragment=mActivityTestRule.getActivity().getMainFragment();
 
@@ -68,28 +62,26 @@ public class MainActivityTest {
             throwable.printStackTrace();
         }
 
-    /*    Context context = mock(Context.class);
-
-        SharedPreferences mSharedPreferences = context.getSharedPreferences("LIST_ARTICLES_READ", Context.MODE_PRIVATE);
-*/
-
         waiting_time(1000);
         click_on_recyclerView_article(1);
+        click_on_recyclerView_article(2);
+        click_on_recyclerView_article(0);
 
-     //   System.out.println("eeee " + mSharedPreferences.getString("ID_ARTICLES_READ",null));
+        SharedPreferences mSharedPreferences = mActivityTestRule.getActivity().getApplicationContext().getSharedPreferences("LIST_ARTICLES_READ", Context.MODE_PRIVATE);
+        String list_articles_read = mSharedPreferences.getString("ID_ARTICLES_READ",null);
 
-        //Assert.assertTrue();
+        Assert.assertTrue(list_articles_read.equals("ID1,ID3,ID2,"));
 
     }
 
-    public void click_on_recyclerView_article(int position){
+    private void click_on_recyclerView_article(int position){
         onView(withId(R.id.fragment_recycler_view))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(position,
                         click()));
         waiting_time(1000);
     }
 
-    public void waiting_time(int time){
+    private void waiting_time(int time){
         try {
             Thread.sleep(time);
         } catch (InterruptedException e) {

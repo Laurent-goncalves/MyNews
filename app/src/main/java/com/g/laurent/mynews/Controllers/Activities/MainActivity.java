@@ -120,7 +120,7 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
 
     }
 
-    private void configureAndShowNotifFragment(){
+    public void configureAndShowNotifFragment(){
 
         NotifFragment notifFragment = new NotifFragment();
         callback_save_settings = (Callback_settings) notifFragment;
@@ -210,7 +210,7 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
     protected void configureToolbar(String title){
         super.configureToolbar(title);
 
-        if(toolbar!=null) {
+        if(toolbar!=null && title_toolbar!=null) {
             title_toolbar.setText(title);
 
             if(getSupportActionBar()!=null) {

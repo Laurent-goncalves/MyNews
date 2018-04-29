@@ -1,92 +1,52 @@
 package com.g.laurent.mynews;
 
-
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.test.mock.MockContext;
-
-import com.g.laurent.mynews.Controllers.Activities.MainActivity;
-import com.g.laurent.mynews.Controllers.Fragments.MainFragment;
-import com.g.laurent.mynews.Controllers.Fragments.NotifFragment;
 import com.g.laurent.mynews.Models.Article;
 import com.g.laurent.mynews.Models.ListArticlesSearch;
-import com.g.laurent.mynews.Models.Search_request;
-
+import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import java.util.ArrayList;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class Notifications_test {
 
     @Test
-    public void Test_recover_data(){
+    public void Test_notification_sending(){
 
-        final SharedPreferences sharedPrefs = mock(SharedPreferences.class);
+        MockContext context = new MockContext();
+        SharedPreferences sharedpref = Mockito.mock(SharedPreferences.class);
+        ListArticlesSearch listArticlesSearch =new ListArticlesSearch(context,null,null,null);
 
-        Mockito.when(sharedPrefs.getString("query",null)).thenReturn("trump");
-        Mockito.when(sharedPrefs.getString("list_subjects",null)).thenReturn("Arts,Politics,Sports");
-        Mockito.when(sharedPrefs.getBoolean("enable_notifications",false)).thenReturn(false);
+        // create list of new Articles with the new ID4
+        ArrayList<Article> list_new_articles = new ArrayList<>();
+        list_new_articles.add(new Article(null,null,null,null,null,null,"ID1"));
+        list_new_articles.add(new Article(null,null,null,null,null,null,"ID2"));
+        list_new_articles.add(new Article(null,null,null,null,null,null,"ID3"));
+        list_new_articles.add(new Article(null,null,null,null,null,null,"ID4"));
+        list_new_articles.add(new Article(null,null,null,null,null,null,"ID5"));
 
-        NotifFragment notifFragment = new NotifFragment();
-        notifFragment.setSharedPreferences_Notif(sharedPrefs);
+        listArticlesSearch.setMlistArticles(list_new_articles);
+        listArticlesSearch.setSharedPreferences_Notif(sharedpref);
 
-        ArrayList<String> ListSubjects = new ArrayList<>();
-        ListSubjects.add("Arts");
-        ListSubjects.add("Politics");
-        ListSubjects.add("Sports");
+        when(sharedpref.getString("list_old_ID_notif",null)).thenReturn("ID1,ID2,ID3");
 
-        // Re-initialization of data
-        notifFragment.setQuery(null);
-        notifFragment.setEnable_notif(null);
-        notifFragment.setListSubjects(null);
-
-        // Data recovered
-        notifFragment.recover_data();
-
-        assertEquals("trump",notifFragment.getQuery());
-        assertEquals(false,notifFragment.getEnable_notif());
-        assertEquals(ListSubjects,notifFragment.getListSubjects());
-    }
-
-    @Test
-    public void Test_notification_checking(){
-
-        //final MockContext context = new MockContext();
-        final SharedPreferences sharedPrefs = mock(SharedPreferences.class);
-
-        ListArticlesSearch listArticlesSearch =  new ListArticlesSearch(null,null,sharedPrefs,null);
-
-        // CREATE LIST OF OLD IDs
-        /*Mockito.when(sharedPrefs.getString("list_old_ID_notif",null)).thenReturn("ID1,ID2,ID3");
-
-        // Mock void's
-        Mockito.doNothing().when(listArticlesSearch).save_list_ID_articles_notif();
-        Mockito.doNothing().when(listArticlesSearch).send_notification(anyString());*/
-
-        // CREATE LIST OF NEW IDs
-        ArrayList<Article> mlist_ID = new ArrayList<>();
-        mlist_ID.add(new Article(null,null,null,null,null,null,"ID1"));
-        mlist_ID.add(new Article(null,null,null,null,null,null,"ID2"));
-        mlist_ID.add(new Article(null,null,null,null,null,null,"ID3"));
-        mlist_ID.add(new Article(null,null,null,null,null,null,"ID4"));
-        listArticlesSearch.setMlistArticles(mlist_ID);
-
-        //System.out.println("eeee " + listArticlesSearch.getMlistArticles().toString());
-        //assertEquals("ID4",listArticlesSearch.getMlistArticles().get(3).getId());
-
-        // COMPARE
         listArticlesSearch.compare_lists_of_id_and_send_notification();
 
-       //assertEquals(1,listArticlesSearch.count);
+        waiting_time(1000);
+
+        Assert.assertEquals(2, listArticlesSearch.count);
+
+
     }
 
+    private void waiting_time(int time){
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

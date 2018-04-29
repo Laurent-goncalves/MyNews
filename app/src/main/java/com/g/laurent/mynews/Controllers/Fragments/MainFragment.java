@@ -39,6 +39,7 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
     private ListArticlesSearch listArticlesNotif;
     private ListArticlesSearch listArticlesSearch;
     private CallbackMainActivity mCallbackMainActivity;
+    private ArrayList<Article> listarticles;
 
     private String tab_name;
     private String query;
@@ -88,6 +89,9 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
             }
         }
 
+        System.out.println("eee configure_subject_articles = " );
+
+
         configure_subject_articles(tab_name);
         return view;
     }
@@ -119,21 +123,25 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
 
     @Override
     public void launch_configure_recycler_view() {
+
+        System.out.println("eee articles = " + listArticlesTopStories.getListArticles().toString());
+
         switch(type_request){
             case "top stories":
-                configureRecyclerView(listArticlesTopStories.getListArticles());
+                listarticles = listArticlesTopStories.getListArticles();
                 break;
             case "most popular":
-                configureRecyclerView(listArticlesMostPopular.getListArticles());
+                listarticles = listArticlesMostPopular.getListArticles();
                 break;
             case "search":
-                //System.out.println("eeee  mlistArticles=" + listArticlesSearch.getListArticles().toString());
-                configureRecyclerView(listArticlesSearch.getListArticles());
+                listarticles=listArticlesSearch.getListArticles();
                 break;
             case "notif_search":
-                configureRecyclerView(listArticlesNotif.getListArticles());
+                listarticles=listArticlesNotif.getListArticles();
                 break;
         }
+
+        configureRecyclerView(listarticles);
     }
 
      public void configureRecyclerView(final ArrayList<Article> listarticles){
@@ -153,7 +161,9 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
     @Override
     public void onResume() {
         super.onResume();
-        //configure_subject_articles(tab_name);
+
+        if(listarticles!=null)
+            configureRecyclerView(listarticles);
     }
 
     // ---------------------- TOOLS FOR DEFINING VARIABLES --------------------------------
