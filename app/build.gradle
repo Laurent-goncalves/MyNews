@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'jacoco-android'
 
 android {
+    buildToolsVersion "27.0.3"
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.g.laurent.mynews"
