@@ -30,7 +30,7 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
     private Context context;
 
 
-    private ArticleViewHolder(View itemView, Context context, SharedPreferences mSharedPreferences) {
+    public ArticleViewHolder(View itemView, Context context, SharedPreferences mSharedPreferences) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         article_view = itemView;

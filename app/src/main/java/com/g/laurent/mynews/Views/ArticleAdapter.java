@@ -20,7 +20,6 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleViewHolder>{
     private SharedPreferences mSharedPreferences;
 
     public ArticleAdapter(ArrayList<Article> ListArticles, Context context) {
-        System.out.println("eeee START");
         this.listArticles=ListArticles;
         this.context=context;
         if(context!=null)
@@ -31,7 +30,6 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleViewHolder>{
     @Override
     public ArticleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
-        System.out.println("eeee onCreateViewHolder");
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.fragment_item_recycler, parent, false);
         return new ArticleViewHolder(view,context,mSharedPreferences);
