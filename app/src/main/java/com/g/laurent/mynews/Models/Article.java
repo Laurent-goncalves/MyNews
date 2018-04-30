@@ -33,18 +33,6 @@ public class Article {
         return imageUrl;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public String getPubDate() {
-        return pubDate;
-    }
-
-    public void setPubDate(String pubDate) {
-        this.pubDate = pubDate;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -53,16 +41,8 @@ public class Article {
         this.title = title;
     }
 
-    public String getSection() {
-        return section;
-    }
-
     public void setSection(String section) {
         this.section = section;
-    }
-
-    public String getSubsection() {
-        return subsection;
     }
 
     public void setSubsection(String subsection) {
@@ -71,10 +51,6 @@ public class Article {
 
     public String getWebUrl() {
         return webUrl;
-    }
-
-    public void setWebUrl(String webUrl) {
-        this.webUrl = webUrl;
     }
 
     public String extract_date(){
@@ -100,8 +76,4 @@ public class Article {
 
     }
 
-    public void ArticleToString(){
-
-        System.out.println("eeee  title =" + title + "    pubDate=" + pubDate  + "    section=" + section);
-    }
 }

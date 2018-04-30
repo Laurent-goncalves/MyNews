@@ -1,6 +1,8 @@
 package com.g.laurent.mynews;
 
 import android.test.mock.MockContext;
+
+import com.g.laurent.mynews.Controllers.Activities.MainActivity;
 import com.g.laurent.mynews.Controllers.Fragments.BaseFragment;
 import com.g.laurent.mynews.Models.Article;
 import com.g.laurent.mynews.Models.ListArticlesMostPopular;
@@ -24,7 +26,9 @@ import static org.mockito.Mockito.mock;
  */
 public class RequestHTTP_test {
 
-    // TEST FOR HTTP REQUEST
+    //------------------------------------------------------------------------------------------------
+    //----------------------------  TEST FOR HTTP REQUEST ------------------------------------------
+    //------------------------------------------------------------------------------------------------
 
     @Test
     public void Test_Search_Request() throws Exception {

@@ -1,7 +1,6 @@
 package com.g.laurent.mynews.Models;
 
 import android.util.Log;
-
 import com.g.laurent.mynews.Utils.MostPopular.MediaMetadatum;
 import com.g.laurent.mynews.Utils.MostPopular.Medium;
 import com.g.laurent.mynews.Utils.MostPopular.MostPopular;
@@ -14,7 +13,6 @@ import io.reactivex.observers.DisposableObserver;
 
 public class ListArticlesMostPopular {
 
-    private Disposable disposable;
     private final String subject;
     private ArrayList<Article> listarticles;
     private ArrayList<String> mlist_ID;
@@ -29,24 +27,24 @@ public class ListArticlesMostPopular {
     }
 
     private void launch_request_most_popular(){
-        disposable = NewsStreams.streamFetchgetMostPopular(subject).subscribeWith(new DisposableObserver<MostPopular>() {
+        Disposable disposable = NewsStreams.streamFetchgetMostPopular(subject).subscribeWith(new DisposableObserver<MostPopular>() {
 
             @Override
             public void onNext(MostPopular mostPopular) {
                 Build_data_mostPopular(mostPopular);
 
-                if(mCallbackMainActivity!=null)
+                if (mCallbackMainActivity != null)
                     mCallbackMainActivity.launch_configure_recycler_view();
             }
 
             @Override
             public void onError(Throwable e) {
-                Log.e("TAG","On Error"+Log.getStackTraceString(e));
+                Log.e("TAG", "On Error" + Log.getStackTraceString(e));
             }
 
             @Override
             public void onComplete() {
-                Log.e("TAG","On Complete !!");
+                Log.e("TAG", "On Complete !!");
             }
         });
     }
@@ -62,6 +60,7 @@ public class ListArticlesMostPopular {
 
                     for(Result resultMostPopular : mResultMostPopular) {
 
+                        // define the listarticles and mlist_ID
                         listarticles.add(new Article(getImageUrlMostPopular(resultMostPopular),
                                 resultMostPopular.getPublishedDate(), resultMostPopular.getTitle(),
                                 resultMostPopular.getSection(), null, resultMostPopular.getUrl(), resultMostPopular.getId()));

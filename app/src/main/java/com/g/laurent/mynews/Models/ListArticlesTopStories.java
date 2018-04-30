@@ -7,7 +7,6 @@ import com.g.laurent.mynews.Utils.TopStories.ResultTopS;
 import com.g.laurent.mynews.Utils.TopStories.TopStories;
 import java.util.ArrayList;
 import java.util.List;
-
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 

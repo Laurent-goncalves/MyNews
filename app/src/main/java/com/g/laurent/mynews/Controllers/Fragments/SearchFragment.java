@@ -1,14 +1,10 @@
 package com.g.laurent.mynews.Controllers.Fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,51 +12,34 @@ import android.widget.CalendarView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.g.laurent.mynews.Controllers.Activities.WebActivity;
-import com.g.laurent.mynews.Models.Article;
 import com.g.laurent.mynews.Models.Callback_search;
 import com.g.laurent.mynews.R;
-import com.g.laurent.mynews.Utils.NewsStreams;
-import com.g.laurent.mynews.Utils.Search.Doc;
-import com.g.laurent.mynews.Utils.Search.ListArticles;
-import com.g.laurent.mynews.Utils.Search.Multimedium;
-import com.g.laurent.mynews.Views.ArticleAdapter;
 import com.g.laurent.mynews.Views.GridViewAdapter;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
-
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.observers.DisposableObserver;
-
 
 public class SearchFragment extends BaseFragment {
 
-
     private TextView begin_date_text;
     private TextView end_date_text;
-    public static final String EXTRA_LINK = "linkaddress";
-    ArrayList<Article> listArticles = new ArrayList<>();
-    private String link_search;
-    private ArticleAdapter adapter;
     private Callback_search mCallback_search;
+    private static final String EXTRA_SAVING_TYPE = "search";
 
     public SearchFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater,container,savedInstanceState);
         View view = inflater.inflate(R.layout.settings_fragment, container, false);
         ButterKnife.bind(this, view);
         ListSubjects=new ArrayList<>();
         query=null;
-        //mCallback_search=new Callback_search();
+
+        // configures views
         configure_date_selectors(getResources().getString(R.string.begindate),begin_date);
         configure_date_selectors(getResources().getString(R.string.enddate),end_date);
         configure_search_areas();
@@ -70,7 +49,7 @@ public class SearchFragment extends BaseFragment {
 
     // -------------- SETTINGS AREAS ------------------------------
 
-    protected void configure_checkboxes(){
+    private void configure_checkboxes(){
         grid_checkbox.setAdapter(new GridViewAdapter(getContext(),getResources().getStringArray(R.array.list_checkbox),null));
     }
 
@@ -88,6 +67,7 @@ public class SearchFragment extends BaseFragment {
 
     private void configure_edit_text(){
         query_area.addTextChangedListener(new TextWatcher() {
+
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -148,7 +128,7 @@ public class SearchFragment extends BaseFragment {
         search_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                save_settings("search");
+                save_settings(EXTRA_SAVING_TYPE);
                 mCallback_search.configureAndShowMainFragmentSearchRequest();
             }
         });
@@ -164,7 +144,6 @@ public class SearchFragment extends BaseFragment {
         }
     }
 
-
     // -----------------------------------------------------------------------------
     // ------------ CONFIGURATION CALENDAR / DATES (begin & end) -------------------
     // -----------------------------------------------------------------------------
@@ -173,19 +152,23 @@ public class SearchFragment extends BaseFragment {
 
         TextView textView;
 
+        // for each view child of the date_view (begin view or end view)
         for(int index=0; index<((ViewGroup)date_view).getChildCount(); index++) {
             View Child = ((ViewGroup)date_view).getChildAt(index);
 
+            // define the one which is an instance of TextView and add the text to display ("Begin date" or "End date")
             if(Child.getId()==R.id.text_date && Child instanceof TextView) {
                 textView = (TextView) Child;
                 textView.setText(type_date);
             }
 
+            // if the child is an instance of relativeLayout
             if(Child instanceof RelativeLayout) {
 
                 for(int j=0; j<((ViewGroup) Child).getChildCount(); j++) {
                     final View SubChild = ((ViewGroup) Child).getChildAt(j);
 
+                    // if the subchild is a textview (the date selected)
                     if (SubChild.getId() == R.id.date_selected && SubChild instanceof TextView){
                         if(type_date.equals("Begin date"))
                             begin_date_text = (TextView) SubChild;
@@ -193,9 +176,10 @@ public class SearchFragment extends BaseFragment {
                             end_date_text = (TextView) SubChild;
                     }
 
+                    // if the subchild is the icon to expand the calendarView
                     if (SubChild.getId() == R.id.icon_expand && SubChild instanceof ImageView) {
 
-                        SubChild.setOnClickListener(new View.OnClickListener() {
+                        SubChild.setOnClickListener(new View.OnClickListener() { // add an OnClickListener
                             @Override
                             public void onClick(View v) {
 
@@ -221,28 +205,27 @@ public class SearchFragment extends BaseFragment {
                 }
             }
         }
-
     }
 
     private void configure_and_show_calendarView(final TextView date_textview, final String type_date) {
 
-        mCalendarView.setVisibility(View.VISIBLE);
+        mCalendarView.setVisibility(View.VISIBLE); // show calendarView
 
         mCalendarView.setOnDateChangeListener((new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
 
                 if(is_the_date_ok(type_date,year,month,dayOfMonth)){
-                    date_textview.setText(create_string_date(year, month, dayOfMonth));
+                    date_textview.setText(create_string_date(year, month, dayOfMonth)); // change date selected into string
 
-                    if(type_date.equals("Begin date"))
+                    if(type_date.equals("Begin date")) // update views with the date selected
                         update_calendar(type_date, year, month, dayOfMonth);
                     else
                         update_calendar(type_date, year, month, dayOfMonth);
 
-                    mCalendarView.setVisibility(View.GONE);
-                    grid_checkbox.setVisibility(View.VISIBLE);
-                    search_button.setVisibility(View.VISIBLE);
+                    mCalendarView.setVisibility(View.GONE); // hide calendar view
+                    grid_checkbox.setVisibility(View.VISIBLE); // show checkboxes
+                    search_button.setVisibility(View.VISIBLE); // show search button
                 }
             }
         }));
@@ -250,6 +233,7 @@ public class SearchFragment extends BaseFragment {
 
     private void update_calendar(String type_date, int year, int month, int dayOfMonth){
 
+        // Define and show the date selected in the calendar
         switch(type_date){
 
             case "Begin date":

@@ -3,6 +3,7 @@ package com.g.laurent.mynews.Controllers.Fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,13 +14,12 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
-import com.g.laurent.mynews.Models.Article;
 import com.g.laurent.mynews.Models.Callback_list_subjects;
 import com.g.laurent.mynews.R;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import butterknife.BindView;
-import io.reactivex.disposables.Disposable;
 
 public class BaseFragment extends Fragment implements Callback_list_subjects {
 
@@ -43,28 +43,44 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
     protected String type;
     protected SharedPreferences sharedPreferences_Search;
     protected SharedPreferences sharedPreferences_Notif;
-    protected ArrayList<Article> mlistArticles;
-    protected Disposable disposable;
-
-
+    protected static final String EXTRA_NOTIF_SETTINGS = "NOTIFICATION_settings";
+    protected static final String EXTRA_SEARCH_SETTINGS = "SEARCH_settings";
+    protected static final String EXTRA_ENABLE_NOTIF = "enable_notifications";
+    protected static final String EXTRA_QUERY_NOTIF = "query_notif";
+    protected static final String EXTRA_SUBJECTS_NOTIF = "list_subjects_notif";
+    protected static final String EXTRA_BEGIN_DATE = "begin_date_search";
+    protected static final String EXTRA_END_DATE = "end_date_search";
+    protected static final String EXTRA_QUERY_SEARCH = "query_search";
+    protected static final String EXTRA_SUBJECTS_SEARCH = "list_subjects_search";
 
     public BaseFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.settings_fragment, container, false);
-        sharedPreferences_Notif = getContext().getSharedPreferences("NOTIFICATION_settings", Context.MODE_PRIVATE);
-        sharedPreferences_Search = getContext().getSharedPreferences("SEARCH_settings", Context.MODE_PRIVATE);
+
+        // Assign variables
+        sharedPreferences_Notif = getContext().getSharedPreferences(EXTRA_NOTIF_SETTINGS, Context.MODE_PRIVATE);
+        sharedPreferences_Search = getContext().getSharedPreferences(EXTRA_SEARCH_SETTINGS, Context.MODE_PRIVATE);
         ListSubjects=new ArrayList<>();
+
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    // ------------------------ DATE CHECKING FOR CALENDAR VIEW ------------------------------
+
     public String create_date_format_yyyymmdd(String date){
 
+        // if the date is in format yyyy-mm-dd
         if(date.substring(4,5).equals("-")){
             String year = date.substring(0,4);
             String month = date.substring(5,7);
@@ -72,7 +88,8 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
 
             return year.toUpperCase() + month.toUpperCase() + day.toUpperCase();
 
-        } else if (date.substring(2,3).equals("/")){ // 01/02/2018
+            // if the date is in format dd/mm/yyyy
+        } else if (date.substring(2,3).equals("/")){
 
             String year = date.substring(6,10);
             String month = date.substring(3,5);
@@ -141,69 +158,38 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
         return answer;
     }
 
-    public boolean IsStrictlyBefore(Calendar dateComp, Calendar dateRef){
-
-        if (dateComp.get(Calendar.YEAR) < dateRef.get(Calendar.YEAR))
-            return true;
-        else if (dateComp.get(Calendar.YEAR) == dateRef.get(Calendar.YEAR)){
-            if (dateComp.get(Calendar.MONTH) < dateRef.get(Calendar.MONTH))
-                return true;
-            else if (dateComp.get(Calendar.MONTH) == dateRef.get(Calendar.MONTH)) {
-                if (dateComp.get(Calendar.DAY_OF_MONTH) < dateRef.get(Calendar.DAY_OF_MONTH))
-                    return true;
-                else
-                    return false;
-            }
-            else
-                return false;
-        } else
-            return false;
+    protected boolean IsStrictlyBefore(Calendar dateComp, Calendar dateRef) {
+        return dateComp.get(Calendar.YEAR) < dateRef.get(Calendar.YEAR) || dateComp.get(Calendar.YEAR) == dateRef.get(Calendar.YEAR) && (dateComp.get(Calendar.MONTH) < dateRef.get(Calendar.MONTH) || dateComp.get(Calendar.MONTH) == dateRef.get(Calendar.MONTH) && dateComp.get(Calendar.DAY_OF_MONTH) < dateRef.get(Calendar.DAY_OF_MONTH));
     }
 
-    public boolean IsStrictlyAfter(Calendar dateComp, Calendar dateRef){
-
-        if (dateComp.get(Calendar.YEAR) > dateRef.get(Calendar.YEAR))
-            return true;
-        else if (dateComp.get(Calendar.YEAR) == dateRef.get(Calendar.YEAR)){
-            if (dateComp.get(Calendar.MONTH) > dateRef.get(Calendar.MONTH))
-                return true;
-            else if (dateComp.get(Calendar.MONTH) == dateRef.get(Calendar.MONTH)) {
-                if (dateComp.get(Calendar.DAY_OF_MONTH) > dateRef.get(Calendar.DAY_OF_MONTH))
-                    return true;
-                else
-                    return false;
-            }
-            else
-                return false;
-        } else
-            return false;
-
+    protected boolean IsStrictlyAfter(Calendar dateComp, Calendar dateRef) {
+        return dateComp.get(Calendar.YEAR) > dateRef.get(Calendar.YEAR) || dateComp.get(Calendar.YEAR) == dateRef.get(Calendar.YEAR) && (dateComp.get(Calendar.MONTH) > dateRef.get(Calendar.MONTH) || dateComp.get(Calendar.MONTH) == dateRef.get(Calendar.MONTH) && dateComp.get(Calendar.DAY_OF_MONTH) > dateRef.get(Calendar.DAY_OF_MONTH));
     }
+
+    // ------------------------ SAVE SETTINGS (callback method)------------------------------
 
     protected void save_settings(String type) {
 
         switch(type){
-
             case "search":
-
-                sharedPreferences_Search.edit().putString("query_search",query).apply();
-                sharedPreferences_Search.edit().putString("list_subjects_search",list_transform_to_String(ListSubjects)).apply();
-                sharedPreferences_Search.edit().putString("begin_date_search",date_begin_str).apply();
-                sharedPreferences_Search.edit().putString("end_date_search",date_end_str).apply();
+                sharedPreferences_Search.edit().putString(EXTRA_QUERY_SEARCH,query).apply();
+                sharedPreferences_Search.edit().putString(EXTRA_SUBJECTS_SEARCH,list_transform_to_String(ListSubjects)).apply();
+                sharedPreferences_Search.edit().putString(EXTRA_BEGIN_DATE,date_begin_str).apply();
+                sharedPreferences_Search.edit().putString(EXTRA_END_DATE,date_end_str).apply();
                 break;
 
             case "notif":
-
-                sharedPreferences_Notif.edit().putString("query_notif",query).apply();
-                sharedPreferences_Notif.edit().putString("list_subjects_notif",list_transform_to_String(ListSubjects)).apply();
-                sharedPreferences_Notif.edit().putBoolean("enable_notifications",enable_notif).apply();
+                sharedPreferences_Notif.edit().putString(EXTRA_QUERY_NOTIF,query).apply();
+                sharedPreferences_Notif.edit().putString(EXTRA_SUBJECTS_NOTIF,list_transform_to_String(ListSubjects)).apply();
+                sharedPreferences_Notif.edit().putBoolean(EXTRA_ENABLE_NOTIF,enable_notif).apply();
                 break;
         }
     }
 
+    // ------------------------ UPDATE ListSubjects (callback method) ------------------------------
+
     @Override
     public void update_list_subjects_in_fragment(String type_modif, String subject) {
-
 
         if(subject!=null){
             switch(type_modif){
@@ -217,13 +203,9 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
     protected String list_transform_to_String(ArrayList<String> list){
 
+        /* /////////////////  Transform an ArrayList into string      */
         StringBuilder list_subjects = new StringBuilder();
 
         // Build the list_subjects in a single String (each subject is separated by a ",")
@@ -244,16 +226,14 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
     }
 
     protected ArrayList<String> string_transform_to_list(String list_string){
-
+        /* /////////////////  Transform a list in string into ArrayList      */
         ArrayList<String> new_list_subjects = new ArrayList<>();
         String[] mlist_subjects;
 
         if(list_string!=null){
             mlist_subjects=list_string.split(",");
 
-            for(int i = 0;i<=mlist_subjects.length-1;i++) {
-                new_list_subjects.add(mlist_subjects[i]);
-            }
+            Collections.addAll(new_list_subjects, mlist_subjects);
 
         } else {
             new_list_subjects=null;
@@ -261,6 +241,7 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
         return new_list_subjects;
     }
 
+    // ------------------- GETTER & SETTER ----------------------------------------------
 
     public void setDate_begin(Calendar date_begin) {
         this.date_begin = date_begin;
@@ -274,10 +255,6 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
         return ListSubjects;
     }
 
-    public void setListSubjects(ArrayList<String> listSubjects) {
-        ListSubjects = listSubjects;
-    }
-
     public String getQuery() {
         return query;
     }
@@ -286,15 +263,40 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
         this.query = query;
     }
 
-    public Boolean getEnable_notif() {
-        return enable_notif;
-    }
-
-    public void setEnable_notif(Boolean enable_notif) {
-        this.enable_notif = enable_notif;
-    }
-
-    public void setSharedPreferences_Notif(SharedPreferences sharedPreferences_Notif) {
-        this.sharedPreferences_Notif = sharedPreferences_Notif;
-    }
 }
+
+
+        /*if (dateComp.get(Calendar.YEAR) < dateRef.get(Calendar.YEAR))
+            return true; // compare the year
+        else if (dateComp.get(Calendar.YEAR) == dateRef.get(Calendar.YEAR)){ // if both dates have the same year
+            if (dateComp.get(Calendar.MONTH) < dateRef.get(Calendar.MONTH)) // compare the months
+                return true;
+            else if (dateComp.get(Calendar.MONTH) == dateRef.get(Calendar.MONTH)) { // if both dates have the same month
+                if (dateComp.get(Calendar.DAY_OF_MONTH) < dateRef.get(Calendar.DAY_OF_MONTH)) // compare the days
+                    return true;
+                else
+                    return false;
+            }
+            else
+                return false;
+        } else
+            return false;*/
+
+
+
+
+                /*if (dateComp.get(Calendar.YEAR) > dateRef.get(Calendar.YEAR))
+            return true; // compare the year
+        else if (dateComp.get(Calendar.YEAR) == dateRef.get(Calendar.YEAR)){ // if both dates have the same year
+            if (dateComp.get(Calendar.MONTH) > dateRef.get(Calendar.MONTH)) // compare the months
+                return true;
+            else if (dateComp.get(Calendar.MONTH) == dateRef.get(Calendar.MONTH)) { // if both dates have the same month
+                if (dateComp.get(Calendar.DAY_OF_MONTH) > dateRef.get(Calendar.DAY_OF_MONTH))  // compare the days
+                    return true;
+                else
+                    return false;
+            }
+            else
+                return false;
+        } else
+            return false;*/

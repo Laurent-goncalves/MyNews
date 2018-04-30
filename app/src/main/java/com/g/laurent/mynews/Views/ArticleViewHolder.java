@@ -2,19 +2,16 @@ package com.g.laurent.mynews.Views;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
-import com.g.laurent.mynews.Controllers.Activities.WebActivity;
 import com.g.laurent.mynews.Models.Article;
 import com.g.laurent.mynews.R;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,14 +24,13 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.news_date) TextView date_view;
     @BindView(R.id.news_title) TextView title_view;
     @BindView(R.id.image_news) ImageView image_view;
-    private static final String EXTRA_LINK = "linkaddress";
     private static final String EXTRA_LIST_ID = "ID_ARTICLES_READ";
     private List<String> list_id_articles_read;
     private String list_articles_read;
     private Context context;
 
 
-    public ArticleViewHolder(View itemView, Context context, SharedPreferences mSharedPreferences) {
+    private ArticleViewHolder(View itemView, Context context, SharedPreferences mSharedPreferences) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         article_view = itemView;
@@ -52,7 +48,7 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
         configure_list_articles_read();
     }
 
-    public void configure_list_articles_read(){
+    private void configure_list_articles_read(){
 
         String[] new_list_articles_read;
 
@@ -61,9 +57,7 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
 
             list_id_articles_read = new ArrayList<>();
 
-            for(int i = 0;i<=new_list_articles_read.length-1;i++) {
-                list_id_articles_read.add(new_list_articles_read[i]);
-            }
+            Collections.addAll(list_id_articles_read, new_list_articles_read);
 
         } else {
             list_id_articles_read=null;
@@ -71,8 +65,6 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void updateViews(final Article article, final Context context){
-
-        System.out.println("eeee " + article.toString());
 
         // Filling textviews
         title_view.setText(article.getTitle());
@@ -111,7 +103,7 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
         category_view.setTextColor(context.getResources().getColor(R.color.color_article_read));
     }
 
-    public void setAsArticleRead(String id){
+    private void setAsArticleRead(String id){
         if(!has_been_read(id)){
             add_id_articles_in_list_articles_read(id);
             change_color_for_read_articles();
@@ -136,28 +128,11 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void add_id_articles_in_list_articles_read(String id_article) {
-
-        if(list_id_articles_read!=null)
-            System.out.println("eeee list_id_articles_read.toString()=" + list_id_articles_read.toString());
-        else
-            System.out.println("eeee list_id_articles_read.toString()=null");
-
-
-            list_id_articles_read=shift_values_from_table(list_id_articles_read,id_article);
-
-
-        if(list_id_articles_read!=null)
-        System.out.println("eeee list_id_articles_read.toString()=" + list_id_articles_read.toString());
-        else
-            System.out.println("eeee list_id_articles_read.toString()=null");
-
+        list_id_articles_read=shift_values_from_table(list_id_articles_read,id_article);
         save_list_articles_read_in_sharedpref();
     }
 
     private List<String> shift_values_from_table(List<String> table, String new_value){
-
-        if(table!=null)
-        System.out.println("eeee  table.toString()=" + table.toString() );
 
         int max = 50;
         List<String> new_table = new ArrayList<>();
@@ -173,15 +148,12 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
                     new_table.addAll(table);
                 }
 
-
             } else if (table.size() == max){ // if the max is reached
 
                 for(int i = 0; i < max-1; i++)
                     new_table.add(table.get(i));
             }
         }
-
-        System.out.println("eeee  new_table.toString()=" + new_table.toString() );
         return new_table;
     }
 
@@ -200,29 +172,13 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
     private void save_list_articles_read_in_sharedpref(){
 
         String list_to_be_saved;
-
         if(list_id_articles_read!=null){
 
             // create list in String
             list_to_be_saved=create_list_articles_read();
-
             // save the list built in a single string in sharedpreferences
-
-            System.out.println("eee list_to_be_saved="+list_to_be_saved);
-
             mSharedPreferences.edit().putString(EXTRA_LIST_ID, list_to_be_saved).apply();
-
-            System.out.println("eee list_to_be_saved="+mSharedPreferences.getString(EXTRA_LIST_ID,null));
-
         }
-    }
-
-    public List<String> getList_id_articles_read() {
-        return list_id_articles_read;
-    }
-
-    public void setList_id_articles_read(List<String> list_id_articles_read) {
-        this.list_id_articles_read = list_id_articles_read;
     }
 }
 

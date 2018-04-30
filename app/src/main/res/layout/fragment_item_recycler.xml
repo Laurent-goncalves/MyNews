@@ -22,7 +22,8 @@
             android:layout_width="70dip"
             android:layout_height="70dip"
             android:layout_marginEnd="5dp"
-            android:scaleType="fitXY"/>
+            android:scaleType="fitXY"
+            android:contentDescription="@string/image_news" />
 
         <RelativeLayout
             android:layout_width="wrap_content"

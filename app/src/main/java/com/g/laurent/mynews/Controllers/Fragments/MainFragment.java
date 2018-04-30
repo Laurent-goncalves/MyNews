@@ -3,6 +3,7 @@ package com.g.laurent.mynews.Controllers.Fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,6 +35,12 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
     public static final String EXTRA_BEGIN = "begin_date";
     public static final String EXTRA_END = "end_date";
 
+    private static final String EXTRA_BEGIN_DATE = "begin_date_search";
+    private static final String EXTRA_END_DATE = "end_date_search";
+    private static final String EXTRA_QUERY_SEARCH = "query_search";
+    private static final String EXTRA_SUBJECTS_SEARCH = "list_subjects_search";
+    private static final String EXTRA_SEARCH_SETTINGS = "SEARCH_settings";
+
     private ListArticlesTopStories listArticlesTopStories;
     private ListArticlesMostPopular listArticlesMostPopular;
     private ListArticlesSearch listArticlesNotif;
@@ -51,7 +58,7 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
     public MainFragment() {} // Required empty public constructor
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view;
@@ -59,41 +66,42 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
         if(inflater!=null) {
             view = inflater.inflate(R.layout.fragment_recycler, container, false);
             ButterKnife.bind(this, view);
-            sharedPreferences_Search = getContext().getSharedPreferences("SEARCH_settings", Context.MODE_PRIVATE);
+            sharedPreferences_Search = getContext().getSharedPreferences(EXTRA_SEARCH_SETTINGS, Context.MODE_PRIVATE);
             mCallbackMainActivity = this;
         } else
             view = null;
 
+        define_variables();
+        configure_subject_articles(tab_name);
+        return view;
+    }
 
+    private void define_variables(){
+
+        // Recover the tab_name
         if(getArguments()!=null)
             tab_name = getArguments().getString(EXTRA_TAB_NAME);
 
         if(tab_name!=null){
 
-            if(tab_name.equals("search request")){
+            if(tab_name.equals("search request")){ // in case of search request
 
-                query = sharedPreferences_Search.getString("query_search",null);
-                subject = sharedPreferences_Search.getString("list_subjects_search",null);
-                begin_date = sharedPreferences_Search.getString("begin_date_search",null);
-                end_date = sharedPreferences_Search.getString("end_date_search",null);
+                query = sharedPreferences_Search.getString(EXTRA_QUERY_SEARCH,null);
+                subject = sharedPreferences_Search.getString(EXTRA_SUBJECTS_SEARCH,null);
+                begin_date = sharedPreferences_Search.getString(EXTRA_BEGIN_DATE,null);
+                end_date = sharedPreferences_Search.getString(EXTRA_END_DATE,null);
 
-            } else if(getArguments()!=null){
+            } else if(getArguments()!=null){ // if not
                 query = getArguments().getString(EXTRA_QUERY);
                 subject = define_subject(getArguments().getString(EXTRA_SUBJECT));
 
                 if(subject==null)
-                    subject = "food";
+                    subject = "politics";
 
                 begin_date = getArguments().getString(EXTRA_BEGIN);
                 end_date = getArguments().getString(EXTRA_END);
             }
         }
-
-        System.out.println("eee configure_subject_articles = " );
-
-
-        configure_subject_articles(tab_name);
-        return view;
     }
 
     public void configure_subject_articles(String tab_name) {
@@ -123,8 +131,6 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
 
     @Override
     public void launch_configure_recycler_view() {
-
-        System.out.println("eee articles = " + listArticlesTopStories.getListArticles().toString());
 
         switch(type_request){
             case "top stories":

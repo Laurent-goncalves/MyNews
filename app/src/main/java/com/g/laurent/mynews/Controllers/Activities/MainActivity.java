@@ -20,9 +20,7 @@ import com.g.laurent.mynews.Controllers.Fragments.MainFragment;
 import com.g.laurent.mynews.Controllers.Fragments.NotifFragment;
 import com.g.laurent.mynews.Controllers.Fragments.SearchFragment;
 import com.g.laurent.mynews.Models.AlarmReceiver;
-import com.g.laurent.mynews.Models.Callback_list_subjects;
 import com.g.laurent.mynews.Models.Callback_search;
-import com.g.laurent.mynews.Models.Callback_settings;
 import com.g.laurent.mynews.Models.ListArticlesSearch;
 import com.g.laurent.mynews.Models.Search_request;
 import com.g.laurent.mynews.R;
@@ -32,6 +30,11 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends BaseActivity implements Callback_search, AlarmReceiver.callbackAlarm {
 
+    /** DESCRIPTION : The MainActivity which extends BaseActivity will be used to integrate :
+     *       - the MainFragment with the recyclerView (top stories, most popular, search,...)
+     *       - the SearchFragment with the different criteria of search
+     *       - the NotifFragment with the settings for sending notifications **/
+
     @BindView(R.id.toolbar_menu_button) ImageButton icon_menu;
     @BindView(R.id.toolbar_menu_search) ImageButton icon_search;
     @BindView(R.id.toolbar_menu_notif) ImageButton icon_notif;
@@ -40,32 +43,28 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
     @BindView(R.id.activity_main_frame_layout) LinearLayout mLinearLayout;
     private MainFragment mainFragment;
     private SearchFragment searchFragment;
-    public static final String EXTRA_TAB_NAME = "tab_name";
+    private static final String EXTRA_TAB_NAME = "tab_name";
+    private static final String EXTRA_NOTIF_SETTINGS = "NOTIFICATION_settings";
+    private static final String EXTRA_ENABLE_NOTIF = "enable_notifications";
+    private static final String EXTRA_QUERY_NOTIF = "query_notif";
+    private static final String EXTRA_SUBJECTS_NOTIF = "list_subjects_notif";
     private TabLayout tablayout;
     private String fragment_displayed;
     private SharedPreferences sharedPreferences_Notif;
-    private Boolean enable_notif;
-
-    public SearchFragment getSearchFragment() {
-        return searchFragment;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
 
-        tab_name=null;
+        // Assign variables
         fragment_displayed="mainfragment";
         String[] list_tabs = recover_list_tabs();
+        tab_name=list_tabs[0];
+        sharedPreferences_Notif = this.getSharedPreferences(EXTRA_NOTIF_SETTINGS, Context.MODE_PRIVATE);
+        Boolean enable_notif = sharedPreferences_Notif.getBoolean(EXTRA_ENABLE_NOTIF, false);
 
-        if(tab_name==null){
-            tab_name=list_tabs[0];
-        }
-
-        sharedPreferences_Notif = this.getSharedPreferences("NOTIFICATION_settings", Context.MODE_PRIVATE);
-        enable_notif=sharedPreferences_Notif.getBoolean("enable_notifications",false);
-
+        // configure alarm-manager and show MainFragment
         this.configureAndShowMainFragment();
         this.configureAlarmManager(enable_notif);
     }
@@ -73,65 +72,79 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
     @Override
     protected void onResume() {
         super.onResume();
+        sharedPreferences_Notif = this.getSharedPreferences(EXTRA_NOTIF_SETTINGS, Context.MODE_PRIVATE);
+        Boolean enable_notif = sharedPreferences_Notif.getBoolean(EXTRA_ENABLE_NOTIF, false);
+        this.configureAlarmManager(enable_notif);
     }
 
-    // -------------- CONFIGURATION Fragment --------------------
+    // -------------- CONFIGURATION Fragment and ALARMMANAGER --------------------
 
     private void configureAndShowMainFragment(){
 
+        // Create a new bundle to send the tab_name to MainFragment
         Bundle bundle = new Bundle();
         bundle.putString(EXTRA_TAB_NAME,tab_name);
 
-        if(tablayout==null)
+        // configure tablayout
+        if(tablayout==null) {
             this.configureTabLayout();
+        }
 
-        if(tablayout.getVisibility()==View.GONE)
-            tablayout.setVisibility(View.VISIBLE);
+        if(tablayout!=null) {
+            if (tablayout.getVisibility() == View.GONE)
+                tablayout.setVisibility(View.VISIBLE);
+        }
 
+        // configure toolbar
         this.configureToolbar("MyNews");
         configure_popupmenu_icon_toolbar();
         fragment_displayed="mainfragment";
 
-
+        // configure and show the MainFragment
         mainFragment = new MainFragment();
         mainFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.activity_main_frame_layout, mainFragment)
                 .commit();
-
     }
 
     @Override
     public void configureAndShowMainFragmentSearchRequest(){
 
+        // Create a new bundle to send the tab_name to MainFragment (for search requests)
         Bundle bundle = new Bundle();
         bundle.putString(EXTRA_TAB_NAME,"search request");
 
+        //configure toolbar and tablayout
+        if(tablayout!=null)
+            tablayout.setVisibility(View.GONE);
+
+        this.configureToolbar("Search Articles");
+        fragment_displayed="mainfragment";
+
+        // configure and show the MainFragment
         mainFragment = new MainFragment();
         mainFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.activity_main_frame_layout, mainFragment)
                 .commit();
-
-        tablayout.setVisibility(View.GONE);
-
-        this.configureToolbar("Search Articles");
-        fragment_displayed="mainfragment";
-
     }
 
     public void configureAndShowNotifFragment(){
 
         NotifFragment notifFragment = new NotifFragment();
-        callback_save_settings = (Callback_settings) notifFragment;
-        callback_list_subjects = (Callback_list_subjects) notifFragment;
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.activity_main_frame_layout, notifFragment)
-                .commit();
+        callback_save_settings = notifFragment; // create callback for savings settings
+        callback_list_subjects = notifFragment; // create callback for updating list of subjects
 
+        //configure toolbar and tablayout
         this.configureToolbar("Notifications");
         fragment_displayed="notiffragment";
         tablayout.setVisibility(View.GONE);
+
+        // configure and show the notifFragment
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.activity_main_frame_layout, notifFragment)
+                .commit();
     }
 
     private void configureAlarmManager(Boolean enable){
@@ -163,24 +176,28 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
     public void configureAndShowSearchFragment(){
 
         searchFragment = new SearchFragment();
-        callback_list_subjects = (Callback_list_subjects) searchFragment;
+        callback_list_subjects = searchFragment;
 
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.activity_main_frame_layout, searchFragment)
-                .commit();
-
+        //configure toolbar and tablayout
         this.configureToolbar("Search Articles");
         fragment_displayed="searchfragment";
         tablayout.setVisibility(View.GONE);
+
+        //configure and show SearchFragment
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.activity_main_frame_layout, searchFragment)
+                .commit();
     }
 
-    // -------------- CONFIGURATION TabLayout  --------------------
+    // -------------- CONFIGURATION TabLayout  -----------------------------
 
     private void configureTabLayout(){
 
+        // Recover list of tabs to be displayed and find the view to be assigned
         String[] list_tabs = recover_list_tabs();
         tablayout = findViewById(R.id.activity_main_tabs);
 
+        // if the list of tabs is not null, create the tab (title + onTabSelectedListener
         if (list_tabs != null) {
             for (String tab : list_tabs) {
 
@@ -204,7 +221,7 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
         }
     }
 
-    // -------------- CONFIGURATION Toolbar & icons --------------------
+    // -------------- CONFIGURATION Toolbar & icons -----------------------
 
     @Override
     protected void configureToolbar(String title){
@@ -217,13 +234,12 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
                 switch (title) {
 
                     case "MyNews":
-
                         icon_search.setVisibility(View.VISIBLE);
                         icon_menu.setVisibility(View.VISIBLE);
                         icon_notif.setVisibility(View.VISIBLE);
                         setIconOnClickListener();
+                        // Disable the Up button
                         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-
                         break;
                     case "Search Articles":
                         icon_search.setVisibility(View.GONE);
@@ -244,12 +260,44 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
         }
     }
 
-    private void setIconOnClickListener(){
+    private void configure_popupmenu_icon_toolbar(){
 
-        icon_menu.setOnClickListener(new Button.OnClickListener() {
+        icon_notif.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
+                //Creating the instance of PopupMenu
+                PopupMenu popup = new PopupMenu(MainActivity.this, icon_notif);
+                //Inflating the Popup using xml file
+                popup.getMenuInflater().inflate(R.menu.menu_toolbar, popup.getMenu());
+
+                //registering popup with OnMenuItemClickListener
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        Toast toast;
+                        switch (item.getItemId()){
+                            case R.id.notifications:
+                                configureAndShowNotifFragment();
+                                return true;
+                            case R.id.help:
+                                toast = Toast.makeText(getApplicationContext(),"Item help selected",Toast.LENGTH_LONG);
+                                toast.show();
+                                return true;
+                            case R.id.about:
+                                toast = Toast.makeText(getApplicationContext(),"Item about selected",Toast.LENGTH_LONG);
+                                toast.show();
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                });
+
+                popup.show();//showing popup menu
             }
         });
+    }
+
+    private void setIconOnClickListener(){
 
         icon_search.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
@@ -259,48 +307,12 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
         });
     }
 
-    private void configure_popupmenu_icon_toolbar(){
-
-        icon_notif.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            //Creating the instance of PopupMenu
-            PopupMenu popup = new PopupMenu(MainActivity.this, icon_notif);
-            //Inflating the Popup using xml file
-            popup.getMenuInflater().inflate(R.menu.menu_toolbar, popup.getMenu());
-
-            //registering popup with OnMenuItemClickListener
-            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                public boolean onMenuItemClick(MenuItem item) {
-                    Toast toast;
-                    switch (item.getItemId()){
-                        case R.id.notifications:
-                            configureAndShowNotifFragment();
-                            return true;
-                        case R.id.help:
-                            toast = Toast.makeText(getApplicationContext(),"Item help selected",Toast.LENGTH_LONG);
-                            toast.show();
-                            return true;
-                        case R.id.about:
-                            toast = Toast.makeText(getApplicationContext(),"Item about selected",Toast.LENGTH_LONG);
-                            toast.show();
-                            return true;
-                        default:
-                            return false;
-                    }
-                }
-            });
-
-            popup.show();//showing popup menu
-        }
-    });
-
-    }
-
+    // ---------------- NOTIFICATIONS -------------------------------------
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                // if the notifFragment is displayed when clicking on up button, save settings of notification and show mainFragment
                 if(fragment_displayed.equals("notiffragment"))
                     callback_save_settings.save_data();
 
@@ -315,18 +327,21 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
     @Override
     public void notification_request_checking() {
 
-        Boolean enable = sharedPreferences_Notif.getBoolean("enable_notifications",false);
+        // Check if notifications are enabled or not and then assign the variable enable
+        Boolean enable = sharedPreferences_Notif.getBoolean(EXTRA_ENABLE_NOTIF,false);
 
         if(enable){
 
-            String new_query = sharedPreferences_Notif.getString("query",null);
-            String list_subj = sharedPreferences_Notif.getString("list_subjects_notif",null);
+            // recover the variable query and list subjects in sharedpreferences
+            String new_query = sharedPreferences_Notif.getString(EXTRA_QUERY_NOTIF,null);
+            String list_subj = sharedPreferences_Notif.getString(EXTRA_SUBJECTS_NOTIF,null);
 
             if(list_subj!=null) {
 
+                // create a new request for search
                 Search_request search_request = new Search_request("notif_checking",new_query, list_subj, null, null);
                 // Launch a new search request to check if there are new articles
-                ListArticlesSearch listArticlesSearch = new ListArticlesSearch(getApplicationContext(), search_request, sharedPreferences_Notif, null);
+                new ListArticlesSearch(getApplicationContext(), search_request, sharedPreferences_Notif, null);
             }
         }
     }
@@ -335,7 +350,7 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
         return mainFragment;
     }
 
-    public void setMainFragment(MainFragment mainFragment) {
-        this.mainFragment = mainFragment;
+    public SearchFragment getSearchFragment() {
+        return searchFragment;
     }
 }

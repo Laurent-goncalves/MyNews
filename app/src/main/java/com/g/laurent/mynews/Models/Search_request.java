@@ -21,10 +21,6 @@ public class Search_request {
         return type_search;
     }
 
-    public void setType_search(String type_search) {
-        this.type_search = type_search;
-    }
-
     public String getQuery() {
         return query;
     }
@@ -35,10 +31,6 @@ public class Search_request {
 
     public String getFilterq() {
         return filterq;
-    }
-
-    public void setFilterq(String filterq) {
-        this.filterq = filterq;
     }
 
     public String getBegindate() {

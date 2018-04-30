@@ -4,6 +4,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -13,6 +14,7 @@ import com.g.laurent.mynews.Utils.Search.Doc;
 import com.g.laurent.mynews.Utils.Search.ListArticles;
 import com.g.laurent.mynews.Utils.Search.Multimedium;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
@@ -75,9 +77,7 @@ public class ListArticlesSearch {
                     // if new request for notification, create the new list of articles with the ID saved
                     if(type_search.equals("notif_checking"))
                         compare_lists_of_id_and_send_notification();
-
                 }
-
             }
 
             @Override
@@ -132,10 +132,15 @@ public class ListArticlesSearch {
         return null;
     }
 
+    // ------------------------------- GETTER and SETTER ----------------------------------------------------
+
     public ArrayList<Article> getListArticles(){
         return mlistArticles;
     }
 
+    public void setMlistArticles(ArrayList<Article> mlistArticles) {
+        this.mlistArticles = mlistArticles;
+    }
 
     // ------------------------------- NOTIFICATION AREA -----------------------------------------------------
 
@@ -153,8 +158,7 @@ public class ListArticlesSearch {
         // Save the new list of ID articles
         try{
             save_list_ID_articles_notif();
-        } catch(Throwable e){};
-
+        } catch(Throwable ignored){}
 
         // For each article, check if it's in the list
         if(mlistArticles!=null){
@@ -169,22 +173,9 @@ public class ListArticlesSearch {
 
         if(count==0)
             send_notification(null);
-
     }
 
-    public void setMlistArticles(ArrayList<Article> mlistArticles) {
-        this.mlistArticles = mlistArticles;
-    }
-
-    public void setMlist_ID(ArrayList<String> mlist_ID) {
-        this.mlist_ID = mlist_ID;
-    }
-
-    public ArrayList<String> getMlist_ID() {
-        return mlist_ID;
-    }
-
-    public void save_list_ID_articles_notif() {
+    private void save_list_ID_articles_notif() {
 
         ArrayList<String> List_ID = new ArrayList<>();
 
@@ -226,9 +217,7 @@ public class ListArticlesSearch {
         if(list_string!=null){
             mlist_subjects=list_string.split(",");
 
-            for(int i = 0;i<=mlist_subjects.length-1;i++) {
-                new_list_subjects.add(mlist_subjects[i]);
-            }
+            Collections.addAll(new_list_subjects, mlist_subjects);
 
         } else {
             new_list_subjects=null;
@@ -236,9 +225,9 @@ public class ListArticlesSearch {
         return new_list_subjects;
     }
 
-    public void send_notification(String title_article){
+    private void send_notification(String title_article){
 
-        String title_notif = null;
+        String title_notif;
 
         if(title_article==null)
             title_notif = "No new article!";

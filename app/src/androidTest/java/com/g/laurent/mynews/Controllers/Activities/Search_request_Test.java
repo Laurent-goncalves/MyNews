@@ -33,7 +33,7 @@ import static org.hamcrest.core.IsNot.not;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class Search_request {
+public class Search_request_Test {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
@@ -114,7 +114,7 @@ public class Search_request {
         }
     }
 
-    public static Matcher<View> childAtPosition(
+    private static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {
 
         return new TypeSafeMatcher<View>() {

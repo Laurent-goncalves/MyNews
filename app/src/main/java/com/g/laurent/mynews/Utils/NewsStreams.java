@@ -1,5 +1,7 @@
 package com.g.laurent.mynews.Utils;
 
+import android.content.res.Configuration;
+
 import com.g.laurent.mynews.Utils.MostPopular.MostPopular;
 import com.g.laurent.mynews.Utils.Search.ListArticles;
 import com.g.laurent.mynews.Utils.TopStories.TopStories;

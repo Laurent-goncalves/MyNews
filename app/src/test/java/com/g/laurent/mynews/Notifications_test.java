@@ -37,8 +37,6 @@ public class Notifications_test {
         waiting_time(1000);
 
         Assert.assertEquals(2, listArticlesSearch.count);
-
-
     }
 
     private void waiting_time(int time){

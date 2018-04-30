@@ -8,7 +8,6 @@ import com.g.laurent.mynews.R;
 
 public class WebActivity extends AppCompatActivity {
 
-    private WebFragment webFragment;
     private String link;
     public static final String EXTRA_LINK = "linkaddress";
 
@@ -16,7 +15,11 @@ public class WebActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web);
+
+        // Recover the URL for the website to show
         link=getIntent().getStringExtra(EXTRA_LINK);
+
+        // configure and show webfragment
         configureAndShowWebFragment();
     }
 
@@ -39,9 +42,12 @@ public class WebActivity extends AppCompatActivity {
 
     private void configureAndShowWebFragment(){
 
+        // Create a new bundle to send the link to the WebFragment
         Bundle bundle = new Bundle();
         bundle.putString(EXTRA_LINK,link);
-        webFragment = (WebFragment) getSupportFragmentManager().findFragmentById(R.id.activity_web_frame_layout);
+
+        // Configure and show webFragment
+        WebFragment webFragment = (WebFragment) getSupportFragmentManager().findFragmentById(R.id.activity_web_frame_layout);
         if (webFragment == null) {
             webFragment = new WebFragment();
             webFragment.setArguments(bundle);

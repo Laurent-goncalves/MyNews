@@ -12,20 +12,23 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/colorPrimary"
         android:layout_margin="15dp"
-        android:hint="@string/Search_query_term" />
+        android:hint="@string/Search_query_term"
+        android:inputType="text" />
 
     <!--      AREA FOR SELECTING DATES        -->
     <LinearLayout
         android:id="@+id/listview_dates"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:baselineAligned="false">
 
         <include
             android:id="@+id/begin_date_selector"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
             android:layout_weight="1"
             layout="@layout/date_selector"/>
 
@@ -33,7 +36,8 @@
             android:id="@+id/end_date_selector"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
             android:layout_weight="1"
             layout="@layout/date_selector"/>
 
