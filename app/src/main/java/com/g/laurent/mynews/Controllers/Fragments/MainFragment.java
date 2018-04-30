@@ -152,16 +152,30 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
 
      public void configureRecyclerView(final ArrayList<Article> listarticles){
 
-         if(adapter == null) {
-             // Create adapter passing in the sample user data
-             adapter = new ArticleAdapter(listarticles, getContext());
-             // Attach the adapter to the recyclerview to populate items
-             recyclerView.setAdapter(adapter);
-             // Set layout manager to position the items
-             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-         } else {
-            adapter.notifyDataSetChanged();
+         try {
+             getActivity().runOnUiThread(new Runnable() {
+
+                 @Override
+                 public void run() {
+                     if(adapter == null) {
+                         // Create adapter passing in the sample user data
+                         adapter = new ArticleAdapter(listarticles, getContext());
+                         // Attach the adapter to the recyclerview to populate items
+                         recyclerView.setAdapter(adapter);
+                         // Set layout manager to position the items
+                         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                     } else {
+                         adapter.notifyDataSetChanged();
+                     }
+
+
+                 }
+             });
+         } catch (Throwable throwable) {
+             throwable.printStackTrace();
          }
+
+
      }
 
     @Override

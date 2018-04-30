@@ -1,6 +1,5 @@
 package com.g.laurent.mynews.Views;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
@@ -96,7 +95,6 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
 
     }
 
-    @SuppressLint("ResourceAsColor")
     private void change_color_for_read_articles(){
         title_view.setTextColor(context.getResources().getColor(R.color.color_article_read));
         date_view.setTextColor(context.getResources().getColor(R.color.color_article_read));
