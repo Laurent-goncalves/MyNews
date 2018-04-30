@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.design.widget.TabLayout;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +25,8 @@ import com.g.laurent.mynews.Models.Callback_search;
 import com.g.laurent.mynews.Models.ListArticlesSearch;
 import com.g.laurent.mynews.Models.Search_request;
 import com.g.laurent.mynews.R;
+import com.g.laurent.mynews.Views.ArticleAdapter;
+
 import java.util.Calendar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,6 +54,7 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
     private TabLayout tablayout;
     private String fragment_displayed;
     private SharedPreferences sharedPreferences_Notif;
+    private String title_tb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,19 +90,14 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
         bundle.putString(EXTRA_TAB_NAME,tab_name);
 
         // configure tablayout
-        if(tablayout==null) {
+        if(tablayout==null)
             this.configureTabLayout();
-        }
-
-        if(tablayout!=null) {
-            if (tablayout.getVisibility() == View.GONE)
-                tablayout.setVisibility(View.VISIBLE);
-        }
 
         // configure toolbar
         this.configureToolbar("MyNews");
         configure_popupmenu_icon_toolbar();
         fragment_displayed="mainfragment";
+        updateTabs();
 
         // configure and show the MainFragment
         mainFragment = new MainFragment();
@@ -116,11 +115,10 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
         bundle.putString(EXTRA_TAB_NAME,"search request");
 
         //configure toolbar and tablayout
-        if(tablayout!=null)
-            tablayout.setVisibility(View.GONE);
+        fragment_displayed="search mainfragment";
+        updateTabs();
 
         this.configureToolbar("Search Articles");
-        fragment_displayed="mainfragment";
 
         // configure and show the MainFragment
         mainFragment = new MainFragment();
@@ -139,7 +137,7 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
         //configure toolbar and tablayout
         this.configureToolbar("Notifications");
         fragment_displayed="notiffragment";
-        tablayout.setVisibility(View.GONE);
+        updateTabs();
 
         // configure and show the notifFragment
         getSupportFragmentManager().beginTransaction()
@@ -181,7 +179,7 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
         //configure toolbar and tablayout
         this.configureToolbar("Search Articles");
         fragment_displayed="searchfragment";
-        tablayout.setVisibility(View.GONE);
+        updateTabs();
 
         //configure and show SearchFragment
         getSupportFragmentManager().beginTransaction()
@@ -190,6 +188,36 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
     }
 
     // -------------- CONFIGURATION TabLayout  -----------------------------
+
+    private void updateTabs(){
+
+        try {
+            runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+
+                    switch (fragment_displayed) {
+
+                        case "searchfragment":
+                            tablayout.setVisibility(View.GONE);
+                            break;
+                        case "notiffragment":
+                            tablayout.setVisibility(View.GONE);
+                            break;
+                        case "search mainfragment":
+                            tablayout.setVisibility(View.GONE);
+                            break;
+                        case "mainfragment":
+                            if (tablayout.getVisibility() == View.GONE)
+                                tablayout.setVisibility(View.VISIBLE);
+                            break;
+                    }
+                }});
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+            }
+    }
 
     private void configureTabLayout(){
 
@@ -227,36 +255,50 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
     protected void configureToolbar(String title){
         super.configureToolbar(title);
 
-        if(toolbar!=null && title_toolbar!=null) {
-            title_toolbar.setText(title);
+        this.title_tb = title;
 
-            if(getSupportActionBar()!=null) {
-                switch (title) {
+        try {
+            runOnUiThread(new Runnable() {
 
-                    case "MyNews":
-                        icon_search.setVisibility(View.VISIBLE);
-                        icon_menu.setVisibility(View.VISIBLE);
-                        icon_notif.setVisibility(View.VISIBLE);
-                        setIconOnClickListener();
-                        // Disable the Up button
-                        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-                        break;
-                    case "Search Articles":
-                        icon_search.setVisibility(View.GONE);
-                        icon_menu.setVisibility(View.GONE);
-                        icon_notif.setVisibility(View.GONE);
-                        // Enable the Up button
-                        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                        break;
-                    case "Notifications":
-                        icon_search.setVisibility(View.GONE);
-                        icon_menu.setVisibility(View.GONE);
-                        icon_notif.setVisibility(View.GONE);
-                        // Enable the Up button
-                        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                        break;
+                @Override
+                public void run() {
+
+                    if (toolbar != null && title_toolbar != null) {
+                        title_toolbar.setText(title_tb);
+
+                        if (getSupportActionBar() != null) {
+                            switch (title_tb) {
+
+                                case "MyNews":
+                                    icon_search.setVisibility(View.VISIBLE);
+                                    icon_menu.setVisibility(View.VISIBLE);
+                                    icon_notif.setVisibility(View.VISIBLE);
+                                    setIconOnClickListener();
+                                    // Disable the Up button
+                                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                                    break;
+                                case "Search Articles":
+                                    icon_search.setVisibility(View.GONE);
+                                    icon_menu.setVisibility(View.GONE);
+                                    icon_notif.setVisibility(View.GONE);
+                                    // Enable the Up button
+                                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                                    break;
+                                case "Notifications":
+                                    icon_search.setVisibility(View.GONE);
+                                    icon_menu.setVisibility(View.GONE);
+                                    icon_notif.setVisibility(View.GONE);
+                                    // Enable the Up button
+                                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                                    break;
+                            }
+                        }
+                    }
+
                 }
-            }
+            });
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
         }
     }
 
