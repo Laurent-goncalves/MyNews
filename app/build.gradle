@@ -1,6 +1,6 @@
 //noinspection GradleCompatible
 apply plugin: 'com.android.application'
-//apply plugin: 'jacoco-android'
+apply plugin: 'jacoco-android'
 
 android {
 
