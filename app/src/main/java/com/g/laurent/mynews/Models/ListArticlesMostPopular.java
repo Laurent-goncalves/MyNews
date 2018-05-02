@@ -75,16 +75,14 @@ public class ListArticlesMostPopular {
     private String getImageUrlMostPopular(Result result){
 
         if(result.getMedia()!=null){
-
             for (Medium med : result.getMedia()) {
-
                 if (med != null) {
                     if (med.getMediaMetadata() != null) {
                         List<MediaMetadatum> mediaMetadata = med.getMediaMetadata();
-
                         for (MediaMetadatum metamedia : mediaMetadata) {
                             if (metamedia.getUrl() != null)
                                 return metamedia.getUrl(); // return image link
+
                         }
                     }
                 }

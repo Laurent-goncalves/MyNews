@@ -68,16 +68,7 @@ public class ListArticlesSearch {
                 if(mCallbackMainActivity!=null)
                     mCallbackMainActivity.launch_configure_recycler_view();
 
-                // if search for notification, save the list of ID in sharedpreferences
-                if(type_search!=null){
-
-                    if(type_search.equals("notif"))
-                        save_list_ID_articles_notif();
-
-                    // if new request for notification, create the new list of articles with the ID saved
-                    if(type_search.equals("notif_checking"))
-                        compare_lists_of_id_and_send_notification();
-                }
+                System.out.println("eee nb d'items=" + mlistArticles.size());
             }
 
             @Override
@@ -87,7 +78,23 @@ public class ListArticlesSearch {
 
             @Override
             public void onComplete() {
-                Log.e("TAG","On Complete !!");
+
+                System.out.println("eee onComplete");
+
+
+                // if search for notification, save the list of ID in sharedpreferences
+                if(type_search!=null) {
+
+                    if (type_search.equals("notif"))
+                        save_list_ID_articles_notif();
+
+                    // if new request for notification, create the new list of articles with the ID saved
+                    if (type_search.equals("notif_checking"))
+                        compare_lists_of_id_and_send_notification();
+
+
+                    Log.e("TAG", "On Complete !!");
+                }
             }
         });
     }

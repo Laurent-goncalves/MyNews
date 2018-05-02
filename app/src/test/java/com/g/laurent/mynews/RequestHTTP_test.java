@@ -35,7 +35,7 @@ public class RequestHTTP_test {
 
         final MockContext context = new MockContext();
         Search_request search_request = new Search_request("search","trump",null,null,null);
-        final ListArticlesSearch listArticlesSearch = new ListArticlesSearch(context,search_request, null, null);
+        ListArticlesSearch listArticlesSearch = new ListArticlesSearch(context,search_request, null, null);
 
         Thread.sleep(3000);
 
@@ -133,44 +133,5 @@ public class RequestHTTP_test {
     public void test_date_format(){
         assertEquals("20180201", new BaseFragment().create_date_format_yyyymmdd("01/02/2018"));
     }
-
-
-    /*
-    @Test
-    public void test_subjects(){
-
-        assertEquals(true, is_tab_name_among_subjects("travel"));
-        assertEquals(false, is_tab_name_among_subjects(null));
-        assertEquals(false, is_tab_name_among_subjects("politic"));
-
-    }
-
-    @Test
-    public void test_list_subjects(){
-
-        assertEquals("arts,sport,travel,business", create_string_list());
-    }
-
-    @Test
-    public void separate_subjects(){
-
-        assertEquals("arts", getListCheckBoxOK("arts,sport,travel,business")[0]);
-        assertEquals("sport", getListCheckBoxOK("arts,sport,travel,business")[1]);
-        assertEquals("travel", getListCheckBoxOK("arts,sport,travel,business")[2]);
-        assertEquals("business", getListCheckBoxOK("arts,sport,travel,business")[3]);
-
-    }
-
-    @Test
-    public void test_articles_read(){
-
-        String[] table = new String[5];
-
-        table[0]="1";
-
-
-        assertEquals("0,1," + null + "," + null + "," + null, add_id_articles_in_list_articles_read(table,"0"));
-    }
-*/
 
 }

@@ -7,9 +7,13 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.g.laurent.mynews.Controllers.Activities.MainActivity;
 import com.g.laurent.mynews.Models.Article;
 import com.g.laurent.mynews.Models.CallbackMainActivity;
 import com.g.laurent.mynews.Models.ListArticlesMostPopular;
@@ -54,6 +58,8 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
     private String begin_date;
     private String end_date;
     private String type_request;
+    private MainActivity mMainActivity;
+    private Context context;
 
     public MainFragment() {} // Required empty public constructor
 
@@ -62,14 +68,16 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view;
+        mMainActivity = (MainActivity) getActivity();
+        context = getContext();
 
-        if(inflater!=null) {
-            view = inflater.inflate(R.layout.fragment_recycler, container, false);
-            ButterKnife.bind(this, view);
+        view = inflater.inflate(R.layout.fragment_recycler, container, false);
+        ButterKnife.bind(this, view);
+
+        if(context!=null)
             sharedPreferences_Search = getContext().getSharedPreferences(EXTRA_SEARCH_SETTINGS, Context.MODE_PRIVATE);
-            mCallbackMainActivity = this;
-        } else
-            view = null;
+
+        mCallbackMainActivity = this;
 
         define_variables();
         configure_subject_articles(tab_name);
@@ -115,16 +123,19 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
             case "most popular":
                 listArticlesMostPopular = new ListArticlesMostPopular(subject,mCallbackMainActivity);
                 break;
-            case "search":
-                if(query==null)
-                    query = tab_name;
+            case "search request":
+                System.out.println("eee  SEARCH REQUEST --------------------------");
+                Search_request search_request = new Search_request("search", null, query, begin_date, end_date);
+                listArticlesSearch = new ListArticlesSearch(context, search_request,null,mCallbackMainActivity);
 
-                Search_request search_request = new Search_request("search", query, null, begin_date, end_date);
-                listArticlesSearch = new ListArticlesSearch(getContext(), search_request,null,mCallbackMainActivity);
+
+                System.out.println("eee  FIN SEARCH REQUEST ");
+
                 break;
             default:
-                search_request = new Search_request("search",null,tab_name,null,null);
-                listArticlesNotif = new ListArticlesSearch(getContext(), search_request,null,mCallbackMainActivity);
+                System.out.println("eee  TRAVEL ---------------");
+                search_request = new Search_request("search",tab_name,null,null,null);
+                listArticlesNotif = new ListArticlesSearch(context, search_request,null,mCallbackMainActivity);
                 break;
         }
     }
@@ -132,58 +143,76 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
     @Override
     public void launch_configure_recycler_view() {
 
-        switch(type_request){
-            case "top stories":
-                listarticles = listArticlesTopStories.getListArticles();
-                break;
-            case "most popular":
-                listarticles = listArticlesMostPopular.getListArticles();
-                break;
-            case "search":
-                listarticles=listArticlesSearch.getListArticles();
-                break;
-            case "notif_search":
-                listarticles=listArticlesNotif.getListArticles();
-                break;
-        }
+        if(listArticlesSearch==null)
+            System.out.println("eeee   listArticlesSearch est null ");
 
-        configureRecyclerView(listarticles);
+        try{
+            switch(type_request){
+                case "top stories":
+                    listarticles = listArticlesTopStories.getListArticles();
+                    break;
+                case "most popular":
+                    listarticles = listArticlesMostPopular.getListArticles();
+                    break;
+                case "search":
+                    listarticles=listArticlesSearch.getListArticles();
+                    break;
+                case "notif_search":
+                    listarticles=listArticlesNotif.getListArticles();
+                    break;
+            }
+
+           // System.out.println("eee nb d'items(3)=" + listarticles.size());
+
+            configureRecyclerView(listarticles);
+
+        } catch (Throwable error){
+
+            Toast toast = Toast.makeText(context,"No article found",Toast.LENGTH_LONG);
+            toast.show();
+            error.printStackTrace();
+        }
     }
 
-     public void configureRecyclerView(final ArrayList<Article> listarticles){
+    public void configureRecyclerView(final ArrayList<Article> listarticles){
 
-         try {
-             getActivity().runOnUiThread(new Runnable() {
+       // System.out.println("eee configureRecyclerView");
 
-                 @Override
-                 public void run() {
-                     if(adapter == null) {
-                         // Create adapter passing in the sample user data
-                         adapter = new ArticleAdapter(listarticles, getContext());
-                         // Attach the adapter to the recyclerview to populate items
-                         recyclerView.setAdapter(adapter);
-                         // Set layout manager to position the items
-                         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                     } else {
-                         adapter.notifyDataSetChanged();
-                     }
+        try {
+            mMainActivity.runOnUiThread(new Runnable() {
 
+             @Override
+             public void run() {
+                 if(adapter == null) {
 
-                 }
-             });
-         } catch (Throwable throwable) {
-             throwable.printStackTrace();
-         }
-
-
-     }
+                 //    System.out.println("eee nb d'items(4)=" + listarticles.size());
+                     // Create adapter passing in the sample user data
+                     adapter = new ArticleAdapter(listarticles, context);
+                     // Attach the adapter to the recyclerview to populate items
+                     recyclerView.setAdapter(adapter);
+                     // Set layout manager to position the items
+                     recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                 } else
+                     adapter.notifyDataSetChanged();
+             }
+         });
+        } catch (Throwable throwable) {
+         throwable.printStackTrace();
+        }
+    }
 
     @Override
     public void onResume() {
         super.onResume();
-
         if(listarticles!=null)
             configureRecyclerView(listarticles);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+        mMainActivity = (MainActivity) getActivity();
     }
 
     // ---------------------- TOOLS FOR DEFINING VARIABLES --------------------------------
@@ -206,6 +235,8 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
                 return "most popular";
             case "TOP STORIES":
                 return "top stories";
+            case "search request":
+                return "search request";
             default:
                 return "search";
         }

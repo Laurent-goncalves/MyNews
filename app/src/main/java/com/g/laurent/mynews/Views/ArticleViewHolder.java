@@ -28,7 +28,6 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
     private String list_articles_read;
     private Context context;
 
-
     public ArticleViewHolder(View itemView, Context context, SharedPreferences mSharedPreferences) {
         super(itemView);
         ButterKnife.bind(this, itemView);
@@ -103,7 +102,8 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
 
     private void setAsArticleRead(String id){
         if(!has_been_read(id)){
-            add_id_articles_in_list_articles_read(id);
+            list_id_articles_read=shift_values_from_table(list_id_articles_read,id);
+            save_list_articles_read_in_sharedpref();
             change_color_for_read_articles();
         }
     }
@@ -123,11 +123,6 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
             }
         }
         return false;
-    }
-
-    private void add_id_articles_in_list_articles_read(String id_article) {
-        list_id_articles_read=shift_values_from_table(list_id_articles_read,id_article);
-        save_list_articles_read_in_sharedpref();
     }
 
     private List<String> shift_values_from_table(List<String> table, String new_value){

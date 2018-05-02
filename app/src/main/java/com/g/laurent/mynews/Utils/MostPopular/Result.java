@@ -66,7 +66,7 @@ public class Result {
     private transient  ArrayList<String> geoFacet = null;
     @SerializedName("media")
     @Expose
-    private transient List<Medium> media;
+    private List<Medium> media = null;
 
   /*  private String mMedium_string;
     private Medium mMedium;
