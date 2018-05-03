@@ -62,7 +62,7 @@ public class ListArticlesMostPopular {
                         // define the listarticles and mlist_ID
                         listarticles.add(new Article(getImageUrlMostPopular(resultMostPopular),
                                 resultMostPopular.getPublishedDate(), resultMostPopular.getTitle(),
-                                resultMostPopular.getSection(), null, resultMostPopular.getUrl(), resultMostPopular.getId()));
+                                resultMostPopular.getSection(), null, resultMostPopular.getUrl(), resultMostPopular.getUrl()));
                     }
                 }
             }

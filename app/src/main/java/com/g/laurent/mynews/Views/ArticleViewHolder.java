@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 class ArticleViewHolder extends RecyclerView.ViewHolder {
 
@@ -32,20 +33,18 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
     private String list_articles_read;
     private Context context;
 
-    public ArticleViewHolder(View itemView, Context context, SharedPreferences mSharedPreferences) {
+    ArticleViewHolder(View itemView, Context context) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         article_view = itemView;
         list_id_articles_read = new ArrayList<>();
-        this.mSharedPreferences=mSharedPreferences;
+        this.mSharedPreferences=getDefaultSharedPreferences(context);
         this.context = context;
 
         if(mSharedPreferences!=null)
             list_articles_read = mSharedPreferences.getString(EXTRA_LIST_ID, null);
         else
             list_articles_read = null;
-
-        mSharedPreferences.edit().putString(EXTRA_LIST_ID, null).apply();
 
         configure_list_articles_read();
     }
@@ -87,9 +86,9 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
             public void onClick(View v) {
             setAsArticleRead(article.getId());
                 if(article.getWebUrl()!=null){
-                    Intent intent = new Intent(context,WebActivity.class);
+                    /*Intent intent = new Intent(context,WebActivity.class);
                     intent.putExtra(EXTRA_LINK, article.getWebUrl());
-                    context.startActivity(intent);
+                    context.startActivity(intent);*/
                 }
             }
         });
@@ -170,6 +169,7 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
 
             // create list in String
             list_to_be_saved=create_list_articles_read();
+
             // save the list built in a single string in sharedpreferences
             mSharedPreferences.edit().putString(EXTRA_LIST_ID, list_to_be_saved).apply();
         }

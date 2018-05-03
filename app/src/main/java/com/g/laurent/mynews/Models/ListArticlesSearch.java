@@ -62,8 +62,6 @@ public class ListArticlesSearch {
 
                 if(mCallbackMainActivity!=null)
                     mCallbackMainActivity.launch_configure_recycler_view();
-
-                System.out.println("eee nb d'items=" + mlistArticles.size());
             }
 
             @Override
@@ -83,7 +81,6 @@ public class ListArticlesSearch {
                     // if new request for notification, create the new list of articles with the ID saved
                     if (type_search.equals("notif_checking"))
                         compare_lists_of_id_and_send_notification();
-
 
                     Log.e("TAG", "On Complete !!");
                 }
