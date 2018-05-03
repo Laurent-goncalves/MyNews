@@ -1,12 +1,15 @@
 package com.g.laurent.mynews.Views;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
+import com.g.laurent.mynews.Controllers.Activities.WebActivity;
 import com.g.laurent.mynews.Models.Article;
 import com.g.laurent.mynews.R;
 import java.util.ArrayList;
@@ -17,14 +20,15 @@ import butterknife.ButterKnife;
 
 class ArticleViewHolder extends RecyclerView.ViewHolder {
 
-    private View article_view;
-    private SharedPreferences mSharedPreferences;
     @BindView(R.id.news_category) TextView category_view;
     @BindView(R.id.news_date) TextView date_view;
     @BindView(R.id.news_title) TextView title_view;
     @BindView(R.id.image_news) ImageView image_view;
     private static final String EXTRA_LIST_ID = "ID_ARTICLES_READ";
+    private static final String EXTRA_LINK = "linkaddress";
     private List<String> list_id_articles_read;
+    private View article_view;
+    private SharedPreferences mSharedPreferences;
     private String list_articles_read;
     private Context context;
 
@@ -81,23 +85,20 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
         article_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
             setAsArticleRead(article.getId());
-
-            if(article.getWebUrl()!=null){
-               /* Intent intent = new Intent(context,WebActivity.class);
-                intent.putExtra(EXTRA_LINK, article.getWebUrl());
-                context.startActivity(intent);*/
-            }
+                if(article.getWebUrl()!=null){
+                    Intent intent = new Intent(context,WebActivity.class);
+                    intent.putExtra(EXTRA_LINK, article.getWebUrl());
+                    context.startActivity(intent);
+                }
             }
         });
-
     }
 
     private void change_color_for_read_articles(){
-        title_view.setTextColor(context.getResources().getColor(R.color.color_article_read));
-        date_view.setTextColor(context.getResources().getColor(R.color.color_article_read));
-        category_view.setTextColor(context.getResources().getColor(R.color.color_article_read));
+        title_view.setTextColor(ContextCompat.getColor(context, R.color.color_article_read));
+        date_view.setTextColor(ContextCompat.getColor(context, R.color.color_article_read));
+        category_view.setTextColor(ContextCompat.getColor(context, R.color.color_article_read));
     }
 
     private void setAsArticleRead(String id){
