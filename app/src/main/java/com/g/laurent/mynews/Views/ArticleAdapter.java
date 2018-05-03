@@ -22,12 +22,15 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleViewHolder>{
     public ArticleAdapter(ArrayList<Article> ListArticles, Context context) {
         this.listArticles=ListArticles;
 
+        System.out.println("eee    listArticles=" + listArticles.size());
+
         if(listArticles==null) {
             Toast toast = Toast.makeText(context, "No article found", Toast.LENGTH_LONG);
             toast.show();
         }
 
         this.context=context;
+
         if(context!=null)
             mSharedPreferences=context.getSharedPreferences("LIST_ARTICLES_READ",Context.MODE_PRIVATE);
     }

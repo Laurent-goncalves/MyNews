@@ -15,19 +15,18 @@ public class ListArticlesMostPopular {
 
     private final String subject;
     private ArrayList<Article> listarticles;
-    private ArrayList<String> mlist_ID;
     private CallbackMainActivity mCallbackMainActivity;
+    private Disposable disposable;
 
     public ListArticlesMostPopular(String subject, CallbackMainActivity mCallbackMainActivity){
         this.listarticles=new ArrayList<>();
-        this.mlist_ID=new ArrayList<>();
         this.subject=subject;
         this.mCallbackMainActivity=mCallbackMainActivity;
         launch_request_most_popular();
     }
 
     private void launch_request_most_popular(){
-        Disposable disposable = NewsStreams.streamFetchgetMostPopular(subject).subscribeWith(new DisposableObserver<MostPopular>() {
+        disposable = NewsStreams.streamFetchgetMostPopular(subject).subscribeWith(new DisposableObserver<MostPopular>() {
 
             @Override
             public void onNext(MostPopular mostPopular) {
@@ -64,8 +63,6 @@ public class ListArticlesMostPopular {
                         listarticles.add(new Article(getImageUrlMostPopular(resultMostPopular),
                                 resultMostPopular.getPublishedDate(), resultMostPopular.getTitle(),
                                 resultMostPopular.getSection(), null, resultMostPopular.getUrl(), resultMostPopular.getId()));
-
-                        mlist_ID.add(resultMostPopular.getId());
                     }
                 }
             }

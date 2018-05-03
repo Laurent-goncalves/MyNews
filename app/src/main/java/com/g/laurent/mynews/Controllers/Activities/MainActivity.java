@@ -55,6 +55,7 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
     private String fragment_displayed;
     private SharedPreferences sharedPreferences_Notif;
     private String title_tb;
+    private int count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +70,7 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
         Boolean enable_notif = sharedPreferences_Notif.getBoolean(EXTRA_ENABLE_NOTIF, false);
 
         // configure alarm-manager and show MainFragment
+        this.configureTabLayout();
         this.configureAndShowMainFragment();
         this.configureAlarmManager(enable_notif);
     }
@@ -220,7 +222,6 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
     }
 
     private void configureTabLayout(){
-
         // Recover list of tabs to be displayed and find the view to be assigned
         String[] list_tabs = recover_list_tabs();
         tablayout = findViewById(R.id.activity_main_tabs);
@@ -233,12 +234,16 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
                 tablayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
                     @Override
                     public void onTabSelected(TabLayout.Tab tab) {
-                        tab_name = tab.getText().toString();
-                        configureAndShowMainFragment();
+                        if(count==0) {
+                            tab_name = tab.getText().toString();
+                            configureAndShowMainFragment();
+                            count++;
+                        }
                     }
 
                     @Override
                     public void onTabUnselected(TabLayout.Tab tab) {
+                        count = 0;
                     }
 
                     @Override

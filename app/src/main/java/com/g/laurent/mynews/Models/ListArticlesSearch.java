@@ -4,7 +4,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -21,7 +20,6 @@ import io.reactivex.observers.DisposableObserver;
 
 public class ListArticlesSearch {
 
-    private Disposable disposable;
     private ArrayList<Article> mlistArticles;
     private ArrayList<String> mlist_ID;
     private String query;
@@ -33,10 +31,6 @@ public class ListArticlesSearch {
     private SharedPreferences sharedPreferences_Notif;
     private Context context;
     public int count;
-
-    public void setSharedPreferences_Notif(SharedPreferences sharedPreferences_Notif) {
-        this.sharedPreferences_Notif = sharedPreferences_Notif;
-    }
 
     public ListArticlesSearch(Context context, Search_request search_request, SharedPreferences sharedPreferences_Notif, CallbackMainActivity mCallbackMainActivity){
 
@@ -54,12 +48,13 @@ public class ListArticlesSearch {
         this.mlist_ID=new ArrayList<>();
         this.mlistArticles=new ArrayList<>();
         this.mCallbackMainActivity=mCallbackMainActivity;
+
         launch_request_search_articles();
     }
 
     private void launch_request_search_articles(){
 
-        disposable = NewsStreams.streamFetchgetListArticles(query, filterq, begindate,enddate).subscribeWith(new DisposableObserver<ListArticles>() {
+        Disposable disposable = NewsStreams.streamFetchgetListArticles(query, filterq, begindate,enddate).subscribeWith(new DisposableObserver<ListArticles>() {
 
             @Override
             public void onNext(ListArticles listArticles) {
@@ -78,9 +73,6 @@ public class ListArticlesSearch {
 
             @Override
             public void onComplete() {
-
-                System.out.println("eee onComplete");
-
 
                 // if search for notification, save the list of ID in sharedpreferences
                 if(type_search!=null) {
@@ -140,6 +132,10 @@ public class ListArticlesSearch {
     }
 
     // ------------------------------- GETTER and SETTER ----------------------------------------------------
+
+    public void setSharedPreferences_Notif(SharedPreferences sharedPreferences_Notif) {
+        this.sharedPreferences_Notif = sharedPreferences_Notif;
+    }
 
     public ArrayList<Article> getListArticles(){
         return mlistArticles;

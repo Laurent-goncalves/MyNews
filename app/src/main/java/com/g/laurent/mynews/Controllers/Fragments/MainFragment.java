@@ -7,12 +7,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import com.g.laurent.mynews.Controllers.Activities.MainActivity;
 import com.g.laurent.mynews.Models.Article;
 import com.g.laurent.mynews.Models.CallbackMainActivity;
@@ -47,7 +45,6 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
 
     private ListArticlesTopStories listArticlesTopStories;
     private ListArticlesMostPopular listArticlesMostPopular;
-    private ListArticlesSearch listArticlesNotif;
     private ListArticlesSearch listArticlesSearch;
     private CallbackMainActivity mCallbackMainActivity;
     private ArrayList<Article> listarticles;
@@ -66,6 +63,7 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        super.onCreateView(inflater,container,savedInstanceState);
         // Inflate the layout for this fragment
         View view;
         mMainActivity = (MainActivity) getActivity();
@@ -75,7 +73,7 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
         ButterKnife.bind(this, view);
 
         if(context!=null)
-            sharedPreferences_Search = getContext().getSharedPreferences(EXTRA_SEARCH_SETTINGS, Context.MODE_PRIVATE);
+            sharedPreferences_Search = context.getSharedPreferences(EXTRA_SEARCH_SETTINGS, Context.MODE_PRIVATE);
 
         mCallbackMainActivity = this;
 
@@ -124,27 +122,18 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
                 listArticlesMostPopular = new ListArticlesMostPopular(subject,mCallbackMainActivity);
                 break;
             case "search request":
-                System.out.println("eee  SEARCH REQUEST --------------------------");
-                Search_request search_request = new Search_request("search", null, query, begin_date, end_date);
+                Search_request search_request = new Search_request("search", query,subject, begin_date, end_date);
                 listArticlesSearch = new ListArticlesSearch(context, search_request,null,mCallbackMainActivity);
-
-
-                System.out.println("eee  FIN SEARCH REQUEST ");
-
                 break;
             default:
-                System.out.println("eee  TRAVEL ---------------");
                 search_request = new Search_request("search",tab_name,null,null,null);
-                listArticlesNotif = new ListArticlesSearch(context, search_request,null,mCallbackMainActivity);
+                listArticlesSearch = new ListArticlesSearch(context, search_request,null,mCallbackMainActivity);
                 break;
         }
     }
 
     @Override
     public void launch_configure_recycler_view() {
-
-        if(listArticlesSearch==null)
-            System.out.println("eeee   listArticlesSearch est null ");
 
         try{
             switch(type_request){
@@ -155,19 +144,18 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
                     listarticles = listArticlesMostPopular.getListArticles();
                     break;
                 case "search":
-                    listarticles=listArticlesSearch.getListArticles();
+                    listarticles = listArticlesSearch.getListArticles();
+                    break;
+                case "search request":
+                    listarticles = listArticlesSearch.getListArticles();
                     break;
                 case "notif_search":
-                    listarticles=listArticlesNotif.getListArticles();
+                    listarticles = listArticlesSearch.getListArticles();
                     break;
             }
-
-           // System.out.println("eee nb d'items(3)=" + listarticles.size());
-
             configureRecyclerView(listarticles);
 
         } catch (Throwable error){
-
             Toast toast = Toast.makeText(context,"No article found",Toast.LENGTH_LONG);
             toast.show();
             error.printStackTrace();
@@ -176,16 +164,12 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
 
     public void configureRecyclerView(final ArrayList<Article> listarticles){
 
-       // System.out.println("eee configureRecyclerView");
-
         try {
             mMainActivity.runOnUiThread(new Runnable() {
 
              @Override
              public void run() {
                  if(adapter == null) {
-
-                 //    System.out.println("eee nb d'items(4)=" + listarticles.size());
                      // Create adapter passing in the sample user data
                      adapter = new ArticleAdapter(listarticles, context);
                      // Attach the adapter to the recyclerview to populate items

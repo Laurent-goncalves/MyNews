@@ -17,7 +17,7 @@ public class NewsStreams {
         return MyNewsService.getSearchListArticles("225a8498a05b4b7bb4d085d0c32e4ce8",query,filter_q,"newest", begin_date, end_date)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                //.observeOn(Schedulers.newThread())  // TEST
+               // .observeOn(Schedulers.newThread())  // TEST
                 .timeout(20, TimeUnit.SECONDS);
 
     }
