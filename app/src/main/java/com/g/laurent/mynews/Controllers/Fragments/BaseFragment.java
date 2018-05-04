@@ -264,39 +264,3 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
     }
 
 }
-
-
-        /*if (dateComp.get(Calendar.YEAR) < dateRef.get(Calendar.YEAR))
-            return true; // compare the year
-        else if (dateComp.get(Calendar.YEAR) == dateRef.get(Calendar.YEAR)){ // if both dates have the same year
-            if (dateComp.get(Calendar.MONTH) < dateRef.get(Calendar.MONTH)) // compare the months
-                return true;
-            else if (dateComp.get(Calendar.MONTH) == dateRef.get(Calendar.MONTH)) { // if both dates have the same month
-                if (dateComp.get(Calendar.DAY_OF_MONTH) < dateRef.get(Calendar.DAY_OF_MONTH)) // compare the days
-                    return true;
-                else
-                    return false;
-            }
-            else
-                return false;
-        } else
-            return false;*/
-
-
-
-
-                /*if (dateComp.get(Calendar.YEAR) > dateRef.get(Calendar.YEAR))
-            return true; // compare the year
-        else if (dateComp.get(Calendar.YEAR) == dateRef.get(Calendar.YEAR)){ // if both dates have the same year
-            if (dateComp.get(Calendar.MONTH) > dateRef.get(Calendar.MONTH)) // compare the months
-                return true;
-            else if (dateComp.get(Calendar.MONTH) == dateRef.get(Calendar.MONTH)) { // if both dates have the same month
-                if (dateComp.get(Calendar.DAY_OF_MONTH) > dateRef.get(Calendar.DAY_OF_MONTH))  // compare the days
-                    return true;
-                else
-                    return false;
-            }
-            else
-                return false;
-        } else
-            return false;*/

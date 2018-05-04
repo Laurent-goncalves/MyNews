@@ -72,6 +72,7 @@ public class NotifFragment extends BaseFragment implements Callback_settings {
             @Override
             public void afterTextChanged(Editable s) {
                 query = s.toString();
+                enable_or_not_notification_switch(false,false);
             }
         });
     }
@@ -81,9 +82,46 @@ public class NotifFragment extends BaseFragment implements Callback_settings {
         toggle_notif.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton cb, boolean on){
-                enable_notif=on;
+                enable_or_not_notification_switch(true,on);
             }
         });
+    }
+
+    private Boolean allow_switch_button_on(){
+
+        Boolean allow = false;
+
+        // if at least one subject is selected and a word is indicated in edittext
+        if(ListSubjects!=null && query!=null){
+            if(ListSubjects.size() >= 1 && !query.equals(""))
+                allow = true;
+        } else
+            allow = false;
+
+        return allow;
+    }
+
+    private void enable_or_not_notification_switch(Boolean click_switch, Boolean state){
+
+        if(click_switch){ // if the user clicks on switch button
+            enable_notif = state && allow_switch_button_on(); // if the user wants to turn on the switch and it is allowed to do it,...
+            toggle_notif.setChecked(enable_notif); // set the switch to the good state
+        } else { // if the user didn't click on switch button
+            if (!allow_switch_button_on()) {
+                enable_notif = false;
+                toggle_notif.setChecked(false);
+            }
+        }
+    }
+
+    // --------------- METHOD FROM CALLBACK --------------------------
+    // --------------- to update ListSubjects -------------------------
+
+    @Override
+    public void update_list_subjects_in_fragment(String type_modif, String subject) {
+        super.update_list_subjects_in_fragment(type_modif, subject);
+        enable_or_not_notification_switch(false,false);
+
     }
 
     // ------------------------------------ DATA saving & recovering ----------------------------------

@@ -86,9 +86,9 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
             public void onClick(View v) {
             setAsArticleRead(article.getId());
                 if(article.getWebUrl()!=null){
-                    /*Intent intent = new Intent(context,WebActivity.class);
+                    Intent intent = new Intent(context,WebActivity.class);
                     intent.putExtra(EXTRA_LINK, article.getWebUrl());
-                    context.startActivity(intent);*/
+                    context.startActivity(intent);
                 }
             }
         });

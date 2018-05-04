@@ -14,6 +14,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import java.util.ArrayList;
+
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -33,6 +35,8 @@ public class MainActivityTest {
     public void Test_read_articles() {
 
         mainFragment=mActivityTestRule.getActivity().getMainFragment();
+        SharedPreferences mSharedPreferences = getDefaultSharedPreferences(mActivityTestRule.getActivity().getApplicationContext());
+        mSharedPreferences.edit().putString("ID_ARTICLES_READ",null).apply();
 
         // Create list of fake articles
         listarticles = new ArrayList<>();
@@ -59,9 +63,8 @@ public class MainActivityTest {
         click_on_recyclerView_article(2);
         click_on_recyclerView_article(0);
 
-        SharedPreferences mSharedPreferences = mActivityTestRule.getActivity().getApplicationContext().getSharedPreferences("LIST_ARTICLES_READ", Context.MODE_PRIVATE);
-        String list_articles_read = mSharedPreferences.getString("ID_ARTICLES_READ",null);
 
+        String list_articles_read = mSharedPreferences.getString("ID_ARTICLES_READ",null);
         Assert.assertTrue(list_articles_read.equals("ID1,ID3,ID2,"));
 
     }

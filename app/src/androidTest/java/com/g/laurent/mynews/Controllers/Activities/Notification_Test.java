@@ -49,6 +49,7 @@ public class Notification_Test {
         mSharedPreferences.edit().putString("query_notif",null).apply();
         mSharedPreferences.edit().putBoolean("enable_notifications",false).apply();
 
+
         try {
             runOnUiThread(new Runnable() {
 
@@ -66,6 +67,18 @@ public class Notification_Test {
                 onChildView(withId(R.id.CheckBox)).perform(click());
 
         waiting_time(1000);
+        ViewInteraction appCompatEditText = onView(
+                allOf(withId(R.id.query_area),
+                        childAtPosition(
+                                allOf(withId(R.id.setting_fragment_layout),
+                                        childAtPosition(
+                                                withId(R.id.activity_main_frame_layout),
+                                                2)),
+                                0),
+                        isDisplayed()));
+        appCompatEditText.perform(replaceText("trump"), closeSoftKeyboard());
+
+        waiting_time(1000);
         ViewInteraction switch_ = onView(
                 allOf(withId(R.id.toggle_enabling_notif), withText("Enable notifications (once per day)"),
                         childAtPosition(
@@ -77,17 +90,6 @@ public class Notification_Test {
                         isDisplayed()));
         switch_.perform(click());
 
-        waiting_time(1000);
-        ViewInteraction appCompatEditText = onView(
-                allOf(withId(R.id.query_area),
-                        childAtPosition(
-                                allOf(withId(R.id.setting_fragment_layout),
-                                        childAtPosition(
-                                                withId(R.id.activity_main_frame_layout),
-                                                2)),
-                                0),
-                        isDisplayed()));
-        appCompatEditText.perform(replaceText("trump"), closeSoftKeyboard());
 
         waiting_time(1000);
         ViewInteraction appCompatImageButton2 = onView(
@@ -106,12 +108,12 @@ public class Notification_Test {
         // Recover sharedpreferrences
         String list_subjects = mSharedPreferences.getString("list_subjects_notif",null);
         String query = mSharedPreferences.getString("query_notif", null);
-        Boolean enable = mSharedPreferences.getBoolean("enable_notifications", false);
+        Boolean enable_end = mSharedPreferences.getBoolean("enable_notifications", false);
 
         // Check if data are saved correctly
         Assert.assertTrue(list_subjects.equals("Arts"));
         Assert.assertTrue(query.equals("trump"));
-        Assert.assertTrue(enable);
+        Assert.assertTrue(enable_end);
 
     }
 

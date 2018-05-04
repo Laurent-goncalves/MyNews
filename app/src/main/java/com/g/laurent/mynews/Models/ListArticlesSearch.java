@@ -29,6 +29,7 @@ public class ListArticlesSearch {
     private String type_search;
     private CallbackMainActivity mCallbackMainActivity;
     private SharedPreferences sharedPreferences_Notif;
+    private static final String EXTRA_OLD_ID_NOTIF = "list_old_ID_notif";
     private Context context;
     public int count;
 
@@ -149,7 +150,7 @@ public class ListArticlesSearch {
         ArrayList<String> list_ID_old;
 
         if(sharedPreferences_Notif!=null)
-            list_ID_old = string_transform_to_list(sharedPreferences_Notif.getString("list_old_ID_notif",null));
+            list_ID_old = string_transform_to_list(sharedPreferences_Notif.getString(EXTRA_OLD_ID_NOTIF,null));
         else
             list_ID_old=null;
 
@@ -185,7 +186,7 @@ public class ListArticlesSearch {
         }
 
         if(sharedPreferences_Notif!=null && List_ID!=null)
-            sharedPreferences_Notif.edit().putString("list_old_ID_notif",list_transform_to_String(List_ID)).apply();
+            sharedPreferences_Notif.edit().putString(EXTRA_OLD_ID_NOTIF,list_transform_to_String(List_ID)).apply();
     }
 
     private String list_transform_to_String(ArrayList<String> list){
