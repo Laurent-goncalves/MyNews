@@ -29,11 +29,11 @@ public class MainActivityTest {
     MainFragment mainFragment;
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
+    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class,false,false);
 
     @Test
     public void Test_read_articles() {
-
+        mActivityTestRule.launchActivity(null);
         mainFragment=mActivityTestRule.getActivity().getMainFragment();
         SharedPreferences mSharedPreferences = getDefaultSharedPreferences(mActivityTestRule.getActivity().getApplicationContext());
         mSharedPreferences.edit().putString("ID_ARTICLES_READ",null).apply();
@@ -65,8 +65,9 @@ public class MainActivityTest {
 
 
         String list_articles_read = mSharedPreferences.getString("ID_ARTICLES_READ",null);
+        //System.out.println("eee list_articles_read="+list_articles_read);
         Assert.assertTrue(list_articles_read.equals("ID1,ID3,ID2,"));
-
+        mActivityTestRule.finishActivity();
     }
 
     private void click_on_recyclerView_article(int position){

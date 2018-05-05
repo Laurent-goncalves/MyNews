@@ -36,10 +36,12 @@ import static org.hamcrest.core.IsNot.not;
 public class Search_request_Test {
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
+    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class,false,false);
 
     @Test
     public void Test_enable_or_disable_button_search() throws Exception {
+
+        mActivityTestRule.launchActivity(null);
 
         mActivityTestRule.getActivity().setToolbar(null);
         mActivityTestRule.getActivity().configureAndShowSearchFragment();
@@ -75,12 +77,13 @@ public class Search_request_Test {
 
         // check if search button is disabled
         onView(withId(R.id.button_search)).check(matches(not(isClickable())));
-
+        mActivityTestRule.finishActivity();
     }
 
     @Test
     public void Test_gridview_update_list_subjects(){
 
+        mActivityTestRule.launchActivity(null);
         mActivityTestRule.getActivity().setToolbar(null);
         mActivityTestRule.getActivity().configureAndShowSearchFragment();
         SearchFragment searchFragment = mActivityTestRule.getActivity().getSearchFragment();
@@ -104,6 +107,7 @@ public class Search_request_Test {
         onData(anything()).inAdapterView(withId(R.id.gridview_check_box)).atPosition(0).
                 onChildView(withId(R.id.CheckBox)).perform(click());
         Assert.assertTrue(searchFragment.getListSubjects().toString().equals("[Business, Travel]"));
+        mActivityTestRule.finishActivity();
     }
 
     private void waiting_time(){

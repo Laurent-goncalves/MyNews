@@ -38,11 +38,13 @@ public class Notification_Test {
     NotifFragment notifFragment;
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
+    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class,false,false);
 
 
     @Test
     public void Test_notification_settings_saving(){
+
+        mActivityTestRule.launchActivity(null);
 
         SharedPreferences mSharedPreferences = mActivityTestRule.getActivity().getApplicationContext().getSharedPreferences("NOTIFICATION_settings", Context.MODE_PRIVATE);
         mSharedPreferences.edit().putString("list_subjects_notif",null).apply();
@@ -114,6 +116,7 @@ public class Notification_Test {
         Assert.assertTrue(list_subjects.equals("Arts"));
         Assert.assertTrue(query.equals("trump"));
         Assert.assertTrue(enable_end);
+        mActivityTestRule.finishActivity();
 
     }
 
