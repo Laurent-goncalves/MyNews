@@ -21,19 +21,19 @@ import io.reactivex.observers.DisposableObserver;
 public class ListArticlesSearch {
 
     private ArrayList<Article> mlistArticles;
-    private ArrayList<String> mlist_ID;
+    //private ArrayList<String> mlist_ID;
     private String query;
     private String filterq;
     private String begindate;
     private String enddate;
     private String type_search;
-    private CallbackMainActivity mCallbackMainActivity;
+    private CallbackMainFragment mCallbackMainFragment;
     private SharedPreferences sharedPreferences_Notif;
     private static final String EXTRA_OLD_ID_NOTIF = "list_old_ID_notif";
     private Context context;
     public int count;
 
-    public ListArticlesSearch(Context context, Search_request search_request, SharedPreferences sharedPreferences_Notif, CallbackMainActivity mCallbackMainActivity){
+    public ListArticlesSearch(Context context, Search_request search_request, SharedPreferences sharedPreferences_Notif, CallbackMainFragment mCallbackMainFragment){
 
         this.sharedPreferences_Notif=sharedPreferences_Notif;
 
@@ -46,23 +46,20 @@ public class ListArticlesSearch {
         }
 
         this.context=context;
-        this.mlist_ID=new ArrayList<>();
+        //this.mlist_ID=new ArrayList<>();
         this.mlistArticles=new ArrayList<>();
-        this.mCallbackMainActivity=mCallbackMainActivity;
+        this.mCallbackMainFragment=mCallbackMainFragment;
 
         launch_request_search_articles();
     }
 
     private void launch_request_search_articles(){
 
-        Disposable disposable = NewsStreams.streamFetchgetListArticles(query, filterq, begindate,enddate).subscribeWith(new DisposableObserver<ListArticles>() {
+        Disposable disposable = NewsStreams.streamFetchgetListArticles(context, query, filterq, begindate,enddate).subscribeWith(new DisposableObserver<ListArticles>() {
 
             @Override
             public void onNext(ListArticles listArticles) {
                 Build_data_SearchArticles(listArticles);
-
-                if(mCallbackMainActivity!=null)
-                    mCallbackMainActivity.launch_configure_recycler_view();
             }
 
             @Override
@@ -72,6 +69,9 @@ public class ListArticlesSearch {
 
             @Override
             public void onComplete() {
+
+                if(mCallbackMainFragment!=null)
+                    mCallbackMainFragment.launch_configure_recycler_view();
 
                 // if search for notification, save the list of ID in sharedpreferences
                 if(type_search!=null) {
@@ -105,7 +105,7 @@ public class ListArticlesSearch {
                                     doc.getHeadline().getMain(),
                                     doc.getSectionName(),null,doc.getWebUrl(),doc.getId()));
 
-                            mlist_ID.add(doc.getId());
+                            //mlist_ID.add(doc.getId());
                         }
                     }
                 }
@@ -185,7 +185,7 @@ public class ListArticlesSearch {
                 List_ID.add(article.getId());
         }
 
-        if(sharedPreferences_Notif!=null && List_ID!=null)
+        if(sharedPreferences_Notif != null)
             sharedPreferences_Notif.edit().putString(EXTRA_OLD_ID_NOTIF,list_transform_to_String(List_ID)).apply();
     }
 

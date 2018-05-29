@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.design.widget.TabLayout;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,8 +24,6 @@ import com.g.laurent.mynews.Models.Callback_search;
 import com.g.laurent.mynews.Models.ListArticlesSearch;
 import com.g.laurent.mynews.Models.Search_request;
 import com.g.laurent.mynews.R;
-import com.g.laurent.mynews.Views.ArticleAdapter;
-
 import java.util.Calendar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -74,6 +71,7 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
         this.configureAndShowMainFragment();
         this.configureAlarmManager(enable_notif);
     }
+
 
     @Override
     protected void onResume() {
@@ -235,7 +233,9 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
                     @Override
                     public void onTabSelected(TabLayout.Tab tab) {
                         if(count==0) {
-                            tab_name = tab.getText().toString();
+                            if (tab.getText() != null) {
+                                tab_name = tab.getText().toString();
+                            }
                             configureAndShowMainFragment();
                             count++;
                         }

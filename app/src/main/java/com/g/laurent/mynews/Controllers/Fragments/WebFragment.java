@@ -25,7 +25,11 @@ public class WebFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_web, container, false);
         ButterKnife.bind(this, view);
         String EXTRA_LINK = "linkaddress";
-        String link = getArguments().getString(EXTRA_LINK);
+        String link = null;
+
+        if (getArguments() != null) {
+            link = getArguments().getString(EXTRA_LINK);
+        }
         mWebView.loadUrl(link);
         return view;
     }

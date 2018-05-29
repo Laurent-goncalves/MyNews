@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import com.g.laurent.mynews.Controllers.Activities.MainActivity;
 import com.g.laurent.mynews.Models.Article;
-import com.g.laurent.mynews.Models.CallbackMainActivity;
+import com.g.laurent.mynews.Models.CallbackMainFragment;
 import com.g.laurent.mynews.Models.ListArticlesMostPopular;
 import com.g.laurent.mynews.Models.ListArticlesSearch;
 import com.g.laurent.mynews.Models.ListArticlesTopStories;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainFragment extends Fragment implements CallbackMainActivity {
+public class MainFragment extends Fragment implements CallbackMainFragment {
 
     @BindView(R.id.fragment_recycler_view)
     RecyclerView recyclerView;
@@ -46,7 +46,7 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
     private ListArticlesTopStories listArticlesTopStories;
     private ListArticlesMostPopular listArticlesMostPopular;
     private ListArticlesSearch listArticlesSearch;
-    private CallbackMainActivity mCallbackMainActivity;
+    private CallbackMainFragment mCallbackMainFragment;
     private ArrayList<Article> listarticles;
 
     private String tab_name;
@@ -75,7 +75,7 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
         if(context!=null)
             sharedPreferences_Search = context.getSharedPreferences(EXTRA_SEARCH_SETTINGS, Context.MODE_PRIVATE);
 
-        mCallbackMainActivity = this;
+        mCallbackMainFragment = this;
 
         define_variables();
         configure_subject_articles(tab_name);
@@ -116,18 +116,18 @@ public class MainFragment extends Fragment implements CallbackMainActivity {
 
         switch(type_request){
             case "top stories":
-                listArticlesTopStories = new ListArticlesTopStories(subject,mCallbackMainActivity);
+                listArticlesTopStories = new ListArticlesTopStories(context,subject,mCallbackMainFragment);
                 break;
             case "most popular":
-                listArticlesMostPopular = new ListArticlesMostPopular(subject,mCallbackMainActivity);
+                listArticlesMostPopular = new ListArticlesMostPopular(context, subject,mCallbackMainFragment);
                 break;
             case "search request":
                 Search_request search_request = new Search_request("search", query,subject, begin_date, end_date);
-                listArticlesSearch = new ListArticlesSearch(context, search_request,null,mCallbackMainActivity);
+                listArticlesSearch = new ListArticlesSearch(context, search_request,null,mCallbackMainFragment);
                 break;
             default:
                 search_request = new Search_request("search",tab_name,null,null,null);
-                listArticlesSearch = new ListArticlesSearch(context, search_request,null,mCallbackMainActivity);
+                listArticlesSearch = new ListArticlesSearch(context, search_request,null,mCallbackMainFragment);
                 break;
         }
     }

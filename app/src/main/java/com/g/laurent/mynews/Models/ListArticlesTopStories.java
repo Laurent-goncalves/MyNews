@@ -1,5 +1,6 @@
 package com.g.laurent.mynews.Models;
 
+import android.content.Context;
 import android.util.Log;
 import com.g.laurent.mynews.Utils.NewsStreams;
 import com.g.laurent.mynews.Utils.TopStories.MultimediumTopS;
@@ -14,26 +15,24 @@ public class ListArticlesTopStories {
 
     private ArrayList<Article> listarticles;
     private String subject;
-    private CallbackMainActivity mCallbackMainActivity;
-    private Disposable disposable;
+    private CallbackMainFragment mCallbackMainFragment;
+    private Context context;
 
-    public ListArticlesTopStories(String subject, CallbackMainActivity mCallbackMainActivity){
+    public ListArticlesTopStories(Context context, String subject, CallbackMainFragment mCallbackMainFragment){
         this.listarticles=new ArrayList<>();
         this.subject=subject;
-        this.mCallbackMainActivity = mCallbackMainActivity;
+        this.context=context;
+        this.mCallbackMainFragment = mCallbackMainFragment;
         launch_request_top_stories();
     }
 
     private void launch_request_top_stories(){
 
-        disposable = NewsStreams.streamFetchgetTopStories(subject).subscribeWith(new DisposableObserver<TopStories>() {
+        Disposable disposable = NewsStreams.streamFetchgetTopStories(context, subject).subscribeWith(new DisposableObserver<TopStories>() {
 
             @Override
             public void onNext(TopStories topStories) {
                 Build_data_topStories(topStories);
-
-                if (mCallbackMainActivity != null)
-                    mCallbackMainActivity.launch_configure_recycler_view();
             }
 
             @Override
@@ -43,6 +42,8 @@ public class ListArticlesTopStories {
 
             @Override
             public void onComplete() {
+                if (mCallbackMainFragment != null)
+                    mCallbackMainFragment.launch_configure_recycler_view();
                 Log.e("TAG", "On Complete !!");
             }
         });

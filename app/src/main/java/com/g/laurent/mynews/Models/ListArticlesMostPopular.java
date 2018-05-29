@@ -1,5 +1,6 @@
 package com.g.laurent.mynews.Models;
 
+import android.content.Context;
 import android.util.Log;
 import com.g.laurent.mynews.Utils.MostPopular.MediaMetadatum;
 import com.g.laurent.mynews.Utils.MostPopular.Medium;
@@ -15,25 +16,23 @@ public class ListArticlesMostPopular {
 
     private final String subject;
     private ArrayList<Article> listarticles;
-    private CallbackMainActivity mCallbackMainActivity;
-    private Disposable disposable;
+    private CallbackMainFragment mCallbackMainFragment;
+    private Context context;
 
-    public ListArticlesMostPopular(String subject, CallbackMainActivity mCallbackMainActivity){
+    public ListArticlesMostPopular(Context context, String subject, CallbackMainFragment mCallbackMainFragment){
         this.listarticles=new ArrayList<>();
         this.subject=subject;
-        this.mCallbackMainActivity=mCallbackMainActivity;
+        this.context=context;
+        this.mCallbackMainFragment=mCallbackMainFragment;
         launch_request_most_popular();
     }
 
     private void launch_request_most_popular(){
-        disposable = NewsStreams.streamFetchgetMostPopular(subject).subscribeWith(new DisposableObserver<MostPopular>() {
+        Disposable disposable = NewsStreams.streamFetchgetMostPopular(context, subject).subscribeWith(new DisposableObserver<MostPopular>() {
 
             @Override
             public void onNext(MostPopular mostPopular) {
                 Build_data_mostPopular(mostPopular);
-
-                if (mCallbackMainActivity != null)
-                    mCallbackMainActivity.launch_configure_recycler_view();
             }
 
             @Override
@@ -43,6 +42,8 @@ public class ListArticlesMostPopular {
 
             @Override
             public void onComplete() {
+                if (mCallbackMainFragment != null)
+                    mCallbackMainFragment.launch_configure_recycler_view();
                 Log.e("TAG", "On Complete !!");
             }
         });

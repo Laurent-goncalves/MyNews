@@ -33,10 +33,11 @@
     <!-- items for date selection -->
     <string name="begindate">Begin date</string>
     <string name="enddate">End date</string>
+    <string name="APIkey">225a8498a05b4b7bb4d085d0c32e4ce8</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_base_setting">BaseSettingActivity</string>
-    <string name="image_news">Image News</string>
+    <string name="image_news">225a8498a05b4b7bb4d085d0c32e4ce8</string>
 
 </resources>

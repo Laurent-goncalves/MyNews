@@ -64,9 +64,11 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
         View view = inflater.inflate(R.layout.settings_fragment, container, false);
 
         // Assign variables
-        sharedPreferences_Notif = getContext().getSharedPreferences(EXTRA_NOTIF_SETTINGS, Context.MODE_PRIVATE);
-        sharedPreferences_Search = getContext().getSharedPreferences(EXTRA_SEARCH_SETTINGS, Context.MODE_PRIVATE);
-        ListSubjects=new ArrayList<>();
+        if(getContext()!=null) {
+            sharedPreferences_Notif = getContext().getSharedPreferences(EXTRA_NOTIF_SETTINGS, Context.MODE_PRIVATE);
+            sharedPreferences_Search = getContext().getSharedPreferences(EXTRA_SEARCH_SETTINGS, Context.MODE_PRIVATE);
+            ListSubjects = new ArrayList<>();
+        }
 
         return view;
     }
