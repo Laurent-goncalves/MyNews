@@ -48,6 +48,8 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
     private static final String EXTRA_ENABLE_NOTIF = "enable_notifications";
     private static final String EXTRA_QUERY_NOTIF = "query_notif";
     private static final String EXTRA_SUBJECTS_NOTIF = "list_subjects_notif";
+    private static final String EXTRA_API_KEY = "api_key";
+    private String api_key;
     private TabLayout tablayout;
     private String fragment_displayed;
     private SharedPreferences sharedPreferences_Notif;
@@ -65,6 +67,7 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
         tab_name=list_tabs[0];
         sharedPreferences_Notif = this.getSharedPreferences(EXTRA_NOTIF_SETTINGS, Context.MODE_PRIVATE);
         Boolean enable_notif = sharedPreferences_Notif.getBoolean(EXTRA_ENABLE_NOTIF, false);
+        api_key = getApplicationContext().getResources().getString(R.string.APIkey);
 
         // configure alarm-manager and show MainFragment
         this.configureTabLayout();
@@ -88,6 +91,7 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
         // Create a new bundle to send the tab_name to MainFragment
         Bundle bundle = new Bundle();
         bundle.putString(EXTRA_TAB_NAME,tab_name);
+        bundle.putString(EXTRA_API_KEY,api_key);
 
         // configure tablayout
         if(tablayout==null)
@@ -113,6 +117,7 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
         // Create a new bundle to send the tab_name to MainFragment (for search requests)
         Bundle bundle = new Bundle();
         bundle.putString(EXTRA_TAB_NAME,"search request");
+        bundle.putString(EXTRA_API_KEY,api_key);
 
         //configure toolbar and tablayout
         fragment_displayed="search mainfragment";
@@ -133,6 +138,9 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
         NotifFragment notifFragment = new NotifFragment();
         callback_save_settings = notifFragment; // create callback for savings settings
         callback_list_subjects = notifFragment; // create callback for updating list of subjects
+        Bundle bundle = new Bundle();
+        bundle.putString(EXTRA_API_KEY,api_key);
+        notifFragment.setArguments(bundle);
 
         //configure toolbar and tablayout
         this.configureToolbar("Notifications");
@@ -175,6 +183,9 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
 
         searchFragment = new SearchFragment();
         callback_list_subjects = searchFragment;
+        Bundle bundle = new Bundle();
+        bundle.putString(EXTRA_API_KEY,api_key);
+        searchFragment.setArguments(bundle);
 
         //configure toolbar and tablayout
         this.configureToolbar("Search Articles");
@@ -383,12 +394,12 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
             String new_query = sharedPreferences_Notif.getString(EXTRA_QUERY_NOTIF,null);
             String list_subj = sharedPreferences_Notif.getString(EXTRA_SUBJECTS_NOTIF,null);
 
-            if(list_subj!=null) {
+            if(list_subj!=null && new_query!=null) {
 
                 // create a new request for search
                 Search_request search_request = new Search_request("notif_checking",new_query, list_subj, null, null);
                 // Launch a new search request to check if there are new articles
-                new ListArticlesSearch(getApplicationContext(), search_request, sharedPreferences_Notif, null);
+                new ListArticlesSearch(getApplicationContext(),api_key, search_request, sharedPreferences_Notif, null);
             }
         }
     }

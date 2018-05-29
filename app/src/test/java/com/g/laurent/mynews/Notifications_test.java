@@ -17,7 +17,8 @@ public class Notifications_test {
 
         MockContext context = new MockContext();
         SharedPreferences sharedpref = Mockito.mock(SharedPreferences.class);
-        ListArticlesSearch listArticlesSearch =new ListArticlesSearch(context,null,null,null);
+        String api_key = "225a8498a05b4b7bb4d085d0c32e4ce8";
+        ListArticlesSearch listArticlesSearch =new ListArticlesSearch(context,api_key,null,null,null);
 
         // create list of new Articles with the new ID4
         ArrayList<Article> list_new_articles = new ArrayList<>();

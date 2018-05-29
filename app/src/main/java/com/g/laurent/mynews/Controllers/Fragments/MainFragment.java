@@ -42,6 +42,7 @@ public class MainFragment extends Fragment implements CallbackMainFragment {
     private static final String EXTRA_QUERY_SEARCH = "query_search";
     private static final String EXTRA_SUBJECTS_SEARCH = "list_subjects_search";
     private static final String EXTRA_SEARCH_SETTINGS = "SEARCH_settings";
+    private static final String EXTRA_API_KEY = "api_key";
 
     private ListArticlesTopStories listArticlesTopStories;
     private ListArticlesMostPopular listArticlesMostPopular;
@@ -114,21 +115,28 @@ public class MainFragment extends Fragment implements CallbackMainFragment {
 
         type_request = define_type_request(tab_name);
 
-        switch(type_request){
-            case "top stories":
-                listArticlesTopStories = new ListArticlesTopStories(context,subject,mCallbackMainFragment);
-                break;
-            case "most popular":
-                listArticlesMostPopular = new ListArticlesMostPopular(context, subject,mCallbackMainFragment);
-                break;
-            case "search request":
-                Search_request search_request = new Search_request("search", query,subject, begin_date, end_date);
-                listArticlesSearch = new ListArticlesSearch(context, search_request,null,mCallbackMainFragment);
-                break;
-            default:
-                search_request = new Search_request("search",tab_name,null,null,null);
-                listArticlesSearch = new ListArticlesSearch(context, search_request,null,mCallbackMainFragment);
-                break;
+        if(getArguments()!=null){
+            String api_key = getArguments().getString(EXTRA_API_KEY,null);
+
+            if(api_key!=null){
+
+                switch(type_request){
+                    case "top stories":
+                        listArticlesTopStories = new ListArticlesTopStories(api_key,subject,mCallbackMainFragment);
+                        break;
+                    case "most popular":
+                        listArticlesMostPopular = new ListArticlesMostPopular(api_key, subject,mCallbackMainFragment);
+                        break;
+                    case "search request":
+                        Search_request search_request = new Search_request("search", query,subject, begin_date, end_date);
+                        listArticlesSearch = new ListArticlesSearch(context, api_key,search_request,null,mCallbackMainFragment);
+                        break;
+                    default:
+                        search_request = new Search_request("search",tab_name,null,null,null);
+                        listArticlesSearch = new ListArticlesSearch(context, api_key,search_request,null,mCallbackMainFragment);
+                        break;
+                }
+            }
         }
     }
 

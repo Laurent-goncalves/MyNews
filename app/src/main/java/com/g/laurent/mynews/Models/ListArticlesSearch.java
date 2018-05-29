@@ -21,7 +21,7 @@ import io.reactivex.observers.DisposableObserver;
 public class ListArticlesSearch {
 
     private ArrayList<Article> mlistArticles;
-    //private ArrayList<String> mlist_ID;
+    private final String api_key;
     private String query;
     private String filterq;
     private String begindate;
@@ -33,7 +33,7 @@ public class ListArticlesSearch {
     private Context context;
     public int count;
 
-    public ListArticlesSearch(Context context, Search_request search_request, SharedPreferences sharedPreferences_Notif, CallbackMainFragment mCallbackMainFragment){
+    public ListArticlesSearch(Context context, String api_key, Search_request search_request, SharedPreferences sharedPreferences_Notif, CallbackMainFragment mCallbackMainFragment){
 
         this.sharedPreferences_Notif=sharedPreferences_Notif;
 
@@ -45,6 +45,7 @@ public class ListArticlesSearch {
             this.enddate=search_request.getEnddate();
         }
 
+        this.api_key=api_key;
         this.context=context;
         //this.mlist_ID=new ArrayList<>();
         this.mlistArticles=new ArrayList<>();
@@ -55,7 +56,7 @@ public class ListArticlesSearch {
 
     private void launch_request_search_articles(){
 
-        Disposable disposable = NewsStreams.streamFetchgetListArticles(context, query, filterq, begindate,enddate).subscribeWith(new DisposableObserver<ListArticles>() {
+        Disposable disposable = NewsStreams.streamFetchgetListArticles(api_key, query, filterq, begindate,enddate).subscribeWith(new DisposableObserver<ListArticles>() {
 
             @Override
             public void onNext(ListArticles listArticles) {

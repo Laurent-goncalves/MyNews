@@ -1,5 +1,6 @@
 package com.g.laurent.mynews.Controllers.Fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.Editable;
@@ -19,6 +20,9 @@ import butterknife.ButterKnife;
 public class NotifFragment extends BaseFragment implements Callback_settings {
 
     private static final String EXTRA_SAVING_TYPE = "notif";
+    private static final String EXTRA_API_KEY = "api_key";
+    private Context context;
+    private String api_key;
 
     public NotifFragment() {
         // Required empty public constructor
@@ -31,6 +35,11 @@ public class NotifFragment extends BaseFragment implements Callback_settings {
         View view = inflater.inflate(R.layout.settings_fragment, container, false);
         ButterKnife.bind(this, view);
         type = EXTRA_SAVING_TYPE;
+        context = getContext();
+
+        if(getArguments()!=null)
+            api_key=getArguments().getString(EXTRA_API_KEY,null);
+
         recover_data();
         configure_edit_text();
         configure_checkboxes();
@@ -135,10 +144,10 @@ public class NotifFragment extends BaseFragment implements Callback_settings {
         // Recover data saved
         recover_data();
 
-        if(enable_notif){
+        if(enable_notif && api_key!=null){
             Search_request search_request = new Search_request(EXTRA_SAVING_TYPE,query,list_transform_to_String(ListSubjects),null,null);
             // Launch request with criteria and save the list of id of articles
-            new ListArticlesSearch(getContext(),search_request,sharedPreferences_Notif,null);
+            new ListArticlesSearch(context,api_key,search_request,sharedPreferences_Notif,null);
         }
     }
 

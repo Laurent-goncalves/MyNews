@@ -34,8 +34,9 @@ public class RequestHTTP_test {
     public void Test_Search_Request() throws Exception {
 
         final MockContext context = new MockContext();
+        String api_key = "225a8498a05b4b7bb4d085d0c32e4ce8";
         Search_request search_request = new Search_request("search","trump",null,null,null);
-        ListArticlesSearch listArticlesSearch = new ListArticlesSearch(context,search_request, null, null);
+        ListArticlesSearch listArticlesSearch = new ListArticlesSearch(context,api_key,search_request, null, null);
 
         Thread.sleep(3000);
 
@@ -45,7 +46,8 @@ public class RequestHTTP_test {
     @Test
     public void Test_Most_Popular_Request() throws Exception {
 
-        final ListArticlesMostPopular listArticlesMostPopular = new ListArticlesMostPopular("travel",null);
+        String api_key = "225a8498a05b4b7bb4d085d0c32e4ce8";
+        final ListArticlesMostPopular listArticlesMostPopular = new ListArticlesMostPopular(api_key,"travel",null);
 
         Thread.sleep(3000);
 
@@ -55,7 +57,8 @@ public class RequestHTTP_test {
     @Test
     public void Test_TopStories_Request() throws Exception {
 
-        final ListArticlesTopStories listArticlesTopStories = new ListArticlesTopStories("travel",null);
+        String api_key = "225a8498a05b4b7bb4d085d0c32e4ce8";
+        final ListArticlesTopStories listArticlesTopStories = new ListArticlesTopStories(api_key,"travel",null);
 
         Thread.sleep(3000);
 

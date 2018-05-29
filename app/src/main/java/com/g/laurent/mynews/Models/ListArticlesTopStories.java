@@ -1,6 +1,5 @@
 package com.g.laurent.mynews.Models;
 
-import android.content.Context;
 import android.util.Log;
 import com.g.laurent.mynews.Utils.NewsStreams;
 import com.g.laurent.mynews.Utils.TopStories.MultimediumTopS;
@@ -16,19 +15,19 @@ public class ListArticlesTopStories {
     private ArrayList<Article> listarticles;
     private String subject;
     private CallbackMainFragment mCallbackMainFragment;
-    private Context context;
+    private final String api_key;
 
-    public ListArticlesTopStories(Context context, String subject, CallbackMainFragment mCallbackMainFragment){
+    public ListArticlesTopStories(String api_key, String subject, CallbackMainFragment mCallbackMainFragment){
         this.listarticles=new ArrayList<>();
         this.subject=subject;
-        this.context=context;
+        this.api_key=api_key;
         this.mCallbackMainFragment = mCallbackMainFragment;
         launch_request_top_stories();
     }
 
     private void launch_request_top_stories(){
 
-        Disposable disposable = NewsStreams.streamFetchgetTopStories(context, subject).subscribeWith(new DisposableObserver<TopStories>() {
+        Disposable disposable = NewsStreams.streamFetchgetTopStories(api_key, subject).subscribeWith(new DisposableObserver<TopStories>() {
 
             @Override
             public void onNext(TopStories topStories) {

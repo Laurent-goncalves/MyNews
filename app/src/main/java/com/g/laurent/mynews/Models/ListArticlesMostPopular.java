@@ -1,6 +1,5 @@
 package com.g.laurent.mynews.Models;
 
-import android.content.Context;
 import android.util.Log;
 import com.g.laurent.mynews.Utils.MostPopular.MediaMetadatum;
 import com.g.laurent.mynews.Utils.MostPopular.Medium;
@@ -15,20 +14,20 @@ import io.reactivex.observers.DisposableObserver;
 public class ListArticlesMostPopular {
 
     private final String subject;
+    private final String api_key;
     private ArrayList<Article> listarticles;
     private CallbackMainFragment mCallbackMainFragment;
-    private Context context;
 
-    public ListArticlesMostPopular(Context context, String subject, CallbackMainFragment mCallbackMainFragment){
+    public ListArticlesMostPopular(String api_key, String subject, CallbackMainFragment mCallbackMainFragment){
         this.listarticles=new ArrayList<>();
         this.subject=subject;
-        this.context=context;
+        this.api_key = api_key;
         this.mCallbackMainFragment=mCallbackMainFragment;
         launch_request_most_popular();
     }
 
     private void launch_request_most_popular(){
-        Disposable disposable = NewsStreams.streamFetchgetMostPopular(context, subject).subscribeWith(new DisposableObserver<MostPopular>() {
+        Disposable disposable = NewsStreams.streamFetchgetMostPopular(api_key, subject).subscribeWith(new DisposableObserver<MostPopular>() {
 
             @Override
             public void onNext(MostPopular mostPopular) {
