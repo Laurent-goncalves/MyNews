@@ -16,13 +16,13 @@ public class ListArticlesMostPopular {
     private final String subject;
     private final String api_key;
     private ArrayList<Article> listarticles;
-    private CallbackMainFragment mCallbackMainFragment;
+    private CallbackPageFragment mCallbackPageFragment;
 
-    public ListArticlesMostPopular(String api_key, String subject, CallbackMainFragment mCallbackMainFragment){
+    public ListArticlesMostPopular(String api_key, String subject, CallbackPageFragment mCallbackPageFragment){
         this.listarticles=new ArrayList<>();
         this.subject=subject;
         this.api_key = api_key;
-        this.mCallbackMainFragment=mCallbackMainFragment;
+        this.mCallbackPageFragment = mCallbackPageFragment;
         launch_request_most_popular();
     }
 
@@ -41,8 +41,8 @@ public class ListArticlesMostPopular {
 
             @Override
             public void onComplete() {
-                if (mCallbackMainFragment != null)
-                    mCallbackMainFragment.launch_configure_recycler_view();
+                if (mCallbackPageFragment != null)
+                    mCallbackPageFragment.launch_configure_recycler_view();
                 Log.e("TAG", "On Complete !!");
             }
         });

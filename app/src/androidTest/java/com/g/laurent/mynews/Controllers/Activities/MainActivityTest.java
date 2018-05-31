@@ -1,12 +1,11 @@
 package com.g.laurent.mynews.Controllers.Activities;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
-import com.g.laurent.mynews.Controllers.Fragments.MainFragment;
+import com.g.laurent.mynews.Controllers.Fragments.PageFragment;
 import com.g.laurent.mynews.Models.Article;
 import com.g.laurent.mynews.R;
 import org.junit.Assert;
@@ -26,7 +25,7 @@ import static android.support.test.internal.runner.junit4.statement.UiThreadStat
 public class MainActivityTest {
 
     ArrayList<Article> listarticles;
-    MainFragment mainFragment;
+    PageFragment mPageFragment;
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class,false,false);
@@ -34,7 +33,7 @@ public class MainActivityTest {
     @Test
     public void Test_read_articles() {
         mActivityTestRule.launchActivity(null);
-        mainFragment=mActivityTestRule.getActivity().getMainFragment();
+        mPageFragment =mActivityTestRule.getActivity().getPageFragment();
         SharedPreferences mSharedPreferences = getDefaultSharedPreferences(mActivityTestRule.getActivity().getApplicationContext());
         mSharedPreferences.edit().putString("ID_ARTICLES_READ",null).apply();
 
@@ -51,7 +50,7 @@ public class MainActivityTest {
 
                 @Override
                 public void run() {
-                    mainFragment.configureRecyclerView(listarticles);
+                    mPageFragment.configureRecyclerView(listarticles);
                 }
             });
         } catch (Throwable throwable) {

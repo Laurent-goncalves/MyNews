@@ -1,12 +1,15 @@
 package com.g.laurent.mynews.Controllers.Activities;
 
 import android.app.AlarmManager;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.design.widget.TabLayout;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.PopupMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,7 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.g.laurent.mynews.Controllers.Fragments.MainFragment;
+import com.g.laurent.mynews.Controllers.Fragments.PageFragment;
 import com.g.laurent.mynews.Controllers.Fragments.NotifFragment;
 import com.g.laurent.mynews.Controllers.Fragments.SearchFragment;
 import com.g.laurent.mynews.Models.AlarmReceiver;
@@ -24,6 +27,8 @@ import com.g.laurent.mynews.Models.Callback_search;
 import com.g.laurent.mynews.Models.ListArticlesSearch;
 import com.g.laurent.mynews.Models.Search_request;
 import com.g.laurent.mynews.R;
+import com.g.laurent.mynews.Views.PageAdapter;
+
 import java.util.Calendar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,17 +36,17 @@ import butterknife.ButterKnife;
 public class MainActivity extends BaseActivity implements Callback_search, AlarmReceiver.callbackAlarm {
 
     /** DESCRIPTION : The MainActivity which extends BaseActivity will be used to integrate :
-     *       - the MainFragment with the recyclerView (top stories, most popular, search,...)
+     *       - the PageFragment with the recyclerView (top stories, most popular, search,...)
      *       - the SearchFragment with the different criteria of search
      *       - the NotifFragment with the settings for sending notifications **/
 
-    @BindView(R.id.toolbar_menu_button) ImageButton icon_menu;
-    @BindView(R.id.toolbar_menu_search) ImageButton icon_search;
-    @BindView(R.id.toolbar_menu_notif) ImageButton icon_notif;
-    @BindView(R.id.toolbar_title) TextView title_toolbar;
+    @BindView(R.id.toolbar_menu_button) ImageButton mIcon_menu;
+    @BindView(R.id.toolbar_menu_search) ImageButton mIcon_search;
+    @BindView(R.id.toolbar_menu_notif) ImageButton mIcon_notif;
+    @BindView(R.id.toolbar_title) TextView mTitle_toolbar;
     @BindView(R.id.relative_layout_toolbar) RelativeLayout mRelativeLayout;
     @BindView(R.id.activity_main_frame_layout) LinearLayout mLinearLayout;
-    private MainFragment mainFragment;
+    private PageFragment mPageFragment;
     private SearchFragment searchFragment;
     private static final String EXTRA_TAB_NAME = "tab_name";
     private static final String EXTRA_NOTIF_SETTINGS = "NOTIFICATION_settings";
@@ -55,6 +60,7 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
     private SharedPreferences sharedPreferences_Notif;
     private String title_tb;
     private int count;
+    private PageAdapter mPageAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,9 +75,8 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
         Boolean enable_notif = sharedPreferences_Notif.getBoolean(EXTRA_ENABLE_NOTIF, false);
         api_key = getApplicationContext().getResources().getString(R.string.APIkey);
 
-        // configure alarm-manager and show MainFragment
-        this.configureTabLayout();
-        this.configureAndShowMainFragment();
+        // configure alarm-manager and show PageFragment
+        this.configureViewPagerAndTabs();
         this.configureAlarmManager(enable_notif);
     }
 
@@ -88,7 +93,7 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
 
     private void configureAndShowMainFragment(){
 
-        // Create a new bundle to send the tab_name to MainFragment
+        // Create a new bundle to send the tab_name to PageFragment
         Bundle bundle = new Bundle();
         bundle.putString(EXTRA_TAB_NAME,tab_name);
         bundle.putString(EXTRA_API_KEY,api_key);
@@ -103,18 +108,18 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
         fragment_displayed="mainfragment";
         updateTabs();
 
-        // configure and show the MainFragment
-        mainFragment = new MainFragment();
-        mainFragment.setArguments(bundle);
+        // configure and show the PageFragment
+        mPageFragment = new PageFragment();
+        mPageFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.activity_main_frame_layout, mainFragment)
+                .replace(R.id.activity_main_frame_layout, mPageFragment)
                 .commit();
     }
 
     @Override
     public void configureAndShowMainFragmentSearchRequest(){
 
-        // Create a new bundle to send the tab_name to MainFragment (for search requests)
+        // Create a new bundle to send the tab_name to PageFragment (for search requests)
         Bundle bundle = new Bundle();
         bundle.putString(EXTRA_TAB_NAME,"search request");
         bundle.putString(EXTRA_API_KEY,api_key);
@@ -125,11 +130,11 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
 
         this.configureToolbar("Search Articles");
 
-        // configure and show the MainFragment
-        mainFragment = new MainFragment();
-        mainFragment.setArguments(bundle);
+        // configure and show the PageFragment
+        mPageFragment = new PageFragment();
+        mPageFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.activity_main_frame_layout, mainFragment)
+                .replace(R.id.activity_main_frame_layout, mPageFragment)
                 .commit();
     }
 
@@ -265,6 +270,28 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
         }
     }
 
+    private void configureViewPagerAndTabs(){
+
+        // Get ViewPager from layout
+        ViewPager pager = (ViewPager)findViewById(R.id.activity_main_viewpager);
+
+        pager.setOffscreenPageLimit(3);
+
+        PageAdapter mPageAdapter = new PageAdapter(getSupportFragmentManager(), api_key);
+
+        // Set Adapter PageAdapter and glue it together
+        pager.setAdapter(mPageAdapter);
+
+        // Get TabLayout from layout
+        TabLayout tabs= (TabLayout)findViewById(R.id.activity_main_tabs);
+
+        // Glue TabLayout and ViewPager together
+        tabs.setupWithViewPager(pager);
+
+        // Design purpose. Tabs have the same width
+        tabs.setTabMode(TabLayout.MODE_FIXED);
+    }
+
     // -------------- CONFIGURATION Toolbar & icons -----------------------
 
     @Override
@@ -279,31 +306,31 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
                 @Override
                 public void run() {
 
-                    if (toolbar != null && title_toolbar != null) {
-                        title_toolbar.setText(title_tb);
+                    if (toolbar != null && mTitle_toolbar != null) {
+                        mTitle_toolbar.setText(title_tb);
 
                         if (getSupportActionBar() != null) {
                             switch (title_tb) {
 
                                 case "MyNews":
-                                    icon_search.setVisibility(View.VISIBLE);
-                                    icon_menu.setVisibility(View.VISIBLE);
-                                    icon_notif.setVisibility(View.VISIBLE);
+                                    mIcon_search.setVisibility(View.VISIBLE);
+                                    mIcon_menu.setVisibility(View.VISIBLE);
+                                    mIcon_notif.setVisibility(View.VISIBLE);
                                     setIconOnClickListener();
                                     // Disable the Up button
                                     getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                                     break;
                                 case "Search Articles":
-                                    icon_search.setVisibility(View.GONE);
-                                    icon_menu.setVisibility(View.GONE);
-                                    icon_notif.setVisibility(View.GONE);
+                                    mIcon_search.setVisibility(View.GONE);
+                                    mIcon_menu.setVisibility(View.GONE);
+                                    mIcon_notif.setVisibility(View.GONE);
                                     // Enable the Up button
                                     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                                     break;
                                 case "Notifications":
-                                    icon_search.setVisibility(View.GONE);
-                                    icon_menu.setVisibility(View.GONE);
-                                    icon_notif.setVisibility(View.GONE);
+                                    mIcon_search.setVisibility(View.GONE);
+                                    mIcon_menu.setVisibility(View.GONE);
+                                    mIcon_notif.setVisibility(View.GONE);
                                     // Enable the Up button
                                     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                                     break;
@@ -320,11 +347,11 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
 
     private void configure_popupmenu_icon_toolbar(){
 
-        icon_notif.setOnClickListener(new View.OnClickListener() {
+        mIcon_notif.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Creating the instance of PopupMenu
-                PopupMenu popup = new PopupMenu(MainActivity.this, icon_notif);
+                PopupMenu popup = new PopupMenu(MainActivity.this, mIcon_notif);
                 //Inflating the Popup using xml file
                 popup.getMenuInflater().inflate(R.menu.menu_toolbar, popup.getMenu());
 
@@ -357,7 +384,7 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
 
     private void setIconOnClickListener(){
 
-        icon_search.setOnClickListener(new Button.OnClickListener() {
+        mIcon_search.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 configureToolbar("Search Articles");
                 configureAndShowSearchFragment();
@@ -370,7 +397,7 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                // if the notifFragment is displayed when clicking on up button, save settings of notification and show mainFragment
+                // if the notifFragment is displayed when clicking on up button, save settings of notification and show mPageFragment
                 if(fragment_displayed.equals("notiffragment"))
                     callback_save_settings.save_data();
 
@@ -399,16 +426,17 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
                 // create a new request for search
                 Search_request search_request = new Search_request("notif_checking",new_query, list_subj, null, null);
                 // Launch a new search request to check if there are new articles
-                new ListArticlesSearch(getApplicationContext(),api_key, search_request, sharedPreferences_Notif, null);
+                new ListArticlesSearch(getApplicationContext(),api_key, search_request, sharedPreferences_Notif);
             }
         }
     }
 
-    public MainFragment getMainFragment() {
-        return mainFragment;
+    public PageFragment getPageFragment() {
+        return mPageFragment;
     }
 
     public SearchFragment getSearchFragment() {
         return searchFragment;
     }
+
 }

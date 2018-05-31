@@ -147,7 +147,7 @@ public class NotifFragment extends BaseFragment implements Callback_settings {
         if(enable_notif && api_key!=null){
             Search_request search_request = new Search_request(EXTRA_SAVING_TYPE,query,list_transform_to_String(ListSubjects),null,null);
             // Launch request with criteria and save the list of id of articles
-            new ListArticlesSearch(context,api_key,search_request,sharedPreferences_Notif,null);
+            new ListArticlesSearch(context,api_key,search_request,sharedPreferences_Notif);
         }
     }
 

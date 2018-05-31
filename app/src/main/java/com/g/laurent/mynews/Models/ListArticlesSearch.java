@@ -18,8 +18,9 @@ import java.util.List;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 
-public class ListArticlesSearch {
+public class ListArticlesSearch implements Disposable {
 
+    private Disposable disposable;
     private ArrayList<Article> mlistArticles;
     private final String api_key;
     private String query;
@@ -27,14 +28,38 @@ public class ListArticlesSearch {
     private String begindate;
     private String enddate;
     private String type_search;
-    private CallbackMainFragment mCallbackMainFragment;
+    private CallbackPageFragment mCallbackPageFragment;
     private SharedPreferences sharedPreferences_Notif;
     private static final String EXTRA_OLD_ID_NOTIF = "list_old_ID_notif";
+    private static final String NOTIF_INITIAL_ID_SEARCH = "create_initial_list_id_notif";
+    private static final String NOTIF_NEW_ID_SEARCH = "create_new_list_id_notif_for_checking";
     private Context context;
     public int count;
 
-    public ListArticlesSearch(Context context, String api_key, Search_request search_request, SharedPreferences sharedPreferences_Notif, CallbackMainFragment mCallbackMainFragment){
+    // ------------------------------------------ CONSTRUCTORS -----------------------------------------------
+    public ListArticlesSearch(Context context, String api_key, Search_request search_request, CallbackPageFragment mCallbackPageFragment){
 
+        // CONSTRUCTOR FOR SEARCH REQUEST (tab "travel" and search request)
+
+        if(search_request!=null){
+            this.type_search=search_request.getType_search();
+            this.query=search_request.getQuery();
+            this.filterq=search_request.getFilterq();
+            this.begindate=search_request.getBegindate();
+            this.enddate=search_request.getEnddate();
+        }
+
+        this.api_key=api_key;
+        this.context=context;
+        this.mlistArticles=new ArrayList<>();
+        this.mCallbackPageFragment = mCallbackPageFragment;
+
+        launch_request_search_articles();
+    }
+
+    public ListArticlesSearch(Context context, String api_key, Search_request search_request, SharedPreferences sharedPreferences_Notif){
+
+        // CONSTRUCTOR FOR SEARCH REQUEST FOR NOTIFICATION
         this.sharedPreferences_Notif=sharedPreferences_Notif;
 
         if(search_request!=null){
@@ -47,16 +72,16 @@ public class ListArticlesSearch {
 
         this.api_key=api_key;
         this.context=context;
-        //this.mlist_ID=new ArrayList<>();
         this.mlistArticles=new ArrayList<>();
-        this.mCallbackMainFragment=mCallbackMainFragment;
 
-        launch_request_search_articles();
+        launch_request_search_articles_notification();
     }
 
-    private void launch_request_search_articles(){
+    // ------------------------------------------ API REQUESTS -----------------------------------------------
 
-        Disposable disposable = NewsStreams.streamFetchgetListArticles(api_key, query, filterq, begindate,enddate).subscribeWith(new DisposableObserver<ListArticles>() {
+    private void launch_request_search_articles_notification() {
+
+        this.disposable = NewsStreams.streamFetchgetListArticles(api_key, query, filterq, begindate,enddate).subscribeWith(new DisposableObserver<ListArticles>() {
 
             @Override
             public void onNext(ListArticles listArticles) {
@@ -71,21 +96,38 @@ public class ListArticlesSearch {
             @Override
             public void onComplete() {
 
-                if(mCallbackMainFragment!=null)
-                    mCallbackMainFragment.launch_configure_recycler_view();
-
-                // if search for notification, save the list of ID in sharedpreferences
                 if(type_search!=null) {
 
-                    if (type_search.equals("notif"))
+                    // if the search consists in initializing the list of ID of articles
+                    if (type_search.equals(NOTIF_INITIAL_ID_SEARCH))
                         save_list_ID_articles_notif();
 
-                    // if new request for notification, create the new list of articles with the ID saved
-                    if (type_search.equals("notif_checking"))
+                    // if the search consists in getting a new list of ID of articles for comparison with old list of ID
+                    if (type_search.equals(NOTIF_NEW_ID_SEARCH))
                         compare_lists_of_id_and_send_notification();
-
-                    Log.e("TAG", "On Complete !!");
                 }
+            }
+        });
+    }
+
+    private void launch_request_search_articles(){
+
+        this.disposable = NewsStreams.streamFetchgetListArticles(api_key, query, filterq, begindate,enddate).subscribeWith(new DisposableObserver<ListArticles>() {
+
+            @Override
+            public void onNext(ListArticles listArticles) {
+                Build_data_SearchArticles(listArticles);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.e("TAG","On Error"+Log.getStackTraceString(e));
+            }
+
+            @Override
+            public void onComplete() {
+                if(mCallbackPageFragment !=null)
+                    mCallbackPageFragment.launch_configure_recycler_view();
             }
         });
     }
@@ -106,7 +148,6 @@ public class ListArticlesSearch {
                                     doc.getHeadline().getMain(),
                                     doc.getSectionName(),null,doc.getWebUrl(),doc.getId()));
 
-                            //mlist_ID.add(doc.getId());
                         }
                     }
                 }
@@ -278,4 +319,13 @@ public class ListArticlesSearch {
         return false;
     }
 
+    @Override
+    public void dispose() {
+        if (this.disposable != null && !this.disposable.isDisposed()) this.disposable.dispose();
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return false;
+    }
 }

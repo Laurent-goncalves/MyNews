@@ -17,6 +17,11 @@ public class Search_request {
         this.enddate=enddate;
     }
 
+    public Search_request(String type_search, String query) {
+        this.type_search=type_search;
+        this.query=query;
+    }
+
     public String getType_search() {
         return type_search;
     }

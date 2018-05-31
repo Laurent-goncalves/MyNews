@@ -1,7 +1,7 @@
 package com.g.laurent.mynews.Models;
 
 
-public interface CallbackMainFragment {
+public interface CallbackPageFragment {
 
     void launch_configure_recycler_view();
 }

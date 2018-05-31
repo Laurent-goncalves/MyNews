@@ -14,14 +14,14 @@ public class ListArticlesTopStories {
 
     private ArrayList<Article> listarticles;
     private String subject;
-    private CallbackMainFragment mCallbackMainFragment;
+    private CallbackPageFragment mCallbackPageFragment;
     private final String api_key;
 
-    public ListArticlesTopStories(String api_key, String subject, CallbackMainFragment mCallbackMainFragment){
+    public ListArticlesTopStories(String api_key, String subject, CallbackPageFragment mCallbackPageFragment){
         this.listarticles=new ArrayList<>();
         this.subject=subject;
         this.api_key=api_key;
-        this.mCallbackMainFragment = mCallbackMainFragment;
+        this.mCallbackPageFragment = mCallbackPageFragment;
         launch_request_top_stories();
     }
 
@@ -41,8 +41,8 @@ public class ListArticlesTopStories {
 
             @Override
             public void onComplete() {
-                if (mCallbackMainFragment != null)
-                    mCallbackMainFragment.launch_configure_recycler_view();
+                if (mCallbackPageFragment != null)
+                    mCallbackPageFragment.launch_configure_recycler_view();
                 Log.e("TAG", "On Complete !!");
             }
         });
