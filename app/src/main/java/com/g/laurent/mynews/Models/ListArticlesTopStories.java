@@ -1,6 +1,5 @@
 package com.g.laurent.mynews.Models;
 
-import android.util.Log;
 import com.g.laurent.mynews.Utils.NewsStreams;
 import com.g.laurent.mynews.Utils.TopStories.MultimediumTopS;
 import com.g.laurent.mynews.Utils.TopStories.ResultTopS;
@@ -10,8 +9,9 @@ import java.util.List;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 
-public class ListArticlesTopStories {
+public class ListArticlesTopStories implements Disposable {
 
+    private Disposable disposable;
     private ArrayList<Article> listarticles;
     private String subject;
     private CallbackPageFragment mCallbackPageFragment;
@@ -27,7 +27,7 @@ public class ListArticlesTopStories {
 
     private void launch_request_top_stories(){
 
-        Disposable disposable = NewsStreams.streamFetchgetTopStories(api_key, subject).subscribeWith(new DisposableObserver<TopStories>() {
+        disposable = NewsStreams.streamFetchgetTopStories(api_key, subject).subscribeWith(new DisposableObserver<TopStories>() {
 
             @Override
             public void onNext(TopStories topStories) {
@@ -36,14 +36,14 @@ public class ListArticlesTopStories {
 
             @Override
             public void onError(Throwable e) {
-                Log.e("TAG", "On Error" + Log.getStackTraceString(e));
+                if (mCallbackPageFragment != null)
+                    mCallbackPageFragment.display_error_message(e.getMessage());
             }
 
             @Override
             public void onComplete() {
                 if (mCallbackPageFragment != null)
-                    mCallbackPageFragment.launch_configure_recycler_view();
-                Log.e("TAG", "On Complete !!");
+                    mCallbackPageFragment.finish_configure_recyclerView();
             }
         });
 
@@ -85,5 +85,15 @@ public class ListArticlesTopStories {
 
     public ArrayList<Article>  getListArticles(){
         return listarticles;
+    }
+
+    @Override
+    public void dispose() {
+        if (this.disposable != null && !this.disposable.isDisposed()) this.disposable.dispose();
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return false;
     }
 }

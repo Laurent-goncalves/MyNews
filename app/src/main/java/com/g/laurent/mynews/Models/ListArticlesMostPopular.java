@@ -11,8 +11,9 @@ import java.util.List;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 
-public class ListArticlesMostPopular {
+public class ListArticlesMostPopular implements Disposable {
 
+    private Disposable disposable;
     private final String subject;
     private final String api_key;
     private ArrayList<Article> listarticles;
@@ -27,7 +28,7 @@ public class ListArticlesMostPopular {
     }
 
     private void launch_request_most_popular(){
-        Disposable disposable = NewsStreams.streamFetchgetMostPopular(api_key, subject).subscribeWith(new DisposableObserver<MostPopular>() {
+        disposable = NewsStreams.streamFetchgetMostPopular(api_key , subject).subscribeWith(new DisposableObserver<MostPopular>() {
 
             @Override
             public void onNext(MostPopular mostPopular) {
@@ -36,13 +37,14 @@ public class ListArticlesMostPopular {
 
             @Override
             public void onError(Throwable e) {
-                Log.e("TAG", "On Error" + Log.getStackTraceString(e));
+                if (mCallbackPageFragment != null)
+                    mCallbackPageFragment.display_error_message(e.getMessage());
             }
 
             @Override
             public void onComplete() {
                 if (mCallbackPageFragment != null)
-                    mCallbackPageFragment.launch_configure_recycler_view();
+                    mCallbackPageFragment.finish_configure_recyclerView();
                 Log.e("TAG", "On Complete !!");
             }
         });
@@ -92,5 +94,15 @@ public class ListArticlesMostPopular {
 
     public ArrayList<Article>  getListArticles(){
         return listarticles;
+    }
+
+    @Override
+    public void dispose() {
+        if (this.disposable != null && !this.disposable.isDisposed()) this.disposable.dispose();
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return false;
     }
 }

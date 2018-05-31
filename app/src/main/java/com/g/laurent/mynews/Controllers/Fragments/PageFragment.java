@@ -5,13 +5,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.g.laurent.mynews.Controllers.Activities.MainActivity;
 import com.g.laurent.mynews.Models.Article;
@@ -22,21 +21,16 @@ import com.g.laurent.mynews.Models.ListArticlesTopStories;
 import com.g.laurent.mynews.Models.Search_request;
 import com.g.laurent.mynews.R;
 import com.g.laurent.mynews.Views.ArticleAdapter;
-import com.g.laurent.mynews.Views.PageAdapter;
-
 import java.util.ArrayList;
 import java.util.Objects;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class PageFragment extends Fragment implements CallbackPageFragment {
 
-    @BindView(R.id.fragment_recycler_view)
-    RecyclerView recyclerView;
-
+    @BindView(R.id.fragment_recycler_view) RecyclerView recyclerView;
+    @BindView(R.id.progressBar) ProgressBar mProgressBar;
     private ArticleAdapter mArticleAdapter;
-    private PageAdapter mPageAdapter;
     private SharedPreferences sharedPreferences_Search;
     public static final String EXTRA_TAB_NAME = "tab_name";
     public static final String EXTRA_TAB_TOP_STORIES = "tab_top_stories";
@@ -67,7 +61,6 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
     private String subject;
     private String begin_date;
     private String end_date;
-    private String type_request;
     private MainActivity mMainActivity;
     private Context context;
     private String api_key;
@@ -97,21 +90,22 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
         View view = inflater.inflate(R.layout.fragment_recycler, container, false);
         ButterKnife.bind(this, view);
 
-        // Assign variables
+        // Assign and initialize variables
         mMainActivity = (MainActivity) getActivity();
         mCallbackPageFragment = this;
         context = getContext();
+        mProgressBar.setVisibility(View.VISIBLE);
 
         // Recover the tab_name and the API key
         if(getArguments()!=null){
             api_key = getArguments().getString(EXTRA_API_KEY,null);
             tab_name = getArguments().getString(EXTRA_TAB_NAME);
-            configure_recyclerView();
+            start_configure_recyclerView();
         }
         return view;
     }
 
-    private void configure_recyclerView(){
+    private void start_configure_recyclerView(){
 
         if(tab_name.equals(EXTRA_TAB_SEARCH)){ // if user has clicked on tab "travel"
 
@@ -165,36 +159,54 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
     }
 
     @Override
-    public void launch_configure_recycler_view() {
+    public void finish_configure_recyclerView() {
 
-        try{
-            switch(tab_name){
-                case EXTRA_TAB_TOP_STORIES:
-                    listarticles = listArticlesTopStories.getListArticles();
-                    break;
-                case EXTRA_TAB_MOST_POPULAR:
-                    listarticles = listArticlesMostPopular.getListArticles();
-                    break;
-                case EXTRA_TAB_TRAVEL:
-                    listarticles = listArticlesSearch.getListArticles();
-                    break;
-                case EXTRA_TAB_SEARCH:
-                    listarticles = listArticlesSearch.getListArticles();
-                    break;
-                case "notif_search":
-                    listarticles = listArticlesSearch.getListArticles();
-                    break;
+        mMainActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    switch(tab_name){
+                        case EXTRA_TAB_TOP_STORIES:
+                            listarticles = listArticlesTopStories.getListArticles();
+                            break;
+                        case EXTRA_TAB_MOST_POPULAR:
+                            listarticles = listArticlesMostPopular.getListArticles();
+                            break;
+                        case EXTRA_TAB_TRAVEL:
+                            listarticles = listArticlesSearch.getListArticles();
+                            break;
+                        case EXTRA_TAB_SEARCH:
+                            listarticles = listArticlesSearch.getListArticles();
+                            break;
+                        case "notif_search":
+                            listarticles = listArticlesSearch.getListArticles();
+                            break;
+                    }
+                    configureRecyclerView(listarticles);
+
+                } catch (final Throwable error){
+                    Toast toast = Toast.makeText(context,"No article found \r\n" + error ,Toast.LENGTH_LONG);
+                    toast.show();
+                    error.printStackTrace();
+                }
             }
-            configureRecyclerView(listarticles);
-
-        } catch (Throwable error){
-            Toast toast = Toast.makeText(context,"No article found",Toast.LENGTH_LONG);
-            toast.show();
-            error.printStackTrace();
-        }
+        });
     }
 
+    @Override
+    public void display_error_message(final String error) {
 
+        mMainActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                mProgressBar.setVisibility(View.GONE);
+                String text_to_display = "Error network request: \r\n" + error;
+                Toast toast = Toast.makeText(getContext(),text_to_display,Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
+    }
 
     public void configureRecyclerView(final ArrayList<Article> listarticles){
 
@@ -217,6 +229,8 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
         } catch (Throwable throwable) {
          throwable.printStackTrace();
         }
+
+        mProgressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -245,20 +259,5 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
         }
         return null;
     }
-
-    private String define_type_request(String tab_name){
-
-        switch (tab_name) {
-            case "MOST POPULAR":
-                return "most popular";
-            case "TOP STORIES":
-                return "top stories";
-            case "search request":
-                return "search request";
-            default:
-                return "search";
-        }
-    }
-
 
 }

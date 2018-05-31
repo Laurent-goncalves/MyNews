@@ -8,7 +8,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.annotation.GlideModule;
+import com.bumptech.glide.module.AppGlideModule;
+import com.bumptech.glide.request.RequestOptions;
 import com.g.laurent.mynews.Controllers.Activities.WebActivity;
 import com.g.laurent.mynews.Models.Article;
 import com.g.laurent.mynews.R;
@@ -78,6 +82,8 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
         // Put image article into imageView
         Glide.with(article_view)
                 .load(article.getImageUrl())
+                .apply(new RequestOptions()
+                        .placeholder(R.drawable.placeholder))
                 .into(image_view);
 
         article_view.setClickable(true);

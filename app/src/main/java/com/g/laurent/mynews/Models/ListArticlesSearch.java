@@ -121,13 +121,14 @@ public class ListArticlesSearch implements Disposable {
 
             @Override
             public void onError(Throwable e) {
-                Log.e("TAG","On Error"+Log.getStackTraceString(e));
+                if (mCallbackPageFragment != null)
+                    mCallbackPageFragment.display_error_message(e.getMessage());
             }
 
             @Override
             public void onComplete() {
                 if(mCallbackPageFragment !=null)
-                    mCallbackPageFragment.launch_configure_recycler_view();
+                    mCallbackPageFragment.finish_configure_recyclerView();
             }
         });
     }

@@ -274,7 +274,6 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
 
         // Get ViewPager from layout
         ViewPager pager = (ViewPager)findViewById(R.id.activity_main_viewpager);
-
         pager.setOffscreenPageLimit(3);
 
         PageAdapter mPageAdapter = new PageAdapter(getSupportFragmentManager(), api_key);

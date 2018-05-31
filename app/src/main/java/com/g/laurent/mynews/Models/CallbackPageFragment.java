@@ -3,5 +3,8 @@ package com.g.laurent.mynews.Models;
 
 public interface CallbackPageFragment {
 
-    void launch_configure_recycler_view();
+    void finish_configure_recyclerView();
+
+    void display_error_message(String error);
+
 }
