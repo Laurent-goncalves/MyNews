@@ -134,7 +134,7 @@ public class SearchFragment extends BaseFragment {
         });
     }
 
-    @Override
+  /*  @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
@@ -142,7 +142,7 @@ public class SearchFragment extends BaseFragment {
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement OnArticleSelectedListener");
         }
-    }
+    }*/
 
     // -----------------------------------------------------------------------------
     // ------------ CONFIGURATION CALENDAR / DATES (begin & end) -------------------

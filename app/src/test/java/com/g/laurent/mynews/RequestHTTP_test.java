@@ -1,5 +1,6 @@
 package com.g.laurent.mynews;
 
+import android.content.SharedPreferences;
 import android.test.mock.MockContext;
 
 import com.g.laurent.mynews.Controllers.Activities.MainActivity;
@@ -36,7 +37,7 @@ public class RequestHTTP_test {
         final MockContext context = new MockContext();
         String api_key = "225a8498a05b4b7bb4d085d0c32e4ce8";
         Search_request search_request = new Search_request("search","trump",null,null,null);
-        ListArticlesSearch listArticlesSearch = new ListArticlesSearch(context,api_key,search_request, null, null);
+        ListArticlesSearch listArticlesSearch = new ListArticlesSearch(context,api_key,search_request, (SharedPreferences) null);
 
         Thread.sleep(3000);
 
