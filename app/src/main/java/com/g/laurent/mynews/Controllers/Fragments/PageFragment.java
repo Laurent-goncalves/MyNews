@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.g.laurent.mynews.Controllers.Activities.MainActivity;
+import com.g.laurent.mynews.Controllers.Activities.SettingActivity;
 import com.g.laurent.mynews.Models.Article;
 import com.g.laurent.mynews.Models.CallbackPageFragment;
 import com.g.laurent.mynews.Models.ListArticlesMostPopular;
@@ -32,23 +33,27 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
     @BindView(R.id.progressBar) ProgressBar mProgressBar;
     private ArticleAdapter mArticleAdapter;
     private SharedPreferences sharedPreferences_Search;
+
+    // TYPE OF ACTIVITY
+    private static final String EXTRA_ACTIVITY_TYPE = "type_activity";
     public static final String EXTRA_TAB_NAME = "tab_name";
     public static final String EXTRA_TAB_TOP_STORIES = "tab_top_stories";
     public static final String EXTRA_TAB_MOST_POPULAR = "tab_most_popular";
-    public static final String EXTRA_TAB_SEARCH = "tab_search";
-    public static final String EXTRA_TAB_TRAVEL = "tab_travel";
-
     public static final String EXTRA_QUERY = "query";
     public static final String EXTRA_SUBJECT = "subject";
     public static final String EXTRA_BEGIN = "begin_date";
     public static final String EXTRA_END = "end_date";
 
+    // SETTINGS FROM SEARCH FRAGMENT
     private static final String EXTRA_BEGIN_DATE = "begin_date_search";
     private static final String EXTRA_END_DATE = "end_date_search";
     private static final String EXTRA_QUERY_SEARCH = "query_search";
     private static final String EXTRA_SUBJECTS_SEARCH = "list_subjects_search";
     private static final String EXTRA_SEARCH_SETTINGS = "SEARCH_settings";
+
+    // API key
     private static final String EXTRA_API_KEY = "api_key";
+
 
     private ListArticlesTopStories listArticlesTopStories;
     private ListArticlesMostPopular listArticlesMostPopular;
@@ -62,12 +67,14 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
     private String begin_date;
     private String end_date;
     private MainActivity mMainActivity;
+    private SettingActivity mSettingActivity;
     private Context context;
     private String api_key;
+    private String tab_interest ;
 
     public PageFragment() {} // Required empty public constructor
 
-    public static PageFragment newInstance(String tab_name, String api_key) {
+    public static PageFragment newInstance(String tab_name, String api_key, String activity_type) {
 
         // Create new fragment
         PageFragment frag = new PageFragment();
@@ -76,6 +83,7 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
         Bundle bundle = new Bundle();
         bundle.putString(EXTRA_TAB_NAME, tab_name);
         bundle.putString(EXTRA_API_KEY, api_key);
+        bundle.putString(EXTRA_ACTIVITY_TYPE, activity_type);
         frag.setArguments(bundle);
 
         return(frag);
@@ -91,33 +99,43 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
         ButterKnife.bind(this, view);
 
         // Assign and initialize variables
-        mMainActivity = (MainActivity) getActivity();
         mCallbackPageFragment = this;
         context = getContext();
+        if(mProgressBar!=null)
         mProgressBar.setVisibility(View.VISIBLE);
+        tab_interest = getResources().getString(R.string.interest_tab);
 
         // Recover the tab_name and the API key
         if(getArguments()!=null){
+
             api_key = getArguments().getString(EXTRA_API_KEY,null);
             tab_name = getArguments().getString(EXTRA_TAB_NAME);
-            start_configure_recyclerView();
+
+            // Launch configuration of recyclerView
+            if(context instanceof MainActivity) {
+                mMainActivity = (MainActivity) getActivity();
+                start_configure_recyclerView_mainActivity();
+            } else {
+                mSettingActivity = (SettingActivity) getActivity();
+                start_configure_recyclerView_settingActivity();
+            }
         }
         return view;
     }
 
-    private void start_configure_recyclerView(){
+    // ---------------------------------------------------------------------------------------------
+    // ----------------------------------------- MainActivity --------------------------------------
+    // ---------------------------------------------------------------------------------------------
 
-        if(tab_name.equals(EXTRA_TAB_SEARCH)){ // if user has clicked on tab "travel"
+    private void start_configure_recyclerView_mainActivity(){
 
-            // Recover sharedPreferences_Search
-            if(context!=null)
-                sharedPreferences_Search = context.getSharedPreferences(EXTRA_SEARCH_SETTINGS, Context.MODE_PRIVATE);
+        if(tab_name.equals(tab_interest)){ // if user has clicked on tab interest (travel here)
 
             // Assign variables
-            query = sharedPreferences_Search.getString(EXTRA_QUERY_SEARCH,null);
-            subject = sharedPreferences_Search.getString(EXTRA_SUBJECTS_SEARCH,null);
-            begin_date = sharedPreferences_Search.getString(EXTRA_BEGIN_DATE,null);
-            end_date = sharedPreferences_Search.getString(EXTRA_END_DATE,null);
+            query = getResources().getString(R.string.query_interest);
+            subject = null;
+            begin_date = null;
+            end_date = null;
 
         } else { // if user has clicked on Most Popular tab or Top Stories tab
 
@@ -132,10 +150,10 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
             end_date = getArguments().getString(EXTRA_END);
         }
 
-        configure_subject_articles(tab_name);
+        configure_subject_articles_mainActivity(tab_name);
     }
 
-    public void configure_subject_articles(String tab_name) {
+    public void configure_subject_articles_mainActivity(String tab_name) {
 
         if(api_key!=null){
 
@@ -146,12 +164,8 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
                 case EXTRA_TAB_MOST_POPULAR:
                     listArticlesMostPopular = new ListArticlesMostPopular(api_key, subject, mCallbackPageFragment);
                     break;
-                case EXTRA_TAB_TRAVEL:
-                    Search_request search_request = new Search_request("search",tab_name);
-                    listArticlesSearch = new ListArticlesSearch(context, api_key, search_request, mCallbackPageFragment);
-                    break;
-                case EXTRA_TAB_SEARCH:
-                    search_request = new Search_request("search", query,subject, begin_date, end_date);
+                default: // if tab interest
+                    Search_request search_request = new Search_request("search",query);
                     listArticlesSearch = new ListArticlesSearch(context, api_key, search_request, mCallbackPageFragment);
                     break;
             }
@@ -159,7 +173,7 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
     }
 
     @Override
-    public void finish_configure_recyclerView() {
+    public void finish_configure_recyclerView_mainActivity() {
 
         mMainActivity.runOnUiThread(new Runnable() {
             @Override
@@ -172,13 +186,7 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
                         case EXTRA_TAB_MOST_POPULAR:
                             listarticles = listArticlesMostPopular.getListArticles();
                             break;
-                        case EXTRA_TAB_TRAVEL:
-                            listarticles = listArticlesSearch.getListArticles();
-                            break;
-                        case EXTRA_TAB_SEARCH:
-                            listarticles = listArticlesSearch.getListArticles();
-                            break;
-                        case "notif_search":
+                        default: // if interest tab
                             listarticles = listArticlesSearch.getListArticles();
                             break;
                     }
@@ -194,9 +202,67 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
     }
 
     @Override
-    public void display_error_message(final String error) {
+    public void display_error_message_mainActivity(final String error) {
 
         mMainActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                mProgressBar.setVisibility(View.GONE);
+                String text_to_display = "Error network request: \r\n" + error;
+                Toast toast = Toast.makeText(getContext(),text_to_display,Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
+    }
+
+
+    // ---------------------------------------------------------------------------------------------
+    // ----------------------------------------- SettingActivity --------------------------------------
+    // ---------------------------------------------------------------------------------------------
+
+    private void start_configure_recyclerView_settingActivity(){
+
+        // Recover sharedPreferences_Search
+        if(context!=null)
+            sharedPreferences_Search = context.getSharedPreferences(EXTRA_SEARCH_SETTINGS, Context.MODE_PRIVATE);
+
+        // Assign variables
+        query = sharedPreferences_Search.getString(EXTRA_QUERY_SEARCH,null);
+        subject = sharedPreferences_Search.getString(EXTRA_SUBJECTS_SEARCH,null);
+        begin_date = sharedPreferences_Search.getString(EXTRA_BEGIN_DATE,null);
+        end_date = sharedPreferences_Search.getString(EXTRA_END_DATE,null);
+
+        configure_subject_articles_settingActivity();
+    }
+
+    public void configure_subject_articles_settingActivity() {
+        if(api_key!=null && context!=null && mCallbackPageFragment!=null){
+            Search_request search_request = new Search_request("search",query,subject,begin_date,end_date);
+            listArticlesSearch = new ListArticlesSearch(context, api_key, search_request, mCallbackPageFragment);
+        }
+    }
+
+    @Override
+    public void finish_configure_recyclerView_settingActivity() {
+        mSettingActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    listarticles = listArticlesSearch.getListArticles();
+                    configureRecyclerView(listarticles);
+                } catch (final Throwable error){
+                    Toast toast = Toast.makeText(context,"No article found \r\n" + error ,Toast.LENGTH_LONG);
+                    toast.show();
+                    error.printStackTrace();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void display_error_message_settingActivity(final String error) {
+        mSettingActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
 
@@ -213,24 +279,25 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
         try {
             mMainActivity.runOnUiThread(new Runnable() {
 
-             @Override
-             public void run() {
-                 if(mArticleAdapter == null) {
-                     // Create adapter passing in the sample user data
-                     mArticleAdapter = new ArticleAdapter(listarticles, context);
-                     // Attach the adapter to the recyclerview to populate items
-                     recyclerView.setAdapter(mArticleAdapter);
-                     // Set layout manager to position the items
-                     recyclerView.setLayoutManager(new LinearLayoutManager(context));
-                 } else
-                     mArticleAdapter.notifyDataSetChanged();
-             }
-         });
+                @Override
+                public void run() {
+                    if(mArticleAdapter == null) {
+                        // Create adapter passing in the sample user data
+                        mArticleAdapter = new ArticleAdapter(listarticles, context);
+                        // Attach the adapter to the recyclerview to populate items
+                        recyclerView.setAdapter(mArticleAdapter);
+                        // Set layout manager to position the items
+                        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                    } else
+                        mArticleAdapter.notifyDataSetChanged();
+                }
+            });
         } catch (Throwable throwable) {
-         throwable.printStackTrace();
+            throwable.printStackTrace();
         }
 
-        mProgressBar.setVisibility(View.GONE);
+        if(mProgressBar!=null)
+            mProgressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -244,7 +311,12 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-        mMainActivity = (MainActivity) getActivity();
+        try{
+            mMainActivity = (MainActivity) getActivity();
+        } catch(Throwable ignored){}
+        try{
+            mSettingActivity = (SettingActivity) getActivity();
+        } catch(Throwable ignored){}
     }
 
     // ---------------------- TOOLS FOR DEFINING VARIABLES --------------------------------
@@ -261,3 +333,20 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
     }
 
 }
+
+
+/*
+
+            switch(type_activity){
+
+                case EXTRA_SETTING_ACTIVITY_TYPE:
+                    mSettingActivity = (SettingActivity) getActivity();
+                    start_configure_recyclerView_settingActivity();
+                    break;
+                case EXTRA_MAIN_ACTIVITY_TYPE:
+                    mMainActivity = (MainActivity) getActivity();
+                    start_configure_recyclerView_mainActivity();
+                    break;
+            }
+
+ */

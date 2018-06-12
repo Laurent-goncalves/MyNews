@@ -1,5 +1,6 @@
 package com.g.laurent.mynews.Controllers.Activities;
 
+import android.content.Intent;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -36,15 +37,18 @@ import static org.hamcrest.core.IsNot.not;
 public class Search_request_Test {
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class,false,false);
+    public ActivityTestRule<SettingActivity> mActivityTestRule = new ActivityTestRule<>(SettingActivity.class,false,false);
 
     @Test
     public void Test_enable_or_disable_button_search() throws Exception {
 
-        mActivityTestRule.launchActivity(null);
+        String EXTRA_TYPE_SETTINGS = "type_of_settings";
+        String EXTRA_SETTINGS_SEARCH = "search_settings";
 
-        mActivityTestRule.getActivity().setToolbar(null);
-        mActivityTestRule.getActivity().configureAndShowSearchFragment();
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_TYPE_SETTINGS, EXTRA_SETTINGS_SEARCH);
+
+        mActivityTestRule.launchActivity(intent);
 
         // check if search button is disabled
         onView(withId(R.id.button_search)).check(matches(not(isEnabled())));
@@ -59,8 +63,8 @@ public class Search_request_Test {
                         childAtPosition(
                                 allOf(withId(R.id.setting_fragment_layout),
                                         childAtPosition(
-                                                withId(R.id.activity_main_frame_layout),
-                                                2)),
+                                                withId(R.id.setting_activity_layout),
+                                                0)),
                                 0),
                         isDisplayed()));
         appCompatEditText.perform(replaceText("text"), closeSoftKeyboard());

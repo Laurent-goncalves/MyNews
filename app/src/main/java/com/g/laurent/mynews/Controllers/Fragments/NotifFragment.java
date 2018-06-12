@@ -24,6 +24,7 @@ public class NotifFragment extends BaseFragment implements Callback_settings {
     private Context context;
     private String api_key;
 
+
     public NotifFragment() {
         // Required empty public constructor
     }
@@ -58,13 +59,16 @@ public class NotifFragment extends BaseFragment implements Callback_settings {
 
     private void configure_checkboxes(){
 
-        if(ListSubjects!=null)
-        grid_checkbox.setAdapter(new GridViewAdapter(getContext(),getResources().getStringArray(R.array.list_checkbox),
-                ListSubjects.toArray(new String[ListSubjects.size()])));
-        else {
+        if(ListSubjects!=null) {
+            mGridViewAdapter = new GridViewAdapter(getContext(), getResources().getStringArray(R.array.list_checkbox),
+                    ListSubjects.toArray(new String[ListSubjects.size()]));
+            grid_checkbox.setAdapter(mGridViewAdapter);
+        } else {
             ListSubjects = new ArrayList<>();
-            grid_checkbox.setAdapter(new GridViewAdapter(getContext(),getResources().getStringArray(R.array.list_checkbox),
-                    null));
+
+            mGridViewAdapter =new GridViewAdapter(getContext(),getResources().getStringArray(R.array.list_checkbox),
+                    null);
+            grid_checkbox.setAdapter(mGridViewAdapter);
         }
     }
 
@@ -130,7 +134,6 @@ public class NotifFragment extends BaseFragment implements Callback_settings {
     public void update_list_subjects_in_fragment(String type_modif, String subject) {
         super.update_list_subjects_in_fragment(type_modif, subject);
         enable_or_not_notification_switch(false,false);
-
     }
 
     // ------------------------------------ DATA saving & recovering ----------------------------------
@@ -167,7 +170,6 @@ public class NotifFragment extends BaseFragment implements Callback_settings {
     @Override
     public void onResume() {
         super.onResume();
-
         recover_data();
         configure_edit_text();
         configure_checkboxes();

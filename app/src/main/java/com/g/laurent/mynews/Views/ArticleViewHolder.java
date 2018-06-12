@@ -8,10 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.annotation.GlideModule;
-import com.bumptech.glide.module.AppGlideModule;
 import com.bumptech.glide.request.RequestOptions;
 import com.g.laurent.mynews.Controllers.Activities.WebActivity;
 import com.g.laurent.mynews.Models.Article;
@@ -178,6 +175,7 @@ class ArticleViewHolder extends RecyclerView.ViewHolder {
 
             // save the list built in a single string in sharedpreferences
             mSharedPreferences.edit().putString(EXTRA_LIST_ID, list_to_be_saved).apply();
+            System.out.println("eee mSharedPreferences");
         }
     }
 }

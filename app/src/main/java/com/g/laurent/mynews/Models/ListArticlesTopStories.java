@@ -37,13 +37,13 @@ public class ListArticlesTopStories implements Disposable {
             @Override
             public void onError(Throwable e) {
                 if (mCallbackPageFragment != null)
-                    mCallbackPageFragment.display_error_message(e.getMessage());
+                    mCallbackPageFragment.display_error_message_mainActivity(e.getMessage());
             }
 
             @Override
             public void onComplete() {
                 if (mCallbackPageFragment != null)
-                    mCallbackPageFragment.finish_configure_recyclerView();
+                    mCallbackPageFragment.finish_configure_recyclerView_mainActivity();
             }
         });
 

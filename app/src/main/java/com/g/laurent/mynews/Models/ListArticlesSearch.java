@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import com.g.laurent.mynews.Controllers.Activities.MainActivity;
 import com.g.laurent.mynews.R;
 import com.g.laurent.mynews.Utils.NewsStreams;
 import com.g.laurent.mynews.Utils.Search.Doc;
@@ -121,14 +122,22 @@ public class ListArticlesSearch implements Disposable {
 
             @Override
             public void onError(Throwable e) {
-                if (mCallbackPageFragment != null)
-                    mCallbackPageFragment.display_error_message(e.getMessage());
+                if (mCallbackPageFragment != null){
+                    if(context instanceof MainActivity)
+                        mCallbackPageFragment.display_error_message_mainActivity(e.getMessage());
+                    else
+                        mCallbackPageFragment.display_error_message_settingActivity(e.getMessage());
+                }
             }
 
             @Override
             public void onComplete() {
-                if(mCallbackPageFragment !=null)
-                    mCallbackPageFragment.finish_configure_recyclerView();
+                if(mCallbackPageFragment !=null){
+                    if(context instanceof MainActivity)
+                        mCallbackPageFragment.finish_configure_recyclerView_mainActivity();
+                    else
+                        mCallbackPageFragment.finish_configure_recyclerView_settingActivity();
+                }
             }
         });
     }

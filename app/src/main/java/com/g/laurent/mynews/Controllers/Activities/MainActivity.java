@@ -1,8 +1,6 @@
 package com.g.laurent.mynews.Controllers.Activities;
 
 import android.app.AlarmManager;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -10,47 +8,23 @@ import android.content.SharedPreferences;
 import android.support.design.widget.TabLayout;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.PopupMenu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-import com.g.laurent.mynews.Controllers.Fragments.PageFragment;
-import com.g.laurent.mynews.Controllers.Fragments.NotifFragment;
-import com.g.laurent.mynews.Controllers.Fragments.SearchFragment;
 import com.g.laurent.mynews.Models.AlarmReceiver;
-import com.g.laurent.mynews.Models.Callback_search;
-import com.g.laurent.mynews.Models.ListArticlesSearch;
-import com.g.laurent.mynews.Models.Search_request;
 import com.g.laurent.mynews.R;
 import com.g.laurent.mynews.Views.PageAdapter;
-
 import java.util.Calendar;
-import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends BaseActivity implements Callback_search, AlarmReceiver.callbackAlarm {
 
-    /** DESCRIPTION : The MainActivity which extends BaseActivity will be used to integrate :
-     *       - the PageFragment with the recyclerView (top stories, most popular, search,...)
-     *       - the SearchFragment with the different criteria of search
-     *       - the NotifFragment with the settings for sending notifications **/
+public class MainActivity extends BaseActivity  {
 
-    private PageFragment mPageFragment;
-    private static final String EXTRA_TAB_NAME = "tab_name";
     private static final String EXTRA_NOTIF_SETTINGS = "NOTIFICATION_settings";
     private static final String EXTRA_ENABLE_NOTIF = "enable_notifications";
-    private static final String EXTRA_QUERY_NOTIF = "query_notif";
-    private static final String EXTRA_SUBJECTS_NOTIF = "list_subjects_notif";
     private static final String EXTRA_API_KEY = "api_key";
     private String api_key;
-    private TabLayout tablayout;
     private String fragment_displayed;
     private SharedPreferences sharedPreferences_Notif;
+    private PageAdapter mPageAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,37 +57,11 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
 
     // -------------- CONFIGURATION Fragment and ALARMMANAGER --------------------
 
-    @Override
-    public void configureAndShowMainFragmentSearchRequest(){
-
-        // Create a new bundle to send the tab_name to PageFragment (for search requests)
-        Bundle bundle = new Bundle();
-        bundle.putString(EXTRA_TAB_NAME,"search request");
-        bundle.putString(EXTRA_API_KEY,api_key);
-
-        //configure toolbar and tablayout
-        fragment_displayed="search mainfragment";
-        //updateTabs();
-
-        this.configureToolbar("Search Articles");
-
-        // configure and show the PageFragment
-        mPageFragment = new PageFragment();
-        mPageFragment.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.activity_main_frame_layout, mPageFragment)
-                .commit();
-    }
-
     private void configureAlarmManager(Boolean enable){
 
-        // Configuration of alarm for saving feeling each day
-        AlarmReceiver.callbackAlarm mcallbackAlarm=this;
-        AlarmReceiver alarmReceiver = new AlarmReceiver();
-        alarmReceiver.createCallbackAlarm(mcallbackAlarm);
-
-        Intent alarmIntent = new Intent(getApplicationContext(), alarmReceiver.getClass());
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent alarmIntent = new Intent(getApplicationContext(), AlarmReceiver.class);
+        alarmIntent.putExtra(EXTRA_API_KEY,api_key);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, alarmIntent, 0);
 
         // Set the alarm to start at 7:00 a.m.
         Calendar calendar = Calendar.getInstance();
@@ -136,16 +84,16 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
     private void configureViewPagerAndTabs(){
 
         // Get ViewPager from layout
-        ViewPager pager = (ViewPager)findViewById(R.id.activity_main_viewpager);
+        ViewPager pager = findViewById(R.id.activity_main_viewpager);
         pager.setOffscreenPageLimit(3);
 
-        PageAdapter mPageAdapter = new PageAdapter(getSupportFragmentManager(), api_key);
+        mPageAdapter = new PageAdapter(getSupportFragmentManager(), api_key);
 
         // Set Adapter PageAdapter and glue it together
         pager.setAdapter(mPageAdapter);
 
         // Get TabLayout from layout
-        TabLayout tabs= (TabLayout)findViewById(R.id.activity_main_tabs);
+        TabLayout tabs= findViewById(R.id.activity_main_tabs);
 
         // Glue TabLayout and ViewPager together
         tabs.setupWithViewPager(pager);
@@ -163,7 +111,11 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
                 if(fragment_displayed.equals("notiffragment"))
                     callback_save_settings.save_data();
 
-                // configureAndShowMainFragment();
+                mPageAdapter = new PageAdapter(getSupportFragmentManager(), api_key);
+
+                sharedPreferences_Notif = this.getSharedPreferences(EXTRA_NOTIF_SETTINGS, Context.MODE_PRIVATE);
+                Boolean enable_notif = sharedPreferences_Notif.getBoolean(EXTRA_ENABLE_NOTIF, false);
+                this.configureAlarmManager(enable_notif);
 
                 return true;
             default:
@@ -171,96 +123,7 @@ public class MainActivity extends BaseActivity implements Callback_search, Alarm
         }
     }
 
-    @Override
-    public void notification_request_checking() {
-
-        // Check if notifications are enabled or not and then assign the variable enable
-        Boolean enable = sharedPreferences_Notif.getBoolean(EXTRA_ENABLE_NOTIF,false);
-
-        if(enable){
-
-            // recover the variable query and list subjects in sharedpreferences
-            String new_query = sharedPreferences_Notif.getString(EXTRA_QUERY_NOTIF,null);
-            String list_subj = sharedPreferences_Notif.getString(EXTRA_SUBJECTS_NOTIF,null);
-
-            if(list_subj!=null && new_query!=null) {
-
-                // create a new request for search
-                Search_request search_request = new Search_request("notif_checking",new_query, list_subj, null, null);
-                // Launch a new search request to check if there are new articles
-                new ListArticlesSearch(getApplicationContext(),api_key, search_request, sharedPreferences_Notif);
-            }
-        }
+    public PageAdapter getPageAdapter() {
+        return mPageAdapter;
     }
-
-    public PageFragment getPageFragment() {
-        return mPageFragment;
-    }
-
-  /*  private void updateTabs(){
-
-        try {
-            runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-
-                    switch (fragment_displayed) {
-
-                        case "searchfragment":
-                            tablayout.setVisibility(View.GONE);
-                            break;
-                        case "notiffragment":
-                            tablayout.setVisibility(View.GONE);
-                            break;
-                        case "search mainfragment":
-                            tablayout.setVisibility(View.GONE);
-                            break;
-                        case "mainfragment":
-                            if (tablayout.getVisibility() == View.GONE)
-                                tablayout.setVisibility(View.VISIBLE);
-                            break;
-                    }
-                }});
-            } catch (Throwable throwable) {
-                throwable.printStackTrace();
-            }
-    }
-
-    private void configureTabLayout(){
-        // Recover list of tabs to be displayed and find the view to be assigned
-        String[] list_tabs = recover_list_tabs();
-        tablayout = findViewById(R.id.activity_main_tabs);
-
-        // if the list of tabs is not null, create the tab (title + onTabSelectedListener
-        if (list_tabs != null) {
-            for (String tab : list_tabs) {
-
-                tablayout.addTab(tablayout.newTab().setText(tab));
-                tablayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-                    @Override
-                    public void onTabSelected(TabLayout.Tab tab) {
-                        if(count==0) {
-                            if (tab.getText() != null) {
-                                tab_name = tab.getText().toString();
-                            }
-                            configureAndShowMainFragment();
-                            count++;
-                        }
-                    }
-
-                    @Override
-                    public void onTabUnselected(TabLayout.Tab tab) {
-                        count = 0;
-                    }
-
-                    @Override
-                    public void onTabReselected(TabLayout.Tab tab) {
-                    }
-                });
-            }
-        }
-    }*/
-
-
 }

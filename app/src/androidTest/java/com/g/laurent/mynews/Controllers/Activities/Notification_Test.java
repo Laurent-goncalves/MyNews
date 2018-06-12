@@ -1,8 +1,11 @@
 package com.g.laurent.mynews.Controllers.Activities;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.test.espresso.ViewInteraction;
+import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
@@ -15,6 +18,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,11 +28,13 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static android.support.test.internal.runner.junit4.statement.UiThreadStatement.runOnUiThread;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsAnything.anything;
 
 @LargeTest
@@ -38,13 +44,18 @@ public class Notification_Test {
     NotifFragment notifFragment;
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class,false,false);
-
+    public ActivityTestRule<SettingActivity> mActivityTestRule = new ActivityTestRule<>(SettingActivity.class,false,false);
 
     @Test
     public void Test_notification_settings_saving(){
 
-        mActivityTestRule.launchActivity(null);
+        String EXTRA_TYPE_SETTINGS = "type_of_settings";
+        String EXTRA_SETTINGS_NOTIF = "notif_settings";
+
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_TYPE_SETTINGS, EXTRA_SETTINGS_NOTIF);
+
+        mActivityTestRule.launchActivity(intent);
 
         SharedPreferences mSharedPreferences = mActivityTestRule.getActivity().getApplicationContext().getSharedPreferences("NOTIFICATION_settings", Context.MODE_PRIVATE);
         mSharedPreferences.edit().putString("list_subjects_notif",null).apply();
@@ -74,8 +85,8 @@ public class Notification_Test {
                         childAtPosition(
                                 allOf(withId(R.id.setting_fragment_layout),
                                         childAtPosition(
-                                                withId(R.id.activity_main_frame_layout),
-                                                2)),
+                                                withId(R.id.setting_activity_layout),
+                                                0)),
                                 0),
                         isDisplayed()));
         appCompatEditText.perform(replaceText("trump"), closeSoftKeyboard());
@@ -86,24 +97,25 @@ public class Notification_Test {
                         childAtPosition(
                                 allOf(withId(R.id.setting_fragment_layout),
                                         childAtPosition(
-                                                withId(R.id.activity_main_frame_layout),
-                                                2)),
+                                                withId(R.id.setting_activity_layout),
+                                                0)),
                                 4),
                         isDisplayed()));
         switch_.perform(click());
 
 
         waiting_time(1000);
-        ViewInteraction appCompatImageButton2 = onView(
+
+        ViewInteraction appCompatImageButton3 = onView(
                 allOf(withContentDescription("Navigate up"),
                         childAtPosition(
                                 allOf(withId(R.id.activity_main_toolbar),
                                         childAtPosition(
-                                                withId(R.id.activity_main_frame_layout),
+                                                withClassName(is("android.widget.LinearLayout")),
                                                 0)),
-                                3),
+                                2),
                         isDisplayed()));
-        appCompatImageButton2.perform(click());
+        appCompatImageButton3.perform(click());
 
         waiting_time(1000);
 

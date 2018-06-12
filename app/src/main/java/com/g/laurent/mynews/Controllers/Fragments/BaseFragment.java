@@ -16,6 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import com.g.laurent.mynews.Models.Callback_list_subjects;
 import com.g.laurent.mynews.R;
+import com.g.laurent.mynews.Views.GridViewAdapter;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -52,6 +54,8 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
     protected static final String EXTRA_END_DATE = "end_date_search";
     protected static final String EXTRA_QUERY_SEARCH = "query_search";
     protected static final String EXTRA_SUBJECTS_SEARCH = "list_subjects_search";
+    protected Context mContext;
+    protected GridViewAdapter mGridViewAdapter;
 
     public BaseFragment() {
         // Required empty public constructor
@@ -68,6 +72,7 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
             sharedPreferences_Notif = getContext().getSharedPreferences(EXTRA_NOTIF_SETTINGS, Context.MODE_PRIVATE);
             sharedPreferences_Search = getContext().getSharedPreferences(EXTRA_SEARCH_SETTINGS, Context.MODE_PRIVATE);
             ListSubjects = new ArrayList<>();
+            mContext = getContext();
         }
 
         return view;
@@ -192,7 +197,6 @@ public class BaseFragment extends Fragment implements Callback_list_subjects {
 
     @Override
     public void update_list_subjects_in_fragment(String type_modif, String subject) {
-
         if(subject!=null){
             switch(type_modif){
                 case "add":

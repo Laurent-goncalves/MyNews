@@ -30,6 +30,10 @@
         <item>"Travel"</item>
     </string-array>
 
+    <!-- settings for tab travel -->
+    <string name="interest_tab">TRAVEL</string>
+    <string name="query_interest">travel</string>
+
     <!-- items for date selection -->
     <string name="begindate">Begin date</string>
     <string name="enddate">End date</string>

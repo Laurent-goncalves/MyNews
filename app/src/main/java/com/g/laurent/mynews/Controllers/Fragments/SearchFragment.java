@@ -8,18 +8,20 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CalendarView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.g.laurent.mynews.Models.Callback_search;
+import com.g.laurent.mynews.Models.Callback_settings;
 import com.g.laurent.mynews.R;
 import com.g.laurent.mynews.Views.GridViewAdapter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import butterknife.ButterKnife;
 
-public class SearchFragment extends BaseFragment {
+public class SearchFragment extends BaseFragment implements Callback_settings {
 
     private TextView begin_date_text;
     private TextView end_date_text;
@@ -50,7 +52,18 @@ public class SearchFragment extends BaseFragment {
     // -------------- SETTINGS AREAS ------------------------------
 
     private void configure_checkboxes(){
-        grid_checkbox.setAdapter(new GridViewAdapter(getContext(),getResources().getStringArray(R.array.list_checkbox),null));
+
+        if(ListSubjects!=null)
+            grid_checkbox.setAdapter(new GridViewAdapter(getContext(),getResources().getStringArray(R.array.list_checkbox),
+                    ListSubjects.toArray(new String[ListSubjects.size()])));
+        else {
+            ListSubjects = new ArrayList<>();
+            grid_checkbox.setAdapter(new GridViewAdapter(getContext(),getResources().getStringArray(R.array.list_checkbox),
+                    null));
+        }
+
+
+        //grid_checkbox.setAdapter(new GridViewAdapter(getContext(),getResources().getStringArray(R.array.list_checkbox),null));
     }
 
     private void configure_search_areas(){
@@ -80,6 +93,16 @@ public class SearchFragment extends BaseFragment {
                 enable_or_not_search_button();
             }
         });
+
+        query_area.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+            }
+        });
     }
 
     // --------------- METHOD FROM CALLBACK --------------------------
@@ -104,7 +127,6 @@ public class SearchFragment extends BaseFragment {
                 enable_search_button(true);
             else
                 enable_search_button(false);
-
         }
     }
 
@@ -134,7 +156,7 @@ public class SearchFragment extends BaseFragment {
         });
     }
 
-  /*  @Override
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
@@ -142,7 +164,14 @@ public class SearchFragment extends BaseFragment {
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement OnArticleSelectedListener");
         }
-    }*/
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        configure_edit_text();
+        configure_checkboxes();
+    }
 
     // -----------------------------------------------------------------------------
     // ------------ CONFIGURATION CALENDAR / DATES (begin & end) -------------------
@@ -256,6 +285,11 @@ public class SearchFragment extends BaseFragment {
                 break;
 
         }
+    }
+
+    @Override
+    public void save_data() {
+
     }
 }
 
