@@ -2,7 +2,6 @@ package com.g.laurent.mynews.Controllers.Activities;
 
 import android.os.Bundle;
 import android.view.MenuItem;
-
 import com.g.laurent.mynews.Controllers.Fragments.NotifFragment;
 import com.g.laurent.mynews.Controllers.Fragments.PageFragment;
 import com.g.laurent.mynews.Controllers.Fragments.SearchFragment;
@@ -36,18 +35,21 @@ public class SettingActivity extends BaseActivity implements Callback_search {
         type_settings = getIntent().getStringExtra(EXTRA_TYPE_SETTINGS);
         api_key = getApplicationContext().getResources().getString(R.string.APIkey);
 
-        switch(type_settings){
-            case EXTRA_SETTINGS_SEARCH:
-                configureAndShowSearchFragment();
-                configureToolbar(SCREEN_SETTINGS_SEARCH);
-                break;
-            case EXTRA_SETTINGS_NOTIF:
-                configureAndShowNotifFragment();
-                configureToolbar(SCREEN_SETTINGS_NOTIF);
-                break;
-            default:
-                finish();
-                break;
+        if(type_settings!=null){
+
+            switch(type_settings){
+                case EXTRA_SETTINGS_SEARCH:
+                    configureAndShowSearchFragment();
+                    configureToolbar(SCREEN_SETTINGS_SEARCH);
+                    break;
+                case EXTRA_SETTINGS_NOTIF:
+                    configureAndShowNotifFragment();
+                    configureToolbar(SCREEN_SETTINGS_NOTIF);
+                    break;
+                default:
+                    finish();
+                    break;
+            }
         }
     }
 

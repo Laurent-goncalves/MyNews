@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
+import android.widget.Toast;
 import com.g.laurent.mynews.Controllers.Activities.MainActivity;
 import com.g.laurent.mynews.R;
 import com.g.laurent.mynews.Utils.NewsStreams;
@@ -91,11 +91,17 @@ public class ListArticlesSearch implements Disposable {
 
             @Override
             public void onError(Throwable e) {
-                Log.e("TAG","On Error"+Log.getStackTraceString(e));
+                Toast toast = Toast.makeText(context,"Error while searching new articles \n" + e.toString(),Toast.LENGTH_LONG);
+                toast.show();
             }
 
             @Override
             public void onComplete() {
+
+                if(mlistArticles.size()==0) {
+                    Toast toast = Toast.makeText(context, "No article found", Toast.LENGTH_LONG);
+                    toast.show();
+                }
 
                 if(type_search!=null) {
 
@@ -132,6 +138,12 @@ public class ListArticlesSearch implements Disposable {
 
             @Override
             public void onComplete() {
+
+                if(mlistArticles.size()==0) {
+                    Toast toast = Toast.makeText(context, "No article found", Toast.LENGTH_LONG);
+                    toast.show();
+                }
+
                 if(mCallbackPageFragment !=null){
                     if(context instanceof MainActivity)
                         mCallbackPageFragment.finish_configure_recyclerView_mainActivity();

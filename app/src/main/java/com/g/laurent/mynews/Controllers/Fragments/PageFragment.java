@@ -159,10 +159,10 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
 
             switch(tab_name){
                 case EXTRA_TAB_TOP_STORIES:
-                    listArticlesTopStories = new ListArticlesTopStories(api_key,subject, mCallbackPageFragment);
+                    listArticlesTopStories = new ListArticlesTopStories(context,api_key,subject, mCallbackPageFragment);
                     break;
                 case EXTRA_TAB_MOST_POPULAR:
-                    listArticlesMostPopular = new ListArticlesMostPopular(api_key, subject, mCallbackPageFragment);
+                    listArticlesMostPopular = new ListArticlesMostPopular(context, api_key, subject, mCallbackPageFragment);
                     break;
                 default: // if tab interest
                     Search_request search_request = new Search_request("search",query);
@@ -190,7 +190,7 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
                             listarticles = listArticlesSearch.getListArticles();
                             break;
                     }
-                    configureRecyclerView(listarticles);
+                    configureRecyclerView();
 
                 } catch (final Throwable error){
                     Toast toast = Toast.makeText(context,"No article found \r\n" + error ,Toast.LENGTH_LONG);
@@ -250,7 +250,7 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
             public void run() {
                 try{
                     listarticles = listArticlesSearch.getListArticles();
-                    configureRecyclerView(listarticles);
+                    configureRecyclerView();
                 } catch (final Throwable error){
                     Toast toast = Toast.makeText(context,"No article found \r\n" + error ,Toast.LENGTH_LONG);
                     toast.show();
@@ -274,37 +274,54 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
         });
     }
 
-    public void configureRecyclerView(final ArrayList<Article> listarticles){
+    public void configureRecyclerView(){
 
         try {
-            mMainActivity.runOnUiThread(new Runnable() {
+            mSettingActivity.runOnUiThread(new Runnable() {
 
                 @Override
                 public void run() {
-                    if(mArticleAdapter == null) {
-                        // Create adapter passing in the sample user data
-                        mArticleAdapter = new ArticleAdapter(listarticles, context);
-                        // Attach the adapter to the recyclerview to populate items
-                        recyclerView.setAdapter(mArticleAdapter);
-                        // Set layout manager to position the items
-                        recyclerView.setLayoutManager(new LinearLayoutManager(context));
-                    } else
-                        mArticleAdapter.notifyDataSetChanged();
+                    // Create adapter passing in the sample user data
+                    mArticleAdapter = new ArticleAdapter(listarticles, context);
+                    // Attach the adapter to the recyclerview to populate items
+                    recyclerView.setAdapter(mArticleAdapter);
+                    // Set layout manager to position the items
+                    recyclerView.setLayoutManager(new LinearLayoutManager(context));
+
+                    if(mProgressBar!=null)
+                        mProgressBar.setVisibility(View.GONE);
                 }
             });
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
 
-        if(mProgressBar!=null)
-            mProgressBar.setVisibility(View.GONE);
+        try {
+            mMainActivity.runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    // Create adapter passing in the sample user data
+                    mArticleAdapter = new ArticleAdapter(listarticles, context);
+                    // Attach the adapter to the recyclerview to populate items
+                    recyclerView.setAdapter(mArticleAdapter);
+                    // Set layout manager to position the items
+                    recyclerView.setLayoutManager(new LinearLayoutManager(context));
+
+                    if(mProgressBar!=null)
+                        mProgressBar.setVisibility(View.GONE);
+                }
+            });
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
         if(listarticles!=null)
-            configureRecyclerView(listarticles);
+            configureRecyclerView();
     }
 
     @Override
@@ -332,21 +349,7 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
         return null;
     }
 
+    public void setListarticles(ArrayList<Article> listarticles) {
+        this.listarticles = listarticles;
+    }
 }
-
-
-/*
-
-            switch(type_activity){
-
-                case EXTRA_SETTING_ACTIVITY_TYPE:
-                    mSettingActivity = (SettingActivity) getActivity();
-                    start_configure_recyclerView_settingActivity();
-                    break;
-                case EXTRA_MAIN_ACTIVITY_TYPE:
-                    mMainActivity = (MainActivity) getActivity();
-                    start_configure_recyclerView_mainActivity();
-                    break;
-            }
-
- */

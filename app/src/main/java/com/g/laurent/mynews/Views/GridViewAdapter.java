@@ -25,35 +25,16 @@ public class GridViewAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        if(list_checkbox_OK!=null) {
-            for(String check : list_checkbox_OK)
-            System.out.println("eeeeee     getCount ---- list_tabs.length=" + list_tabs.length + "   list_checkbox_OK=" + check);
-        } else
-            System.out.println("eeeeee     getCount ---- list_tabs.length="+list_tabs.length + "   list_checkbox_OK=null");
-
         return list_tabs.length;
     }
 
     @Override
     public Object getItem(int position) {
-
-        if(list_checkbox_OK!=null){
-            for(String check : list_checkbox_OK)
-                System.out.println("eeeeee     getItem ---- position=" + position + "   list_checkbox_OK=" + check);
-        }else
-            System.out.println("eeeeee     getItem ---- position="+position + "   list_checkbox_OK=null");
-
         return null;
     }
 
     @Override
     public long getItemId(int position) {
-        if(list_checkbox_OK!=null){
-            for(String check : list_checkbox_OK)
-                System.out.println("eeeeee     getItemId ---- position=" + position + "   list_checkbox_OK=" + check);
-        }else
-            System.out.println("eeeeee     getItemId ---- position="+position + "   list_checkbox_OK=null");
-
         return 0;
     }
 

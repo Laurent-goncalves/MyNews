@@ -60,27 +60,34 @@ public class MainActivityTest {
         listarticles.add(new Article(null,"dd/mm/yyyy","article3",null,null,null,"ID3"));
         listarticles.add(new Article(null,"dd/mm/yyyy","article4",null,null,null,"ID4"));
 
+        waiting_time(5000);
+
         // configure and test recyclerView
         try {
             runOnUiThread(new Runnable() {
 
                 @Override
                 public void run() {
-                    mPageFragment.configureRecyclerView(listarticles);
+                    mPageFragment.setListarticles(listarticles);
+                    mPageFragment.configureRecyclerView();
+
+                    waiting_time(3000);
+                    click_on_recyclerView_article(1);
+                    click_on_recyclerView_article(2);
+                    click_on_recyclerView_article(0);
+
+                    SharedPreferences mSharedPreferences = getDefaultSharedPreferences(mActivityTestRule.getActivity().getApplicationContext());
+                    String list_articles_read = mSharedPreferences.getString("ID_ARTICLES_READ",null);
+                    Assert.assertTrue(list_articles_read.equals("ID1,ID3,ID2,"));
+                    mActivityTestRule.finishActivity();
+
                 }
             });
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
 
-        waiting_time(3000);
-        click_on_recyclerView_article(1);
-        click_on_recyclerView_article(2);
-        click_on_recyclerView_article(0);
 
-        String list_articles_read = mSharedPreferences.getString("ID_ARTICLES_READ",null);
-        Assert.assertTrue(list_articles_read.equals("ID1,ID3,ID2,"));
-        mActivityTestRule.finishActivity();
     }
 
     private void click_on_recyclerView_article(int position){

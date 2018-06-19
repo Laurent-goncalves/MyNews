@@ -61,9 +61,6 @@ public class SearchFragment extends BaseFragment implements Callback_settings {
             grid_checkbox.setAdapter(new GridViewAdapter(getContext(),getResources().getStringArray(R.array.list_checkbox),
                     null));
         }
-
-
-        //grid_checkbox.setAdapter(new GridViewAdapter(getContext(),getResources().getStringArray(R.array.list_checkbox),null));
     }
 
     private void configure_search_areas(){
@@ -91,16 +88,6 @@ public class SearchFragment extends BaseFragment implements Callback_settings {
             public void afterTextChanged(Editable s) {
                 query = s.toString();
                 enable_or_not_search_button();
-            }
-        });
-
-        query_area.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null) {
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                }
             }
         });
     }

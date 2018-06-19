@@ -1,6 +1,9 @@
 package com.g.laurent.mynews.Models;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
+
 import com.g.laurent.mynews.Utils.MostPopular.MediaMetadatum;
 import com.g.laurent.mynews.Utils.MostPopular.Medium;
 import com.g.laurent.mynews.Utils.MostPopular.MostPopular;
@@ -13,16 +16,18 @@ import io.reactivex.observers.DisposableObserver;
 
 public class ListArticlesMostPopular implements Disposable {
 
+    private Context context;
     private Disposable disposable;
     private final String subject;
     private final String api_key;
     private ArrayList<Article> listarticles;
     private CallbackPageFragment mCallbackPageFragment;
 
-    public ListArticlesMostPopular(String api_key, String subject, CallbackPageFragment mCallbackPageFragment){
+    public ListArticlesMostPopular(Context context, String api_key, String subject, CallbackPageFragment mCallbackPageFragment){
         this.listarticles=new ArrayList<>();
         this.subject=subject;
         this.api_key = api_key;
+        this.context= context;
         this.mCallbackPageFragment = mCallbackPageFragment;
         launch_request_most_popular();
     }
@@ -43,6 +48,12 @@ public class ListArticlesMostPopular implements Disposable {
 
             @Override
             public void onComplete() {
+
+                if(listarticles.size()==0) {
+                    Toast toast = Toast.makeText(context, "No article found", Toast.LENGTH_LONG);
+                    toast.show();
+                }
+
                 if (mCallbackPageFragment != null)
                     mCallbackPageFragment.finish_configure_recyclerView_mainActivity();
                 Log.e("TAG", "On Complete !!");

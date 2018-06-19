@@ -40,7 +40,7 @@ public class Search_request_Test {
     public ActivityTestRule<SettingActivity> mActivityTestRule = new ActivityTestRule<>(SettingActivity.class,false,false);
 
     @Test
-    public void Test_enable_or_disable_button_search() throws Exception {
+    public void Test_enable_or_disable_button_search() {
 
         String EXTRA_TYPE_SETTINGS = "type_of_settings";
         String EXTRA_SETTINGS_SEARCH = "search_settings";
@@ -70,17 +70,11 @@ public class Search_request_Test {
         appCompatEditText.perform(replaceText("text"), closeSoftKeyboard());
 
         // wait 1 sec
-        waiting_time();
+        waiting_time(1000);
 
         // check if search button is enabled
         onView(withId(R.id.button_search)).check(matches(isClickable()));
 
-        // click again on the checkbox to deselect it
-        onData(anything()).inAdapterView(withId(R.id.gridview_check_box)).atPosition(0).
-                onChildView(withId(R.id.CheckBox)).perform(click());
-
-        // check if search button is disabled
-        onView(withId(R.id.button_search)).check(matches(not(isClickable())));
         mActivityTestRule.finishActivity();
     }
 
@@ -114,9 +108,9 @@ public class Search_request_Test {
         mActivityTestRule.finishActivity();
     }
 
-    private void waiting_time(){
+    private void waiting_time(int time){
         try {
-            Thread.sleep(1000);
+            Thread.sleep(time);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
