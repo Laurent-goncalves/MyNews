@@ -48,7 +48,7 @@ public class RequestHTTP_test {
     public void Test_Most_Popular_Request() throws Exception {
 
         String api_key = "225a8498a05b4b7bb4d085d0c32e4ce8";
-        final ListArticlesMostPopular listArticlesMostPopular = new ListArticlesMostPopular(api_key,"travel",null);
+        final ListArticlesMostPopular listArticlesMostPopular = new ListArticlesMostPopular(null,api_key,"travel",null);
 
         Thread.sleep(3000);
 
@@ -59,7 +59,7 @@ public class RequestHTTP_test {
     public void Test_TopStories_Request() throws Exception {
 
         String api_key = "225a8498a05b4b7bb4d085d0c32e4ce8";
-        final ListArticlesTopStories listArticlesTopStories = new ListArticlesTopStories(api_key,"travel",null);
+        final ListArticlesTopStories listArticlesTopStories = new ListArticlesTopStories(null,api_key,"travel",null);
 
         Thread.sleep(3000);
 

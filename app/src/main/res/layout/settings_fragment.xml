@@ -16,6 +16,11 @@
         android:inputType="text" />
 
 
+    
+
+
+
+
     <!--  GRIDVIEW FOR CHECKBOX (arts, travel, sports,...)  -->
     <GridView
         android:id="@+id/gridview_check_box"
@@ -67,6 +72,7 @@
         android:clickable="true"
         android:focusable="true">
     </CalendarView>
+
 
 
     <!--  LINE SEPARATOR  -->
