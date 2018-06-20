@@ -37,7 +37,7 @@ public interface NewsService {
 
     HttpLoggingInterceptor logging = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
 
-    OkHttpClient.Builder httpClient = new OkHttpClient.Builder().addInterceptor(logging).retryOnConnectionFailure(false);
+    OkHttpClient.Builder httpClient = new OkHttpClient.Builder().addInterceptor(logging).retryOnConnectionFailure(true);
 
     Retrofit retrofit = new Retrofit.Builder()
             .baseUrl("https://api.nytimes.com/svc/")

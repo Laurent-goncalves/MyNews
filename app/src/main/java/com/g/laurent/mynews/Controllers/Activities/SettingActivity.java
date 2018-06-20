@@ -9,6 +9,8 @@ import com.g.laurent.mynews.Models.Callback_search;
 import com.g.laurent.mynews.R;
 import butterknife.ButterKnife;
 
+
+
 public class SettingActivity extends BaseActivity implements Callback_search {
 
     /** DESCRIPTION : The SettingActivity which extends BaseActivity will be used to integrate :
@@ -52,6 +54,8 @@ public class SettingActivity extends BaseActivity implements Callback_search {
             }
         }
     }
+
+    // -------------- CONFIGURATION FRAGMENTS --------------------------------------
 
     public void configureAndShowNotifFragment(){
 

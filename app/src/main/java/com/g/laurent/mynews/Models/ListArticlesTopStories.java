@@ -57,7 +57,6 @@ public class ListArticlesTopStories implements Disposable {
                     mCallbackPageFragment.finish_configure_recyclerView_mainActivity();
             }
         });
-
     }
 
     private void Build_data_topStories(TopStories topStories) {

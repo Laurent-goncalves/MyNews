@@ -16,15 +16,18 @@ import java.util.Calendar;
 import butterknife.ButterKnife;
 
 
-public class MainActivity extends BaseActivity  {
+public class MainActivity extends BaseActivity {
 
     private static final String EXTRA_NOTIF_SETTINGS = "NOTIFICATION_settings";
     private static final String EXTRA_ENABLE_NOTIF = "enable_notifications";
     private static final String EXTRA_API_KEY = "api_key";
     private String api_key;
     private String fragment_displayed;
-    private SharedPreferences sharedPreferences_Notif;
     private PageAdapter mPageAdapter;
+    private SharedPreferences sharedPreferences_Notif;
+    private AlarmManager manager;
+    private Calendar calendar;
+    private PendingIntent pendingIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,35 +45,37 @@ public class MainActivity extends BaseActivity  {
 
         // configure alarm-manager, toolbar and show PageFragment
         this.configureViewPagerAndTabs();
-        this.configureAlarmManager(enable_notif);
+        configureAlarmManager(enable_notif);
         configureToolbar(SCREEN_LIST_ARTICLES);
     }
-
 
     @Override
     protected void onResume() {
         super.onResume();
-        sharedPreferences_Notif = this.getSharedPreferences(EXTRA_NOTIF_SETTINGS, Context.MODE_PRIVATE);
-        Boolean enable_notif = sharedPreferences_Notif.getBoolean(EXTRA_ENABLE_NOTIF, false);
-        this.configureAlarmManager(enable_notif);
     }
 
-    // -------------- CONFIGURATION Fragment and ALARMMANAGER --------------------
+    // -------------- CONFIGURATION ALARMMANAGER ----------------------------------
 
     private void configureAlarmManager(Boolean enable){
 
         Intent alarmIntent = new Intent(getApplicationContext(), AlarmReceiver.class);
         alarmIntent.putExtra(EXTRA_API_KEY,api_key);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, alarmIntent, 0);
+        pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, alarmIntent, 0);
 
         // Set the alarm to start at 7:00 a.m.
-        Calendar calendar = Calendar.getInstance();
+        calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY, 7);
         calendar.set(Calendar.MINUTE,0);
 
         // Create alarm
-        AlarmManager manager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        manager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+
+        // enable or not alarm
+        enable_or_not_alarm_manager(enable);
+    }
+
+    public void enable_or_not_alarm_manager(Boolean enable) {
 
         if(manager!=null && enable) // IF NOTIFICATION ENABLED
             manager.setRepeating(AlarmManager.RTC,calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
@@ -87,7 +92,7 @@ public class MainActivity extends BaseActivity  {
         ViewPager pager = findViewById(R.id.activity_main_viewpager);
         pager.setOffscreenPageLimit(3);
 
-        mPageAdapter = new PageAdapter(getSupportFragmentManager(), api_key);
+        mPageAdapter = new PageAdapter(getSupportFragmentManager(), api_key, getApplicationContext());
 
         // Set Adapter PageAdapter and glue it together
         pager.setAdapter(mPageAdapter);
@@ -111,13 +116,12 @@ public class MainActivity extends BaseActivity  {
                 if(fragment_displayed.equals("notiffragment"))
                     callback_save_settings.save_data();
 
-                mPageAdapter = new PageAdapter(getSupportFragmentManager(), api_key);
+                mPageAdapter = new PageAdapter(getSupportFragmentManager(), api_key, getApplicationContext());
 
-                sharedPreferences_Notif = this.getSharedPreferences(EXTRA_NOTIF_SETTINGS, Context.MODE_PRIVATE);
                 Boolean enable_notif = sharedPreferences_Notif.getBoolean(EXTRA_ENABLE_NOTIF, false);
                 this.configureAlarmManager(enable_notif);
 
-                return true;
+                return false;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -126,4 +130,5 @@ public class MainActivity extends BaseActivity  {
     public PageAdapter getPageAdapter() {
         return mPageAdapter;
     }
+
 }

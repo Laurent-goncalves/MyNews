@@ -113,10 +113,8 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
 
             // Launch configuration of recyclerView
             if(context instanceof MainActivity) {
-                mMainActivity = (MainActivity) getActivity();
                 start_configure_recyclerView_mainActivity();
             } else {
-                mSettingActivity = (SettingActivity) getActivity();
                 start_configure_recyclerView_settingActivity();
             }
         }
@@ -140,8 +138,8 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
         } else { // if user has clicked on Most Popular tab or Top Stories tab
 
             // Assign variables
-            query = Objects.requireNonNull(getArguments()).getString(EXTRA_QUERY);
-            subject = define_subject(getArguments().getString(EXTRA_SUBJECT));
+            query = Objects.requireNonNull(getArguments()).getString(EXTRA_QUERY); // recover the "section"
+            subject = define_subject(getArguments().getString(EXTRA_SUBJECT)); // recover subjects
 
             if(subject==null)
                 subject = "politics";
@@ -150,10 +148,10 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
             end_date = getArguments().getString(EXTRA_END);
         }
 
-        configure_subject_articles_mainActivity(tab_name);
+        configure_articles_mainActivity(tab_name);
     }
 
-    public void configure_subject_articles_mainActivity(String tab_name) {
+    public void configure_articles_mainActivity(String tab_name) {
 
         if(api_key!=null){
 
@@ -233,10 +231,10 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
         begin_date = sharedPreferences_Search.getString(EXTRA_BEGIN_DATE,null);
         end_date = sharedPreferences_Search.getString(EXTRA_END_DATE,null);
 
-        configure_subject_articles_settingActivity();
+        configure_articles_settingActivity();
     }
 
-    public void configure_subject_articles_settingActivity() {
+    public void configure_articles_settingActivity() {
         if(api_key!=null && context!=null && mCallbackPageFragment!=null){
             Search_request search_request = new Search_request("search",query,subject,begin_date,end_date);
             listArticlesSearch = new ListArticlesSearch(context, api_key, search_request, mCallbackPageFragment);
@@ -268,7 +266,7 @@ public class PageFragment extends Fragment implements CallbackPageFragment {
 
                 mProgressBar.setVisibility(View.GONE);
                 String text_to_display = "Error network request: \r\n" + error;
-                Toast toast = Toast.makeText(getContext(),text_to_display,Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(getContext(),text_to_display,Toast.LENGTH_LONG);
                 toast.show();
             }
         });

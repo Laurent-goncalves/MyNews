@@ -16,24 +16,6 @@
         android:inputType="text" />
 
 
-    
-
-
-
-
-    <!--  GRIDVIEW FOR CHECKBOX (arts, travel, sports,...)  -->
-    <GridView
-        android:id="@+id/gridview_check_box"
-        android:layout_margin="15dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:numColumns="2"
-        android:verticalSpacing="5dp"
-        android:horizontalSpacing="10dp">
-    </GridView>
-
-
-
 
     <!--      AREA FOR SELECTING DATES        -->
     <LinearLayout
@@ -72,6 +54,24 @@
         android:clickable="true"
         android:focusable="true">
     </CalendarView>
+
+
+
+    <!--  GRIDVIEW FOR CHECKBOX (arts, travel, sports,...)  -->
+    <GridView
+        android:id="@+id/gridview_check_box"
+        android:layout_margin="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:numColumns="2"
+        android:verticalSpacing="5dp"
+        android:horizontalSpacing="10dp">
+    </GridView>
+
+
+
+
+
 
 
 

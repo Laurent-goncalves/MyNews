@@ -91,8 +91,13 @@ public class ListArticlesSearch implements Disposable {
 
             @Override
             public void onError(Throwable e) {
-                Toast toast = Toast.makeText(context,"Error while searching new articles \n" + e.toString(),Toast.LENGTH_LONG);
-                toast.show();
+
+                if (mCallbackPageFragment != null){
+                    if(context instanceof MainActivity)
+                        mCallbackPageFragment.display_error_message_mainActivity(e.getMessage());
+                    else
+                        mCallbackPageFragment.display_error_message_settingActivity(e.getMessage());
+                }
             }
 
             @Override
@@ -128,6 +133,7 @@ public class ListArticlesSearch implements Disposable {
 
             @Override
             public void onError(Throwable e) {
+
                 if (mCallbackPageFragment != null){
                     if(context instanceof MainActivity)
                         mCallbackPageFragment.display_error_message_mainActivity(e.getMessage());
@@ -212,6 +218,7 @@ public class ListArticlesSearch implements Disposable {
     public void compare_lists_of_id_and_send_notification(){
 
         ArrayList<String> list_ID_old;
+        StringBuilder titles_article = new StringBuilder();
 
         if(sharedPreferences_Notif!=null)
             list_ID_old = string_transform_to_list(sharedPreferences_Notif.getString(EXTRA_OLD_ID_NOTIF,null));
@@ -230,13 +237,20 @@ public class ListArticlesSearch implements Disposable {
             for(Article article : mlistArticles){
 
                 if(!is_ID_in_the_list(article.getId(), list_ID_old)) { // if the article is NEW
-                    send_notification(article.getTitle());
+
+                    if(count==0)
+                        titles_article.append(article.getTitle());
+                    else
+                        titles_article.append("\n").append(article.getTitle());
+
                     count++;
                 }
             }
         }
 
-        if(count==0)
+        if(count!=0)
+            send_notification(titles_article.toString());
+        else
             send_notification(null);
     }
 
@@ -297,7 +311,7 @@ public class ListArticlesSearch implements Disposable {
         if(title_article==null)
             title_notif = "No new article!";
         else
-            title_notif = "New article!";
+            title_notif = "New articles!";
 
         String CHANNEL_ID = "my_channel_01";
 

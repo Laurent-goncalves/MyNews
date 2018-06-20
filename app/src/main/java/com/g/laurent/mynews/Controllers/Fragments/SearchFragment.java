@@ -8,7 +8,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
+import android.view.WindowManager;
 import android.widget.CalendarView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -19,6 +19,8 @@ import com.g.laurent.mynews.R;
 import com.g.laurent.mynews.Views.GridViewAdapter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Objects;
+
 import butterknife.ButterKnife;
 
 public class SearchFragment extends BaseFragment implements Callback_settings {
@@ -40,6 +42,9 @@ public class SearchFragment extends BaseFragment implements Callback_settings {
         ButterKnife.bind(this, view);
         ListSubjects=new ArrayList<>();
         query=null;
+
+        Objects.requireNonNull(getActivity()).getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         // configures views
         configure_date_selectors(getResources().getString(R.string.begindate),begin_date);
